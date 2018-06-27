@@ -1,5 +1,4 @@
-VoiceIt API 2.0 C++ Wrapper
-# voiceit2-cpp
+# VoiceIt API 2.0 C++ Wrapper
 
 A C++ wrapper for VoiceIt's API 2.0 featuring Voice + Face Verification and Identification.
 
