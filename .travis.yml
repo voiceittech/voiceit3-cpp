@@ -1,16 +1,19 @@
-matrix:
-  include:
-    - os: linux
-        addons:
-          apt:
-            packages:
-              - cmake
-              - g++-8
-              - openssl
+language: cpp
+addons:
+  apt:
+    packages:
+    - cmake
+    - g++-8
+    - openssl
 before_script:
 - git submodule add https://github.com/whoshuu/cpr.git
 - git submodule update --init --recursive
-- echo "set (CMAKE_CXX_STANDARD 11)\nproject (Tests)\ncmake_minimum_required(VERSION 2.8.12)\nadd_subdirectory(cpr)\ninclude_directories(${CPR_INCLUDE_DIRS})\nadd_executable(Test Test.cpp)\ntarget_link_libraries(Tests ${CPR_LIBRARIES})\n" > CMakeLists.txt
+- echo "set (CMAKE_CXX_STANDARD 11)\nproject (Tests)\ncmake_minimum_required(VERSION
+  2.8.12)\nadd_subdirectory(cpr)\ninclude_directories(${CPR_INCLUDE_DIRS})\nadd_executable(Test
+  Test.cpp)\ntarget_link_libraries(Tests ${CPR_LIBRARIES})\n" > CMakeLists.txt
 - cmake -DOPENSSL_ROOT_DIR=/usr/local/ssl
 - make
-script: ./Test
+script: "./Test"
+notifications:
+  slack:
+    secure: UPnF2d7L0+hp/DcCO0X4qHkFG+rePXpJqScUj7XQ6Mt3o6ZbmotapkceZYjbuEaNWmv64jC0DdwoVSTzCl40DLcvgJY5R4qSCQSiqI6glX/efeQl7NZqrKULEsrqF2oNA4YnWxHBFL+eb2PLM7s0AsRJt+zU80zeLmT0VpOcZoebCVGqGYNFN0i+q2rl9yRzqWGirgAo1dcv9i/lBvgkLiiC7qNAm/WS1TGH0hlFNCShTgEmMdKKa1k9wu+KoO2cfFRDPqpJWEbMLNI0VF7qXfaXm8v6OaMUVvzizFyXkiE2xqNapotVYn2I+Ne5iuEGBd9GQAl0ncwmlXsdwMuTTbthfmaFRRfl92rrQP15b13h0MUJbSGr4dry7Aw5W9JFQfexhB+yr3UKNzCMoxgpfgy62dBxd+7szhDFeoyfG0J479Z9c7cmrX+M5rXoLR1eY3gM4TVQFpU0SByA3KfoNa62UiZXxuN/CM8RtUoxfc7mV7CDUm7sHSCzagBKkJ/BRB8W8Asnb000cVVgTwFVKsvWKGB++QNLG8BTXjZKbNU6qv3IwwYCjkF4AVbk7oSSOY5Q9aGW7/OdPKibV49DSGlzYp2G34y+097vQZU4wDRSGN6uZ2wLCSXhNIzKobk40je7PU5nprFLyqFFRA60H+VLzH6Y2s5VW6guulXx4iY=
