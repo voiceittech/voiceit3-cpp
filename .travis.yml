@@ -3,7 +3,7 @@ addons:
   apt:
     packages:
     - cmake
-    - g++-8
+    - gcc-8
     - openssl
 before_script:
 - git submodule add https://github.com/whoshuu/cpr.git
