@@ -1,0 +1,23 @@
+matrix:
+  include:
+    - os: linux
+        addons:
+          apt:
+            packages:
+              - cmake
+              - g++-8
+              - openssl
+before_script:
+- git submodule add https://github.com/whoshuu/cpr.git
+- git submodule update --init --recursive
+- echo 'set (CMAKE_CXX_STANDARD 11)
+project (Tests)
+cmake_minimum_required(VERSION 2.8.12)
+add_subdirectory(cpr)
+include_directories(${CPR_INCLUDE_DIRS})
+add_executable(Test Test.cpp)
+target_link_libraries(Tests ${CPR_LIBRARIES})
+' > CMakeLists.txt
+- cmake -DOPENSSL_ROOT_DIR=/usr/local/ssl
+- make
+script: ./Test
