@@ -1,7 +1,6 @@
 #include <string>
 #include <iostream>
 #include <cpr/cpr.h>
-
 #include "json.hpp"
 
 using json = nlohmann::json;
@@ -30,6 +29,18 @@ class VoiceIt2
     json CreateUser()
     {
       const auto reqResponse = cpr::Post(cpr::Url{ baseUrl + "/users"}, *auth, *platformHeader);
+      return json::parse(reqResponse.text);
+    }
+
+    json DeleteUser(std::string userId)
+    {
+      const auto reqResponse = cpr::Delete(cpr::Url{ baseUrl + "/users/" + userId}, *auth, *platformHeader);
+      return json::parse(reqResponse.text);
+    }
+
+    json GetGroupsForUser(std::string userId)
+    {
+      const auto reqResponse = cpr::Get(cpr::Url{ baseUrl + "/users/" + userId + "/groups"}, *auth, *platformHeader);
       return json::parse(reqResponse.text);
     }
 
