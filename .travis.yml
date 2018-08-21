@@ -7,10 +7,10 @@ addons:
     packages:
       - gcc-8
 before_script:
-  - cpp-8 --version
   - sudo apt update && sudo apt install cmake openssl
   - git submodule add https://github.com/whoshuu/cpr.git
   - git submodule update --init --recursive
+  - echo "set (CMAKE_CXX_STANDARD 11)" > CMakeLists.txt
   - echo "set (CMAKE_CXX_STANDARD 11)" > CMakeLists.txt
   - echo "project (Tests)" >> CMakeLists.txt
   - echo "cmake_minimum_required(VERSION 2.8.12)" >> CMakeLists.txt
@@ -19,7 +19,7 @@ before_script:
   - echo "add_executable(Test Test.cpp)" >> CMakeLists.txt
   - echo "target_link_libraries(Tests ${CPR_LIBRARIES})" >> CMakeLists.txt
   - cat CMakeLists.txt
-  - cmake -DOPENSSL_ROOT_DIR=/usr/local/ssl
+  - cmake -DOPENSSL_ROOT_DIR=/usr/local/ssl -CMAKE_C_COMPILER="/usr/bin/cpp-8"
   - make
 script: "./Test"
 notifications:
