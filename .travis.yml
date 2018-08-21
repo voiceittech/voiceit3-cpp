@@ -1,25 +1,28 @@
-matrix:
-  include:
-    # works on Precise and Trusty
-    - os: linux
-      addons:
-        apt:
-          sources:
-            - ubuntu-toolchain-r-test
-          packages:
-            - g++-8
-      env:
-         - MATRIX_EVAL="CC=gcc-8 && CXX=g++-8"
-before_install:
-    - eval "${MATRIX_EVAL}"
+language: cpp
+compiler:
+  - gcc
+  - clang
+addons:
+  apt:
+    sources:
+      - ubuntu-toolchain-r-test
+    packages:
+      - gcc-8
 before_script:
+  - echo 'CC=gcc-8' >> ~/.profile
+  - echo 'CXX=g++-8' >> ~/.profile
+  - source ~/.profile
   - gcc --version
   - sudo apt update && sudo apt install cmake openssl
   - git submodule add https://github.com/whoshuu/cpr.git
   - git submodule update --init --recursive
-  - echo "set (CMAKE_CXX_STANDARD 11)\nproject (Tests)\ncmake_minimum_required(VERSION
-  2.8.12)\nadd_subdirectory(cpr)\ninclude_directories(${CPR_INCLUDE_DIRS})\nadd_executable(Test
-  Test.cpp)\ntarget_link_libraries(Tests ${CPR_LIBRARIES})\n" > CMakeLists.txt
+  - echo "set (CMAKE_CXX_STANDARD 11)" > CMakeLists.txt
+  - "project (Tests)" >> CMakeLists.txt
+  - "cmake_minimum_required(VERSION 2.8.12)" >> CMakeLists.txt
+  - "add_subdirectory(cpr)" >> CMakeLists.txt
+  - "include_directories(${CPR_INCLUDE_DIRS})" >> CMakeLists.txt
+  - "add_executable(Test Test.cpp)" >> CMakeLists.txt
+  - "target_link_libraries(Tests ${CPR_LIBRARIES})" >> CMakeLists.txt
   - cmake -DOPENSSL_ROOT_DIR=/usr/local/ssl
   - make
 script: "./Test"
