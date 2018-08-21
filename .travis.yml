@@ -18,7 +18,7 @@ before_script:
   - echo "include_directories(\${CPR_INCLUDE_DIRS})" >> CMakeLists.txt
   - echo "add_executable(Tests Test.cpp)" >> CMakeLists.txt
   - echo "target_link_libraries(Tests \${CPR_LIBRARIES})" >> CMakeLists.txt
-  - cmake -D -CMAKE_CXX_COMPILER="/usr/bin/cpp-8"
+  - cmake -D -CMAKE_CXX_COMPILER="/usr/bin/gcc-8"
   - make
 script: "./Tests"
 notifications:
