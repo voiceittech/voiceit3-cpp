@@ -11,12 +11,14 @@ addons:
 before_script:
   - which gcc-8
   - which g++-8
+  - export CC=gcc-8
+  - export CXX=g++-8
   - g++-8 --version
   - git submodule add https://github.com/whoshuu/cpr.git
   - git submodule update --init --recursive
   - echo "set (CMAKE_CXX_STANDARD 11)" > CMakeLists.txt
   - echo "project (Tests)" >> CMakeLists.txt
-  - echo "cmake_minimum_required(VERSION 2.8.12)" >> CMakeLists.txt
+  - echo "cmake_minimum_required(VERSION 3.0)" >> CMakeLists.txt
   - echo "add_subdirectory(cpr)" >> CMakeLists.txt
   - echo "include_directories(\${CPR_INCLUDE_DIRS})" >> CMakeLists.txt
   - echo "add_executable(Tests Test.cpp)" >> CMakeLists.txt
