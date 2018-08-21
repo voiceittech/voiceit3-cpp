@@ -7,7 +7,6 @@ addons:
     packages:
       - gcc-8
       - libssl-dev
-      - libcurl-dev
       - cmake
 before_script:
   - git submodule add https://github.com/whoshuu/cpr.git
