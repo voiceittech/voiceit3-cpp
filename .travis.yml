@@ -7,9 +7,7 @@ addons:
     packages:
       - gcc-8
 before_script:
-  - which cpp-8
-  - ls /usr/local/bin
-  - ls /usr/bin
+  - cpp-8 --version
   - sudo apt update && sudo apt install cmake openssl
   - git submodule add https://github.com/whoshuu/cpr.git
   - git submodule update --init --recursive
