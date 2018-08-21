@@ -21,7 +21,7 @@ before_script:
   - echo "add_executable(Tests Test.cpp)" >> CMakeLists.txt
   - echo "target_link_libraries(Tests \${CPR_LIBRARIES})" >> CMakeLists.txt
   - cmake -D -CMAKE_CXX_COMPILER="/usr/bin/g++-8"
-  - make
+  - make CPP=g++-8 CXX=g++-8 LD=g++-8
 script: "./Tests"
 notifications:
   slack:
