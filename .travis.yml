@@ -9,6 +9,7 @@ addons:
       - libssl-dev
       - cmake
 before_script:
+  - which gcc-8
   - which g++-8
   - g++-8 --version
   - git submodule add https://github.com/whoshuu/cpr.git
