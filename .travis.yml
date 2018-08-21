@@ -9,9 +9,10 @@ addons:
     packages:
       - gcc-8
 before_script:
-  - export CC=gcc-8
-  - export CXX=g++-8
-  - gcc --version
+  - which g++-8
+  - which g++8
+  - ls /usr/local/bin
+  - ls /usr/bin
   - sudo apt update && sudo apt install cmake openssl
   - git submodule add https://github.com/whoshuu/cpr.git
   - git submodule update --init --recursive
