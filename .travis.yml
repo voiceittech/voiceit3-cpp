@@ -1,5 +1,13 @@
 language: cpp
-compiler: gcc
+compiler:
+- gcc
+- clang
+addons:
+  apt:
+    sources:
+      - ubuntu-toolchain-r-test
+    packages:
+      - gcc8
 before_script:
 - gcc --version
 - sudo apt update && sudo apt install cmake openssl
