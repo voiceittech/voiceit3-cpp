@@ -1,7 +1,5 @@
 language: cpp
-compiler:
-  - gcc
-  - clang
+compiler: gcc
 addons:
   apt:
     sources:
@@ -9,7 +7,7 @@ addons:
     packages:
       - gcc-8
 before_script:
-  - which g++8
+  - which cpp-8
   - ls /usr/local/bin
   - ls /usr/bin
   - sudo apt update && sudo apt install cmake openssl
