@@ -15,13 +15,14 @@ before_script:
   - sudo apt update && sudo apt install cmake openssl
   - git submodule add https://github.com/whoshuu/cpr.git
   - git submodule update --init --recursive
-  - echo "set (CMAKE_CXX_STANDARD 11)\n" > CMakeLists.txt
-  - echo "project (Tests)\n" >> CMakeLists.txt
-  - echo "cmake_minimum_required(VERSION 2.8.12)\n" >> CMakeLists.txt
-  - echo "add_subdirectory(cpr)\n" >> CMakeLists.txt
-  - echo "include_directories(${CPR_INCLUDE_DIRS})\n" >> CMakeLists.txt
-  - echo "add_executable(Test Test.cpp)\n" >> CMakeLists.txt
-  - echo "target_link_libraries(Tests ${CPR_LIBRARIES})\n" >> CMakeLists.txt
+  - echo "set (CMAKE_CXX_STANDARD 11)" > CMakeLists.txt
+  - echo "project (Tests)" >> CMakeLists.txt
+  - echo "cmake_minimum_required(VERSION 2.8.12)" >> CMakeLists.txt
+  - echo "add_subdirectory(cpr)" >> CMakeLists.txt
+  - echo "include_directories(${CPR_INCLUDE_DIRS})" >> CMakeLists.txt
+  - echo "add_executable(Test Test.cpp)" >> CMakeLists.txt
+  - echo "target_link_libraries(Tests ${CPR_LIBRARIES})" >> CMakeLists.txt
+  - cat CMakeLists.txt
   - cmake -DOPENSSL_ROOT_DIR=/usr/local/ssl
   - make
 script: "./Test"
