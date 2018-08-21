@@ -6,8 +6,9 @@ addons:
       - ubuntu-toolchain-r-test
     packages:
       - gcc-8
+      - libssl-dev
+      - cmake
 before_script:
-  - sudo apt update && sudo apt install cmake openssl
   - git submodule add https://github.com/whoshuu/cpr.git
   - git submodule update --init --recursive
   - echo "set (CMAKE_CXX_STANDARD 11)" > CMakeLists.txt
