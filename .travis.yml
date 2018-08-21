@@ -9,7 +9,6 @@ addons:
     packages:
       - gcc-8
 before_script:
-  - which g++-8
   - which g++8
   - ls /usr/local/bin
   - ls /usr/bin
