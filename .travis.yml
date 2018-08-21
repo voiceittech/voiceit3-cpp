@@ -9,6 +9,8 @@ addons:
       - libssl-dev
       - cmake
 before_script:
+  - gcc-8 --version
+  - which /usr/bin/gcc-8
   - git submodule add https://github.com/whoshuu/cpr.git
   - git submodule update --init --recursive
   - echo "set (CMAKE_CXX_STANDARD 11)" > CMakeLists.txt
