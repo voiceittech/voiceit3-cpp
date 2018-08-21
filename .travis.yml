@@ -17,12 +17,12 @@ before_script:
   - git submodule add https://github.com/whoshuu/cpr.git
   - git submodule update --init --recursive
   - echo "set (CMAKE_CXX_STANDARD 11)\n" > CMakeLists.txt
-  - "project (Tests)\n" >> CMakeLists.txt
-  - "cmake_minimum_required(VERSION 2.8.12)\n" >> CMakeLists.txt
-  - "add_subdirectory(cpr)\n" >> CMakeLists.txt
-  - "include_directories(${CPR_INCLUDE_DIRS})\n" >> CMakeLists.txt
-  - "add_executable(Test Test.cpp)\n" >> CMakeLists.txt
-  - "target_link_libraries(Tests ${CPR_LIBRARIES})\n" >> CMakeLists.txt
+  - echo "project (Tests)\n" >> CMakeLists.txt
+  - echo "cmake_minimum_required(VERSION 2.8.12)\n" >> CMakeLists.txt
+  - echo "add_subdirectory(cpr)\n" >> CMakeLists.txt
+  - echo "include_directories(${CPR_INCLUDE_DIRS})\n" >> CMakeLists.txt
+  - echo "add_executable(Test Test.cpp)\n" >> CMakeLists.txt
+  - echo "target_link_libraries(Tests ${CPR_LIBRARIES})\n" >> CMakeLists.txt
   - cmake -DOPENSSL_ROOT_DIR=/usr/local/ssl
   - make
 script: "./Test"
