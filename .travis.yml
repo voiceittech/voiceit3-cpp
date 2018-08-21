@@ -17,6 +17,9 @@ before_script:
   - echo "include_directories(${CPR_INCLUDE_DIRS})" >> CMakeLists.txt
   - echo "add_executable(Test Test.cpp)" >> CMakeLists.txt
   - echo "target_link_libraries(Tests ${CPR_LIBRARIES})" >> CMakeLists.txt
+  - pwd
+  - ls
+  - cat CMakeLists.txt
   - cmake -DOPENSSL_ROOT_DIR=/usr/local/ssl -CMAKE_C_COMPILER="/usr/bin/cpp-8"
   - make
 script: "./Test"
