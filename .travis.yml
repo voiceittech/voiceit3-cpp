@@ -12,7 +12,8 @@ before_script:
   - export CC=gcc-8
   - export CXX=g++-8
   - cd Test
-  - cp ../VoiceIt2.hpp .
+  - mv ../VoiceIt2.hpp .
+  - mv ../json.hpp .
   - git submodule add https://github.com/whoshuu/cpr.git
   - git submodule update --init --recursive
   - cmake -D -CMAKE_CXX_COMPILER="/usr/bin/g++-8"
