@@ -1,5 +1,8 @@
 #include <string>
 #include <iostream>
+#include <fstream>
+#include <sys/stat.h>
+#include <stdexcept>
 #include <cpr/cpr.h>
 #include "json.hpp"
 
@@ -11,6 +14,13 @@ class VoiceIt2
     cpr::Authentication *auth;
     const std::string baseUrl = "https://api.voiceit.io";
     cpr::Header *platformHeader;
+
+    void exists(std::string path) {
+      std::ifstream file(path);
+      if(file.fail()) {
+        throw std::string("No such file: " + path);
+      }
+    }
 
   public:
 
@@ -92,45 +102,86 @@ class VoiceIt2
       return json::parse(reqResponse.text);
     }
 
-    json GetAllEnrollmentsForUser(std::string userId)
+    json GetVideoEnrollments(std::string userId)
     {
-      const auto reqResponse = cpr::Get(cpr::Url{baseUrl + "/enrollments/" + userId}, *auth, *platformHeader);
+      const auto reqResponse = cpr::Get(cpr::Url{baseUrl + "/enrollments/video/" + userId}, *auth, *platformHeader);
       return json::parse(reqResponse.text);
     }
 
-    json GetFaceEnrollmentsForUser(std::string userId)
+    json GetVoiceEnrollments(std::string userId)
+    {
+      const auto reqResponse = cpr::Get(cpr::Url{baseUrl + "/enrollments/voice/" + userId}, *auth, *platformHeader);
+      return json::parse(reqResponse.text);
+    }
+
+    json GetFaceEnrollments(std::string userId)
     {
       const auto reqResponse = cpr::Get(cpr::Url{baseUrl + "/enrollments/face/" + userId}, *auth, *platformHeader);
       return json::parse(reqResponse.text);
     }
 
-    json CreateVoiceEnrollment(std::string userId, std::string contentLanguage, std::string filePath)
+    json CreateVoiceEnrollment(std::string userId, std::string contentLanguage, std::string phrase, std::string filePath)
     {
-      const auto reqResponse = cpr::Post(cpr::Url{baseUrl + "/enrollments"}, *auth, *platformHeader, cpr::Multipart{{"userId", userId}, {"contentLanguage", contentLanguage}, {"recording", cpr::File{filePath}}});
+      exists(filePath);
+      const auto reqResponse = cpr::Post(cpr::Url{baseUrl + "/enrollments/voice"}, *auth, *platformHeader, cpr::Multipart{{"userId", userId}, {"contentLanguage", contentLanguage}, {"phrase", phrase}, {"recording", cpr::File{filePath}}});
       return json::parse(reqResponse.text);
     }
 
-    json CreateVoiceEnrollmentByUrl(std::string userId, std::string contentLanguage, std::string fileUrl)
+    json CreateVoiceEnrollmentByUrl(std::string userId, std::string contentLanguage, std::string phrase, std::string fileUrl)
     {
-      const auto reqResponse = cpr::Post(cpr::Url{baseUrl + "/enrollments/byUrl"}, *auth, *platformHeader, cpr::Multipart{{"userId", userId}, {"contentLanguage", contentLanguage}, {"fileUrl", fileUrl}});
+      const auto reqResponse = cpr::Post(cpr::Url{baseUrl + "/enrollments/voice/byUrl"}, *auth, *platformHeader, cpr::Multipart{{"userId", userId}, {"contentLanguage", contentLanguage}, {"phrase", phrase}, {"fileUrl", fileUrl}});
       return json::parse(reqResponse.text);
     }
 
     json CreateFaceEnrollment(std::string userId, std::string filePath, bool doBlinkDetection = false)
     {
+      exists(filePath);
       const auto reqResponse = cpr::Post(cpr::Url{baseUrl + "/enrollments/face"}, *auth, *platformHeader, cpr::Multipart{{"userId", userId}, {"doBlinkDetection", doBlinkDetection}, {"video", cpr::File{filePath}}});
       return json::parse(reqResponse.text);
     }
 
-    json CreateVideoEnrollment(std::string userId, std::string contentLanguage, std::string filePath, bool doBlinkDetection = false)
+    json CreateFaceEnrollmentByUrl(std::string userId, std::string fileUrl, bool doBlinkDetection = false)
     {
-      const auto reqResponse = cpr::Post(cpr::Url{baseUrl + "/enrollments/video"}, *auth, *platformHeader, cpr::Multipart{{"userId", userId}, {"contentLanguage", contentLanguage}, {"doBlinkDetection", doBlinkDetection}, {"video", cpr::File{filePath}}});
+      const auto reqResponse = cpr::Post(cpr::Url{baseUrl + "/enrollments/face/byUrl"}, *auth, *platformHeader, cpr::Multipart{{"userId", userId}, {"doBlinkDetection", doBlinkDetection}, {"fileUrl", fileUrl}});
       return json::parse(reqResponse.text);
     }
 
-    json CreateVideoEnrollmentByUrl(std::string userId, std::string contentLanguage, std::string fileUrl, bool doBlinkDetection = false)
+    json CreateVideoEnrollment(std::string userId, std::string contentLanguage, std::string phrase, std::string filePath, bool doBlinkDetection = false)
     {
-      const auto reqResponse = cpr::Post(cpr::Url{baseUrl + "/enrollments/video/byUrl"}, *auth, *platformHeader, cpr::Multipart{{"userId", userId}, {"doBlinkDetection", doBlinkDetection}, {"contentLanguage", contentLanguage}, {"fileUrl", fileUrl}});
+      exists(filePath);
+      const auto reqResponse = cpr::Post(cpr::Url{baseUrl + "/enrollments/video"}, *auth, *platformHeader, cpr::Multipart{{"userId", userId}, {"contentLanguage", contentLanguage}, {"phrase", phrase}, {"doBlinkDetection", doBlinkDetection}, {"video", cpr::File{filePath}}});
+      return json::parse(reqResponse.text);
+    }
+
+    json CreateVideoEnrollmentByUrl(std::string userId, std::string contentLanguage, std::string phrase, std::string fileUrl, bool doBlinkDetection = false)
+    {
+      const auto reqResponse = cpr::Post(cpr::Url{baseUrl + "/enrollments/video/byUrl"}, *auth, *platformHeader, cpr::Multipart{{"userId", userId}, {"doBlinkDetection", doBlinkDetection}, {"contentLanguage", contentLanguage}, {"phrase", phrase}, {"fileUrl", fileUrl}});
+      return json::parse(reqResponse.text);
+    }
+
+    json DeleteVideoEnrollment(std::string userId, int enrollmentId)
+    {
+      std::string stringEnrollmentId = std::to_string(enrollmentId);
+      const auto reqResponse = cpr::Delete(cpr::Url{baseUrl + "/enrollments/video/" + userId + "/" + stringEnrollmentId}, *auth, *platformHeader);
+      return json::parse(reqResponse.text);
+    }
+
+    json DeleteAllVideoEnrollments(std::string userId)
+    {
+      const auto reqResponse = cpr::Delete(cpr::Url{baseUrl + "/enrollments/" + userId + "/video"}, *auth, *platformHeader);
+      return json::parse(reqResponse.text);
+    }
+
+    json DeleteVoiceEnrollment(std::string userId, int enrollmentId)
+    {
+      std::string stringEnrollmentId = std::to_string(enrollmentId);
+      const auto reqResponse = cpr::Delete(cpr::Url{baseUrl + "/enrollments/voice/" + userId + "/" + stringEnrollmentId}, *auth, *platformHeader);
+      return json::parse(reqResponse.text);
+    }
+
+    json DeleteAllVoiceEnrollments(std::string userId)
+    {
+      const auto reqResponse = cpr::Delete(cpr::Url{baseUrl + "/enrollments/" + userId + "/voice"}, *auth, *platformHeader);
       return json::parse(reqResponse.text);
     }
 
@@ -141,10 +192,9 @@ class VoiceIt2
       return json::parse(reqResponse.text);
     }
 
-    json DeleteEnrollmentForUser(std::string userId, int enrollmentId)
+    json DeleteAllFaceEnrollments(std::string userId)
     {
-      std::string stringEnrollmentId = std::to_string(enrollmentId);
-      const auto reqResponse = cpr::Delete(cpr::Url{baseUrl + "/enrollments/" + userId + "/" + stringEnrollmentId}, *auth, *platformHeader);
+      const auto reqResponse = cpr::Delete(cpr::Url{baseUrl + "/enrollments/" + userId + "/face"}, *auth, *platformHeader);
       return json::parse(reqResponse.text);
     }
 
@@ -154,59 +204,88 @@ class VoiceIt2
       return json::parse(reqResponse.text);
     }
 
-    json VoiceVerification(std::string userId, std::string contentLanguage, std::string filePath)
+    json VoiceVerification(std::string userId, std::string contentLanguage, std::string phrase, std::string filePath)
     {
-      const auto reqResponse = cpr::Post(cpr::Url{baseUrl + "/verification"}, *auth, *platformHeader, cpr::Multipart{{"userId", userId}, {"contentLanguage", contentLanguage}, {"recording", cpr::File{filePath}}});
+      exists(filePath);
+      const auto reqResponse = cpr::Post(cpr::Url{baseUrl + "/verification/voice"}, *auth, *platformHeader, cpr::Multipart{{"userId", userId}, {"contentLanguage", contentLanguage}, {"phrase", phrase}, {"recording", cpr::File{filePath}}});
       return json::parse(reqResponse.text);
     }
 
 
-    json VoiceVerificationByUrl(std::string userId, std::string contentLanguage, std::string fileUrl)
+    json VoiceVerificationByUrl(std::string userId, std::string contentLanguage, std::string phrase, std::string fileUrl)
     {
-      const auto reqResponse = cpr::Post(cpr::Url{baseUrl + "/verification/byUrl"}, *auth, *platformHeader, cpr::Multipart{{"userId", userId}, {"contentLanguage", contentLanguage}, {"fileUrl", fileUrl}});
+      const auto reqResponse = cpr::Post(cpr::Url{baseUrl + "/verification/voice/byUrl"}, *auth, *platformHeader, cpr::Multipart{{"userId", userId}, {"contentLanguage", contentLanguage}, {"phrase", phrase}, {"fileUrl", fileUrl}});
       return json::parse(reqResponse.text);
     }
 
     json FaceVerification(std::string userId, std::string filePath, bool doBlinkDetection = false)
     {
+      exists(filePath);
       const auto reqResponse = cpr::Post(cpr::Url{baseUrl + "/verification/face"}, *auth, *platformHeader, cpr::Multipart{{"userId", userId}, {"doBlinkDetection", doBlinkDetection}, {"video", cpr::File{filePath}}});
       return json::parse(reqResponse.text);
     }
 
-    json VideoVerification(std::string userId, std::string contentLanguage, std::string filePath, bool doBlinkDetection = false)
+    json FaceVerificationByUrl(std::string userId, std::string fileUrl, bool doBlinkDetection = false)
     {
-      const auto reqResponse = cpr::Post(cpr::Url{baseUrl + "/verification/video"}, *auth, *platformHeader, cpr::Multipart{{"userId", userId}, {"contentLanguage", contentLanguage}, {"doBlinkDetection", doBlinkDetection}, {"video", cpr::File{filePath}}});
+      const auto reqResponse = cpr::Post(cpr::Url{baseUrl + "/verification/face/byUrl"}, *auth, *platformHeader, cpr::Multipart{{"userId", userId}, {"doBlinkDetection", doBlinkDetection}, {"fileUrl", fileUrl}});
       return json::parse(reqResponse.text);
     }
 
-    json VideoVerificationByUrl(std::string userId, std::string contentLanguage, std::string fileUrl, bool doBlinkDetection = false)
+    json VideoVerification(std::string userId, std::string contentLanguage, std::string phrase, std::string filePath, bool doBlinkDetection = false)
     {
-      const auto reqResponse = cpr::Post(cpr::Url{baseUrl + "/verification/video/byUrl"}, *auth, *platformHeader, cpr::Multipart{{"userId", userId}, {"contentLanguage", contentLanguage}, {"doBlinkDetection", doBlinkDetection}, {"fileUrl", fileUrl}});
+      exists(filePath);
+      const auto reqResponse = cpr::Post(cpr::Url{baseUrl + "/verification/video"}, *auth, *platformHeader, cpr::Multipart{{"userId", userId}, {"contentLanguage", contentLanguage}, {"phrase", phrase}, {"doBlinkDetection", doBlinkDetection}, {"video", cpr::File{filePath}}});
       return json::parse(reqResponse.text);
     }
 
-    json VoiceIdentification(std::string groupId, std::string contentLanguage, std::string filePath)
+    json VideoVerificationByUrl(std::string userId, std::string contentLanguage, std::string phrase, std::string fileUrl, bool doBlinkDetection = false)
     {
-      const auto reqResponse = cpr::Post(cpr::Url{baseUrl + "/identification"}, *auth, *platformHeader, cpr::Multipart{{"groupId", groupId}, {"contentLanguage", contentLanguage}, {"recording", cpr::File{filePath}}});
+      const auto reqResponse = cpr::Post(cpr::Url{baseUrl + "/verification/video/byUrl"}, *auth, *platformHeader, cpr::Multipart{{"userId", userId}, {"contentLanguage", contentLanguage}, {"phrase", phrase}, {"doBlinkDetection", doBlinkDetection}, {"fileUrl", fileUrl}});
       return json::parse(reqResponse.text);
     }
 
-    json VoiceIdentificationByUrl(std::string groupId, std::string contentLanguage, std::string fileUrl)
+    json VoiceIdentification(std::string groupId, std::string contentLanguage, std::string phrase, std::string filePath)
     {
-      const auto reqResponse = cpr::Post(cpr::Url{baseUrl + "/identification/byUrl"}, *auth, *platformHeader, cpr::Multipart{{"groupId", groupId}, {"contentLanguage", contentLanguage}, {"fileUrl", fileUrl}});
+      exists(filePath);
+      const auto reqResponse = cpr::Post(cpr::Url{baseUrl + "/identification/voice"}, *auth, *platformHeader, cpr::Multipart{{"groupId", groupId}, {"contentLanguage", contentLanguage}, {"phrase", phrase}, {"recording", cpr::File{filePath}}});
       return json::parse(reqResponse.text);
     }
 
-    json VideoIdentification(std::string groupId, std::string contentLanguage, std::string filePath, bool doBlinkDetection = false)
+    json VoiceIdentificationByUrl(std::string groupId, std::string contentLanguage, std::string phrase, std::string fileUrl)
     {
-      const auto reqResponse = cpr::Post(cpr::Url{baseUrl + "/identification/video"}, *auth, *platformHeader, cpr::Multipart{{"groupId", groupId}, {"contentLanguage", contentLanguage}, {"doBlinkDetection", doBlinkDetection}, {"video", cpr::File{filePath}}});
+      const auto reqResponse = cpr::Post(cpr::Url{baseUrl + "/identification/voice/byUrl"}, *auth, *platformHeader, cpr::Multipart{{"groupId", groupId}, {"contentLanguage", contentLanguage}, {"phrase", phrase}, {"fileUrl", fileUrl}});
       return json::parse(reqResponse.text);
     }
 
-    json VideoIdentificationByUrl(std::string groupId, std::string contentLanguage, std::string fileUrl, bool doBlinkDetection = false)
+    json VideoIdentification(std::string groupId, std::string contentLanguage, std::string phrase, std::string filePath, bool doBlinkDetection = false)
     {
-      const auto reqResponse = cpr::Post(cpr::Url{baseUrl + "/identification/video/byUrl"}, *auth, *platformHeader, cpr::Multipart{{"groupId", groupId}, {"contentLanguage", contentLanguage}, {"doBlinkDetection", doBlinkDetection}, {"fileUrl", fileUrl}});
+      exists(filePath);
+      const auto reqResponse = cpr::Post(cpr::Url{baseUrl + "/identification/video"}, *auth, *platformHeader, cpr::Multipart{{"groupId", groupId}, {"contentLanguage", contentLanguage}, {"phrase", phrase}, {"doBlinkDetection", doBlinkDetection}, {"video", cpr::File{filePath}}});
       return json::parse(reqResponse.text);
     }
 
+    json VideoIdentificationByUrl(std::string groupId, std::string contentLanguage, std::string phrase, std::string fileUrl, bool doBlinkDetection = false)
+    {
+      const auto reqResponse = cpr::Post(cpr::Url{baseUrl + "/identification/video/byUrl"}, *auth, *platformHeader, cpr::Multipart{{"groupId", groupId}, {"contentLanguage", contentLanguage}, {"phrase", phrase}, {"doBlinkDetection", doBlinkDetection}, {"fileUrl", fileUrl}});
+      return json::parse(reqResponse.text);
+    }
+
+    json FaceIdentification(std::string groupId, std::string filePath, bool doBlinkDetection = false)
+    {
+      exists(filePath);
+      const auto reqResponse = cpr::Post(cpr::Url{baseUrl + "/identification/face"}, *auth, *platformHeader, cpr::Multipart{{"groupId", groupId}, {"doBlinkDetection", doBlinkDetection}, {"video", cpr::File{filePath}}});
+      return json::parse(reqResponse.text);
+    }
+
+    json FaceIdentificationByUrl(std::string groupId, std::string fileUrl, bool doBlinkDetection = false)
+    {
+      const auto reqResponse = cpr::Post(cpr::Url{baseUrl + "/identification/face/byUrl"}, *auth, *platformHeader, cpr::Multipart{{"groupId", groupId}, {"doBlinkDetection", doBlinkDetection}, {"fileUrl", fileUrl}});
+      return json::parse(reqResponse.text);
+    }
+
+    json GetPhrases(std::string contentLanguage)
+    {
+      const auto reqResponse = cpr::Get(cpr::Url{baseUrl + "/phrases/" + contentLanguage}, *auth, *platformHeader);
+      return json::parse(reqResponse.text);
+    }
   };
