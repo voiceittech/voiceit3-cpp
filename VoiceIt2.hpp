@@ -13,7 +13,7 @@ class VoiceIt2
     const std::string baseUrl = "https://api.voiceit.io";
     cpr::Header *platformHeader;
 
-    void exists(std::string path) {
+    void FileExists(std::string path) {
       std::ifstream file(path);
       if(file.fail()) {
         throw std::string("No such file: " + path);
@@ -120,7 +120,7 @@ class VoiceIt2
 
     json CreateVoiceEnrollment(std::string userId, std::string contentLanguage, std::string phrase, std::string filePath)
     {
-      exists(filePath);
+      FileExists(filePath);
       const auto reqResponse = cpr::Post(cpr::Url{baseUrl + "/enrollments/voice"}, *auth, *platformHeader, cpr::Multipart{{"userId", userId}, {"contentLanguage", contentLanguage}, {"phrase", phrase}, {"recording", cpr::File{filePath}}});
       return json::parse(reqResponse.text);
     }
@@ -133,7 +133,7 @@ class VoiceIt2
 
     json CreateFaceEnrollment(std::string userId, std::string filePath, bool doBlinkDetection = false)
     {
-      exists(filePath);
+      FileExists(filePath);
       const auto reqResponse = cpr::Post(cpr::Url{baseUrl + "/enrollments/face"}, *auth, *platformHeader, cpr::Multipart{{"userId", userId}, {"doBlinkDetection", doBlinkDetection}, {"video", cpr::File{filePath}}});
       return json::parse(reqResponse.text);
     }
@@ -146,7 +146,7 @@ class VoiceIt2
 
     json CreateVideoEnrollment(std::string userId, std::string contentLanguage, std::string phrase, std::string filePath, bool doBlinkDetection = false)
     {
-      exists(filePath);
+      FileExists(filePath);
       const auto reqResponse = cpr::Post(cpr::Url{baseUrl + "/enrollments/video"}, *auth, *platformHeader, cpr::Multipart{{"userId", userId}, {"contentLanguage", contentLanguage}, {"phrase", phrase}, {"doBlinkDetection", doBlinkDetection}, {"video", cpr::File{filePath}}});
       return json::parse(reqResponse.text);
     }
@@ -204,7 +204,7 @@ class VoiceIt2
 
     json VoiceVerification(std::string userId, std::string contentLanguage, std::string phrase, std::string filePath)
     {
-      exists(filePath);
+      FileExists(filePath);
       const auto reqResponse = cpr::Post(cpr::Url{baseUrl + "/verification/voice"}, *auth, *platformHeader, cpr::Multipart{{"userId", userId}, {"contentLanguage", contentLanguage}, {"phrase", phrase}, {"recording", cpr::File{filePath}}});
       return json::parse(reqResponse.text);
     }
@@ -218,7 +218,7 @@ class VoiceIt2
 
     json FaceVerification(std::string userId, std::string filePath, bool doBlinkDetection = false)
     {
-      exists(filePath);
+      FileExists(filePath);
       const auto reqResponse = cpr::Post(cpr::Url{baseUrl + "/verification/face"}, *auth, *platformHeader, cpr::Multipart{{"userId", userId}, {"doBlinkDetection", doBlinkDetection}, {"video", cpr::File{filePath}}});
       return json::parse(reqResponse.text);
     }
@@ -231,7 +231,7 @@ class VoiceIt2
 
     json VideoVerification(std::string userId, std::string contentLanguage, std::string phrase, std::string filePath, bool doBlinkDetection = false)
     {
-      exists(filePath);
+      FileExists(filePath);
       const auto reqResponse = cpr::Post(cpr::Url{baseUrl + "/verification/video"}, *auth, *platformHeader, cpr::Multipart{{"userId", userId}, {"contentLanguage", contentLanguage}, {"phrase", phrase}, {"doBlinkDetection", doBlinkDetection}, {"video", cpr::File{filePath}}});
       return json::parse(reqResponse.text);
     }
@@ -244,7 +244,7 @@ class VoiceIt2
 
     json VoiceIdentification(std::string groupId, std::string contentLanguage, std::string phrase, std::string filePath)
     {
-      exists(filePath);
+      FileExists(filePath);
       const auto reqResponse = cpr::Post(cpr::Url{baseUrl + "/identification/voice"}, *auth, *platformHeader, cpr::Multipart{{"groupId", groupId}, {"contentLanguage", contentLanguage}, {"phrase", phrase}, {"recording", cpr::File{filePath}}});
       return json::parse(reqResponse.text);
     }
@@ -257,7 +257,7 @@ class VoiceIt2
 
     json VideoIdentification(std::string groupId, std::string contentLanguage, std::string phrase, std::string filePath, bool doBlinkDetection = false)
     {
-      exists(filePath);
+      FileExists(filePath);
       const auto reqResponse = cpr::Post(cpr::Url{baseUrl + "/identification/video"}, *auth, *platformHeader, cpr::Multipart{{"groupId", groupId}, {"contentLanguage", contentLanguage}, {"phrase", phrase}, {"doBlinkDetection", doBlinkDetection}, {"video", cpr::File{filePath}}});
       return json::parse(reqResponse.text);
     }
@@ -270,7 +270,7 @@ class VoiceIt2
 
     json FaceIdentification(std::string groupId, std::string filePath, bool doBlinkDetection = false)
     {
-      exists(filePath);
+      FileExists(filePath);
       const auto reqResponse = cpr::Post(cpr::Url{baseUrl + "/identification/face"}, *auth, *platformHeader, cpr::Multipart{{"groupId", groupId}, {"doBlinkDetection", doBlinkDetection}, {"video", cpr::File{filePath}}});
       return json::parse(reqResponse.text);
     }
