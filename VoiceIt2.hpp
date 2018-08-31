@@ -102,19 +102,19 @@ class VoiceIt2
       return json::parse(reqResponse.text);
     }
 
-    json GetVideoEnrollments(std::string userId)
+    json GetAllVideoEnrollments(std::string userId)
     {
       const auto reqResponse = cpr::Get(cpr::Url{baseUrl + "/enrollments/video/" + userId}, *auth, *platformHeader);
       return json::parse(reqResponse.text);
     }
 
-    json GetVoiceEnrollments(std::string userId)
+    json GetAllVoiceEnrollments(std::string userId)
     {
       const auto reqResponse = cpr::Get(cpr::Url{baseUrl + "/enrollments/voice/" + userId}, *auth, *platformHeader);
       return json::parse(reqResponse.text);
     }
 
-    json GetFaceEnrollments(std::string userId)
+    json GetAllFaceEnrollments(std::string userId)
     {
       const auto reqResponse = cpr::Get(cpr::Url{baseUrl + "/enrollments/face/" + userId}, *auth, *platformHeader);
       return json::parse(reqResponse.text);

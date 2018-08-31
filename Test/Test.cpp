@@ -543,15 +543,15 @@ int main() {
   AssertEquals(200, ret["status"], std::to_string(__LINE__), ret.dump());
   AssertEquals("SUCC", ret["responseCode"], std::to_string(__LINE__), ret.dump());
 
-  ret = v.GetVideoEnrollments(userId);
+  ret = v.GetAllVideoEnrollments(userId);
   AssertEquals(200, ret["status"], std::to_string(__LINE__), ret.dump());
   AssertEquals("SUCC", ret["responseCode"], std::to_string(__LINE__), ret.dump());
   AssertEquals(1, ret["count"], std::to_string(__LINE__), ret.dump());
-  ret = v.GetVoiceEnrollments(userId);
+  ret = v.GetAllVoiceEnrollments(userId);
   AssertEquals(200, ret["status"], std::to_string(__LINE__), ret.dump());
   AssertEquals("SUCC", ret["responseCode"], std::to_string(__LINE__), ret.dump());
   AssertEquals(1, ret["count"], std::to_string(__LINE__), ret.dump());
-  ret = v.GetFaceEnrollments(userId);
+  ret = v.GetAllFaceEnrollments(userId);
   AssertEquals(200, ret["status"], std::to_string(__LINE__), ret.dump());
   AssertEquals("SUCC", ret["responseCode"], std::to_string(__LINE__), ret.dump());
   AssertEquals(1, ret["count"], std::to_string(__LINE__), ret.dump());
@@ -576,9 +576,9 @@ int main() {
   ret = v.DeleteAllFaceEnrollments(userId);
   AssertEquals(200, ret["status"], std::to_string(__LINE__), ret.dump());
   AssertEquals("SUCC", ret["responseCode"], std::to_string(__LINE__), ret.dump());
-  AssertEquals(0, v.GetVideoEnrollments(userId)["count"], std::to_string(__LINE__), ret.dump());
-  AssertEquals(0, v.GetVoiceEnrollments(userId)["count"], std::to_string(__LINE__), ret.dump());
-  AssertEquals(0, v.GetFaceEnrollments(userId)["count"], std::to_string(__LINE__), ret.dump());
+  AssertEquals(0, v.GetAllVideoEnrollments(userId)["count"], std::to_string(__LINE__), ret.dump());
+  AssertEquals(0, v.GetAllVoiceEnrollments(userId)["count"], std::to_string(__LINE__), ret.dump());
+  AssertEquals(0, v.GetAllFaceEnrollments(userId)["count"], std::to_string(__LINE__), ret.dump());
   v.DeleteAllEnrollmentsForUser(userId);
   v.DeleteUser(userId);
 
