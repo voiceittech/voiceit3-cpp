@@ -1,8 +1,6 @@
 #include <string>
 #include <iostream>
 #include <fstream>
-#include <sys/stat.h>
-#include <stdexcept>
 #include <cpr/cpr.h>
 #include "json.hpp"
 
