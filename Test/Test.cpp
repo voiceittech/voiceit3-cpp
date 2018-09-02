@@ -244,10 +244,10 @@ int main() {
   AssertEquals(userId1, ret["userId"], std::to_string(__LINE__), ret.dump());
 
   // Delete All Enrollments
-  ret = v.DeleteAllEnrollmentsForUser(userId1);
+  ret = v.DeleteAllEnrollments(userId1);
   AssertEquals(200, ret["status"], std::to_string(__LINE__), ret.dump());
   AssertEquals("SUCC", ret["responseCode"], std::to_string(__LINE__), ret.dump());
-  v.DeleteAllEnrollmentsForUser(userId2);
+  v.DeleteAllEnrollments(userId2);
 
   // Reset for ...ByUrl operations
   v.DeleteUser(userId1);
@@ -295,8 +295,8 @@ int main() {
   AssertEquals("SUCC", ret["responseCode"], std::to_string(__LINE__), ret.dump());
   AssertEquals(userId1, ret["userId"], std::to_string(__LINE__), ret.dump());
 
-  v.DeleteAllEnrollmentsForUser(userId1);
-  v.DeleteAllEnrollmentsForUser(userId2);
+  v.DeleteAllEnrollments(userId1);
+  v.DeleteAllEnrollments(userId2);
   v.DeleteUser(userId1);
   v.DeleteUser(userId2);
   v.DeleteGroup(groupId);
@@ -359,8 +359,8 @@ int main() {
   AssertEquals(userId1, ret["userId"], std::to_string(__LINE__), ret.dump());
 
   // Reset for ...ByUrl operations
-  v.DeleteAllEnrollmentsForUser(userId1);
-  v.DeleteAllEnrollmentsForUser(userId2);
+  v.DeleteAllEnrollments(userId1);
+  v.DeleteAllEnrollments(userId2);
   v.DeleteUser(userId1);
   v.DeleteUser(userId2);
   v.DeleteGroup(groupId);
@@ -405,8 +405,8 @@ int main() {
   AssertEquals("SUCC", ret["responseCode"], std::to_string(__LINE__), ret.dump());
   AssertEquals(userId1, ret["userId"], std::to_string(__LINE__), ret.dump());
 
-  v.DeleteAllEnrollmentsForUser(userId1);
-  v.DeleteAllEnrollmentsForUser(userId2);
+  v.DeleteAllEnrollments(userId1);
+  v.DeleteAllEnrollments(userId2);
   v.DeleteUser(userId1);
   v.DeleteUser(userId2);
   v.DeleteGroup(groupId);
@@ -467,8 +467,8 @@ int main() {
   
 
   // Reset for ...ByUrl operations
-  v.DeleteAllEnrollmentsForUser(userId1);
-  v.DeleteAllEnrollmentsForUser(userId2);
+  v.DeleteAllEnrollments(userId1);
+  v.DeleteAllEnrollments(userId2);
   v.DeleteUser(userId1);
   v.DeleteUser(userId2);
   v.DeleteGroup(groupId);
@@ -513,8 +513,8 @@ int main() {
   AssertEquals("SUCC", ret["responseCode"], std::to_string(__LINE__), ret.dump());
   AssertEquals(userId1, ret["userId"], std::to_string(__LINE__), ret.dump());
 
-  v.DeleteAllEnrollmentsForUser(userId1);
-  v.DeleteAllEnrollmentsForUser(userId2);
+  v.DeleteAllEnrollments(userId1);
+  v.DeleteAllEnrollments(userId2);
   v.DeleteUser(userId1);
   v.DeleteUser(userId2);
   v.DeleteGroup(groupId);
@@ -556,7 +556,7 @@ int main() {
   AssertEquals("SUCC", ret["responseCode"], std::to_string(__LINE__), ret.dump());
   AssertEquals(1, ret["count"], std::to_string(__LINE__), ret.dump());
 
-  v.DeleteAllEnrollmentsForUser(userId);
+  v.DeleteAllEnrollments(userId);
   std::cout << "****Delete Enrollment All Passed****" << std::endl;
     
   // Test Delete Enrollments
@@ -579,7 +579,7 @@ int main() {
   AssertEquals(0, v.GetAllVideoEnrollments(userId)["count"], std::to_string(__LINE__), ret.dump());
   AssertEquals(0, v.GetAllVoiceEnrollments(userId)["count"], std::to_string(__LINE__), ret.dump());
   AssertEquals(0, v.GetAllFaceEnrollments(userId)["count"], std::to_string(__LINE__), ret.dump());
-  v.DeleteAllEnrollmentsForUser(userId);
+  v.DeleteAllEnrollments(userId);
   v.DeleteUser(userId);
 
   std::cout << "****Delete All Video/Voice/Face Enrollments All Passed****" << std::endl;
