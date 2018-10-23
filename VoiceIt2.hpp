@@ -196,7 +196,7 @@ class VoiceIt2
       return json::parse(reqResponse.text);
     }
 
-    json DeleteAllEnrollmentsForUser(std::string userId)
+    json DeleteAllEnrollments(std::string userId)
     {
       const auto reqResponse = cpr::Delete(cpr::Url{baseUrl + "/enrollments/" + userId + "/all"}, *auth, *platformHeader);
       return json::parse(reqResponse.text);
