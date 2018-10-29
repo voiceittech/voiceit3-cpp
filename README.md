@@ -1,6 +1,6 @@
 <img src="./cpp.png" width="100%" style="width:100%" />
 
-# VoiceIt API 2.0 C++ Wrapper ![travisstatus](https://travis-ci.org/voiceittech/voiceit2-cpp.svg?branch=master)
+# VoiceIt API 2.0 C++ Wrapper ![travisstatus](https://api.travis-ci.org/voiceittech/VoiceIt2-Cpp.svg?branch=master)
 
 A C++ wrapper for VoiceIt's API 2.0 featuring Voice + Face Verification and Identification.
 
