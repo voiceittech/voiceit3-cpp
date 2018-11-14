@@ -17,9 +17,4 @@ Contact us with any questions at support@voiceit.io
 
 ## License
 
-voiceit2-cpp is available under the MIT license. See the LICENSE file for more info.
-
-
-  
-
-  
+VoiceIt2-cpp is available under the MIT license. See the LICENSE file for more info.

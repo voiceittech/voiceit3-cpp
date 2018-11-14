@@ -286,4 +286,10 @@ class VoiceIt2
       const auto reqResponse = cpr::Get(cpr::Url{baseUrl + "/phrases/" + contentLanguage}, *auth, *platformHeader);
       return json::parse(reqResponse.text);
     }
+
+    json CreateUserToken(std::string userId)
+    {
+      const auto reqResponse = cpr::Post(cpr::Url{baseUrl + "/users/" + userId + "/token"}, *auth, *platformHeader);
+      return json::parse(reqResponse.text);
+    }
   };
