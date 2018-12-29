@@ -133,7 +133,7 @@ class VoiceIt2
         const auto reqResponse = cpr::Post(cpr::Url{baseUrl + "/groups"}, *auth, *platformHeader, cpr::Parameters{{"description", description}});
         return json::parse(reqResponse.text);
       } else {
-        const auto reqResponse = cpr::Post(cpr::Url{baseUrl + "/groups"}, *auth, *platformHeader, cpr::Parameters{{"description", description}});
+        const auto reqResponse = cpr::Post(cpr::Url{baseUrl + "/groups"}, *auth, *platformHeader, cpr::Parameters{{"description", description}, {"notificationURL", notificationUrl}});
         return json::parse(reqResponse.text);
       }
     }
@@ -144,7 +144,7 @@ class VoiceIt2
         const auto reqResponse = cpr::Put(cpr::Url{baseUrl + "/groups/addUser"}, *auth, *platformHeader, cpr::Parameters{{"groupId", groupId}, {"userId", userId}});
         return json::parse(reqResponse.text);
       } else {
-        const auto reqResponse = cpr::Put(cpr::Url{baseUrl + "/groups/addUser"}, *auth, *platformHeader, cpr::Parameters{{"groupId", groupId}, {"userId", userId}, {"description", description}});
+        const auto reqResponse = cpr::Put(cpr::Url{baseUrl + "/groups/addUser"}, *auth, *platformHeader, cpr::Parameters{{"groupId", groupId}, {"userId", userId}, {"notificationURL", notificationUrl}});
         return json::parse(reqResponse.text);
       }
     }
@@ -155,7 +155,7 @@ class VoiceIt2
         const auto reqResponse = cpr::Put(cpr::Url{baseUrl + "/groups/removeUser"}, *auth, *platformHeader, cpr::Parameters{{"groupId", groupId}, {"userId", userId}});
         return json::parse(reqResponse.text);
       } else {
-        const auto reqResponse = cpr::Put(cpr::Url{baseUrl + "/groups/removeUser"}, *auth, *platformHeader, cpr::Parameters{{"groupId", groupId}, {"userId", userId}, {"description", description}});
+        const auto reqResponse = cpr::Put(cpr::Url{baseUrl + "/groups/removeUser"}, *auth, *platformHeader, cpr::Parameters{{"groupId", groupId}, {"userId", userId}, {"description", description}, {"notificationURL", notificationUrl}});
         return json::parse(reqResponse.text);
       }
     }
