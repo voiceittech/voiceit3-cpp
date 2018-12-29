@@ -155,7 +155,7 @@ class VoiceIt2
         const auto reqResponse = cpr::Put(cpr::Url{baseUrl + "/groups/removeUser"}, *auth, *platformHeader, cpr::Parameters{{"groupId", groupId}, {"userId", userId}});
         return json::parse(reqResponse.text);
       } else {
-        const auto reqResponse = cpr::Put(cpr::Url{baseUrl + "/groups/removeUser"}, *auth, *platformHeader, cpr::Parameters{{"groupId", groupId}, {"userId", userId}, {"description", description}, {"notificationURL", notificationUrl}});
+        const auto reqResponse = cpr::Put(cpr::Url{baseUrl + "/groups/removeUser"}, *auth, *platformHeader, cpr::Parameters{{"groupId", groupId}, {"userId", userId}, {"notificationURL", notificationUrl}});
         return json::parse(reqResponse.text);
       }
     }
