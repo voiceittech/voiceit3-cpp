@@ -54,6 +54,11 @@ int main() {
   VoiceIt2 v(getenv("VIAPIKEY"), getenv("VIAPITOKEN"));
   json ret;
 
+  // Test Webhooks
+  v.AddNotificationUrl("https://voiceit.io");
+  AssertEquals("https://voiceit.io", v.GetNotificationUrl(), std::to_string(__LINE__), ret.dump());
+  v.RemoveNotificationUrl();
+  AssertEquals("", v.GetNotificationUrl(), std::to_string(__LINE__), ret.dump());
 
   // Test IO Exceptions
   try {
@@ -127,8 +132,6 @@ int main() {
   } catch(std::string msg) {
     std::cout << "File check for FaceIdentification() worked" << std::endl;
   }
-
-  v.AddNotificationUrl("https://93141a1d.ngrok.io");
 
   // Test Basics
   ret = v.CreateUser();

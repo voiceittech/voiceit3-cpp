@@ -39,6 +39,11 @@ class VoiceIt2
       notificationUrl = "";
     }
 
+    std::string GetNotificationUrl()
+    {
+      return notificationUrl;
+    }
+
     json GetAllUsers()
     {
       if (notificationUrl == "") {
