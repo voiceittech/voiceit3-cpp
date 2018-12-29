@@ -128,6 +128,8 @@ int main() {
     std::cout << "File check for FaceIdentification() worked" << std::endl;
   }
 
+  v.AddNotificationUrl("https://93141a1d.ngrok.io")
+
   // Test Basics
   ret = v.CreateUser();
   AssertEquals(201, ret["status"], std::to_string(__LINE__), ret.dump());
