@@ -1,3 +1,4 @@
+if: branch = master
 language: cpp
 compiler: gcc
 addons:
@@ -20,6 +21,7 @@ before_script:
   - make CC=/usr/bin/gcc-8 CPP=/usr/bin/g++-8 CXX=/usr/bin/g++-8 LD=/usr/bin/g++-8
 script: "./Test"
 after_success:
+  - ./update.sh
   - ./email.sh
 notifications:
   slack:
