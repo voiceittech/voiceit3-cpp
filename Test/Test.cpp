@@ -181,7 +181,6 @@ int main() {
   AssertEquals("SUCC", ret["responseCode"], std::to_string(__LINE__), ret.dump());
 
   ret = v.CreateUserToken(userId, 10);
-  std::cout << ret << std::endl;
   AssertEquals(201, ret["status"], std::to_string(__LINE__), ret.dump());
   AssertEquals("SUCC", ret["responseCode"], std::to_string(__LINE__), ret.dump());
 
