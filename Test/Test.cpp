@@ -180,7 +180,7 @@ int main() {
   AssertEquals(200, ret["status"], std::to_string(__LINE__), ret.dump());
   AssertEquals("SUCC", ret["responseCode"], std::to_string(__LINE__), ret.dump());
 
-  ret = v.CreateUserToken(userId);
+  ret = v.CreateUserToken(userId, 10);
   AssertEquals(201, ret["status"], std::to_string(__LINE__), ret.dump());
   AssertEquals("SUCC", ret["responseCode"], std::to_string(__LINE__), ret.dump());
 

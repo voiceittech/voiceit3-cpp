@@ -508,13 +508,13 @@ class VoiceIt2
       }
     }
 
-    json CreateUserToken(std::string userId)
+    json CreateUserToken(std::string userId, int timeOut)
     {
       if (notificationUrl == "") {
-        const auto reqResponse = cpr::Post(cpr::Url{baseUrl + "/users/" + userId + "/token"}, *auth, *platformHeader);
+        const auto reqResponse = cpr::Post(cpr::Url{baseUrl + "/users/" + userId + "/token"}, *auth, *platformHeader, cpr::Parameters{{"timeOut", timeOut}});
         return json::parse(reqResponse.text);
       } else {
-        const auto reqResponse = cpr::Post(cpr::Url{baseUrl + "/users/" + userId + "/token"}, *auth, *platformHeader, cpr::Parameters{{"notificationURL", notificationUrl}});
+        const auto reqResponse = cpr::Post(cpr::Url{baseUrl + "/users/" + userId + "/token"}, *auth, *platformHeader, cpr::Parameters{{"timeOut", timeOut}, {"notificationURL", notificationUrl}});
         return json::parse(reqResponse.text);
       }
     }
