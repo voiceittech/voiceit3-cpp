@@ -514,7 +514,7 @@ class VoiceIt2
         const auto reqResponse = cpr::Post(cpr::Url{baseUrl + "/users/" + userId + "/token"}, *auth, *platformHeader, cpr::Parameters{{"timeOut", std::to_string(timeOut)}});
         return json::parse(reqResponse.text);
       } else {
-        const auto reqResponse = cpr::Post(cpr::Url{baseUrl + "/users/" + userId + "/token"}, *auth, *platformHeader, cpr::Parameters{{"timeOut", timeOut}, {"notificationURL", notificationUrl}});
+        const auto reqResponse = cpr::Post(cpr::Url{baseUrl + "/users/" + userId + "/token"}, *auth, *platformHeader, cpr::Parameters{{"timeOut", std::to_string(timeOut)}, {"notificationURL", notificationUrl}});
         return json::parse(reqResponse.text);
       }
     }
