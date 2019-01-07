@@ -52,10 +52,12 @@ void DownloadFile(std::string destination, std::string source) {
 }
 
 int main() {
-  VoiceIt2 v(std::getenv("VIAPIKEY"), std::getenv("VIAPITOKEN"));
+  VoiceIt2 v(getenv("VIAPIKEY"), getenv("VIAPITOKEN"));
 
-  if (std::getenv("BOXFUSE_ENV") == "voiceittest") {
-    std::ofstream out(std::getenv("BOXFUSE_ENV") + "/platformVersion");
+  std::string boxfuseenv = getenv("BOXFUSE_ENV");
+  if (boxfuseenv == "voiceittest") {
+    std::string home = getenv("HOME");
+    std::ofstream out(home + "/platformVersion");
     out << v.GetVersion();
     out.close();
   }
