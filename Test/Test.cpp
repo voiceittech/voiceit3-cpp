@@ -1,4 +1,5 @@
 #include "VoiceIt2.hpp"
+#include <fstream>
 #include <iostream>
 #include <string>
 #include <stdio.h>
@@ -52,6 +53,13 @@ void DownloadFile(std::string destination, std::string source) {
 
 int main() {
   VoiceIt2 v(getenv("VIAPIKEY"), getenv("VIAPITOKEN"));
+
+  if (getenv("BOXFUSE_ENV") == "voiceittest") {
+    std::ofstream out(getenv("BOXFUSE_ENV") + "/platformVersion");
+    out << v.GetVersion();
+    out.close();
+  }
+
   json ret;
 
   // Test Webhooks
