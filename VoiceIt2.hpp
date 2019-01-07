@@ -11,6 +11,7 @@ class VoiceIt2
   private:
     cpr::Authentication *auth;
     const std::string baseUrl = "https://api.voiceit.io";
+    const std::string version = "1.1.0";
     std::string notificationUrl = "";
     cpr::Header *platformHeader;
 
@@ -26,7 +27,12 @@ class VoiceIt2
     VoiceIt2(std::string key, std::string token)
     {
       auth = new cpr::Authentication(key, token);
-      platformHeader = new cpr::Header{{"platformId", "34"}};
+      platformHeader = new cpr::Header{{"platformId", "34"}, {"platformVersion", version}};
+    }
+
+    std::string GetVersion()
+    {
+      return version;
     }
 
     void AddNotificationUrl(std::string url)
@@ -510,12 +516,7 @@ class VoiceIt2
 
     json CreateUserToken(std::string userId, int timeOut)
     {
-      if (notificationUrl == "") {
-        const auto reqResponse = cpr::Post(cpr::Url{baseUrl + "/users/" + userId + "/token"}, *auth, *platformHeader, cpr::Parameters{{"timeOut", std::to_string(timeOut)}});
-        return json::parse(reqResponse.text);
-      } else {
-        const auto reqResponse = cpr::Post(cpr::Url{baseUrl + "/users/" + userId + "/token"}, *auth, *platformHeader, cpr::Parameters{{"timeOut", std::to_string(timeOut)}, {"notificationURL", notificationUrl}});
-        return json::parse(reqResponse.text);
-      }
+      const auto reqResponse = cpr::Post(cpr::Url{baseUrl + "/users/" + userId + "/token"}, *auth, *platformHeader, cpr::Parameters{{"timeOut", std::to_string(timeOut)}});
+      return json::parse(reqResponse.text);
     }
   };
