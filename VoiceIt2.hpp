@@ -514,7 +514,7 @@ class VoiceIt2
       }
     }
 
-    json CreateUserToken(std::string userId, int timeOut)
+    json CreateUserToken(std::string userId, int secondsToTimeout)
     {
       const auto reqResponse = cpr::Post(cpr::Url{baseUrl + "/users/" + userId + "/token"}, *auth, *platformHeader, cpr::Parameters{{"timeOut", std::to_string(timeOut)}});
       return json::parse(reqResponse.text);
