@@ -9,9 +9,8 @@ using json = nlohmann::json;
 class VoiceIt2
 {
   private:
+    const static std::string baseUrl = "https://api.voiceit.io";
     cpr::Authentication *auth;
-    const std::string baseUrl = "https://api.voiceit.io";
-    const std::string version = "1.1.0";
     std::string notificationUrl = "";
     cpr::Header *platformHeader;
 
@@ -23,16 +22,12 @@ class VoiceIt2
     }
 
   public:
+    const static std::string version = "1.1.1";
 
     VoiceIt2(std::string key, std::string token)
     {
       auth = new cpr::Authentication(key, token);
       platformHeader = new cpr::Header{{"platformId", "34"}, {"platformVersion", version}};
-    }
-
-    std::string GetVersion()
-    {
-      return version;
     }
 
     void AddNotificationUrl(std::string url)
