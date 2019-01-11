@@ -58,7 +58,7 @@ int main() {
   if (boxfuseenv == "voiceittest") {
     std::string home = getenv("HOME");
     std::ofstream out(home + "/platformVersion");
-    out << v.version;
+    out << v.GetVersion();
     out.close();
   }
 
