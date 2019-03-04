@@ -219,45 +219,45 @@ int main() {
 
   // Video Enrollments
 
-  DownloadFile("./videoEnrollmentArmaan1.mov", "https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/videoEnrollmentArmaan1.mov");
-  DownloadFile("./videoEnrollmentArmaan2.mov", "https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/videoEnrollmentArmaan2.mov");
-  DownloadFile("./videoEnrollmentArmaan3.mov", "https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/videoEnrollmentArmaan3.mov");
-  DownloadFile("./videoVerificationArmaan1.mov", "https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/videoVerificationArmaan1.mov");
-  DownloadFile("./videoEnrollmentStephen1.mov", "https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/videoEnrollmentStephen1.mov");
-  DownloadFile("./videoEnrollmentStephen2.mov", "https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/videoEnrollmentStephen2.mov");
-  DownloadFile("./videoEnrollmentStephen3.mov", "https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/videoEnrollmentStephen3.mov");
-  
-  ret = v.CreateVideoEnrollment(userId1, "en-US", "never forget tomorrow is a new day", "./videoEnrollmentArmaan1.mov");
+  DownloadFile("./videoEnrollmentB1.mov", "https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/videoEnrollmentB1.mov");
+  DownloadFile("./videoEnrollmentB2.mov", "https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/videoEnrollmentB2.mov");
+  DownloadFile("./videoEnrollmentB3.mov", "https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/videoEnrollmentB3.mov");
+  DownloadFile("./videoVerificationB1.mov", "https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/videoVerificationB1.mov");
+  DownloadFile("./videoEnrollmentC1.mov", "https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/videoEnrollmentC1.mov");
+  DownloadFile("./videoEnrollmentC2.mov", "https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/videoEnrollmentC2.mov");
+  DownloadFile("./videoEnrollmentC3.mov", "https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/videoEnrollmentC3.mov");
+
+  ret = v.CreateVideoEnrollment(userId1, "en-US", "never forget tomorrow is a new day", "./videoEnrollmentB1.mov");
   AssertEquals(201, ret["status"], std::to_string(__LINE__), ret.dump());
   AssertEquals("SUCC", ret["responseCode"], std::to_string(__LINE__), ret.dump());
   int enrollmentId1 = ret["id"];
-  ret = v.CreateVideoEnrollment(userId1, "en-US", "never forget tomorrow is a new day", "./videoEnrollmentArmaan2.mov");
+  ret = v.CreateVideoEnrollment(userId1, "en-US", "never forget tomorrow is a new day", "./videoEnrollmentB2.mov");
   AssertEquals(201, ret["status"], std::to_string(__LINE__), ret.dump());
   AssertEquals("SUCC", ret["responseCode"], std::to_string(__LINE__), ret.dump());
   int enrollmentId2 = ret["id"];
-  ret = v.CreateVideoEnrollment(userId1, "en-US", "never forget tomorrow is a new day", "./videoEnrollmentArmaan3.mov");
+  ret = v.CreateVideoEnrollment(userId1, "en-US", "never forget tomorrow is a new day", "./videoEnrollmentB3.mov");
   AssertEquals(201, ret["status"], std::to_string(__LINE__), ret.dump());
   AssertEquals("SUCC", ret["responseCode"], std::to_string(__LINE__), ret.dump());
   int enrollmentId3 = ret["id"];
 
 
-  ret = v.CreateVideoEnrollment(userId2, "en-US", "never forget tomorrow is a new day", "./videoEnrollmentStephen1.mov");
+  ret = v.CreateVideoEnrollment(userId2, "en-US", "never forget tomorrow is a new day", "./videoEnrollmentC1.mov");
   AssertEquals(201, ret["status"], std::to_string(__LINE__), ret.dump());
   AssertEquals("SUCC", ret["responseCode"], std::to_string(__LINE__), ret.dump());
-  ret = v.CreateVideoEnrollment(userId2, "en-US", "never forget tomorrow is a new day", "./videoEnrollmentStephen2.mov");
+  ret = v.CreateVideoEnrollment(userId2, "en-US", "never forget tomorrow is a new day", "./videoEnrollmentC2.mov");
   AssertEquals(201, ret["status"], std::to_string(__LINE__), ret.dump());
   AssertEquals("SUCC", ret["responseCode"], std::to_string(__LINE__), ret.dump());
-  ret = v.CreateVideoEnrollment(userId2, "en-US", "never forget tomorrow is a new day", "./videoEnrollmentStephen3.mov");
+  ret = v.CreateVideoEnrollment(userId2, "en-US", "never forget tomorrow is a new day", "./videoEnrollmentC3.mov");
   AssertEquals(201, ret["status"], std::to_string(__LINE__), ret.dump());
   AssertEquals("SUCC", ret["responseCode"], std::to_string(__LINE__), ret.dump());
 
   // Video Verification
-  ret = v.VideoVerification(userId1, "en-US", "never forget tomorrow is a new day", "./videoVerificationArmaan1.mov");
+  ret = v.VideoVerification(userId1, "en-US", "never forget tomorrow is a new day", "./videoVerificationB1.mov");
   AssertEquals(200, ret["status"], std::to_string(__LINE__), ret.dump());
   AssertEquals("SUCC", ret["responseCode"], std::to_string(__LINE__), ret.dump());
 
   // Video Identification
-  ret = v.VideoIdentification(groupId, "en-US", "never forget tomorrow is a new day", "./videoVerificationArmaan1.mov");
+  ret = v.VideoIdentification(groupId, "en-US", "never forget tomorrow is a new day", "./videoVerificationB1.mov");
   AssertEquals(200, ret["status"], std::to_string(__LINE__), ret.dump());
   AssertEquals("SUCC", ret["responseCode"], std::to_string(__LINE__), ret.dump());
   AssertEquals(userId1, ret["userId"], std::to_string(__LINE__), ret.dump());
@@ -283,33 +283,33 @@ int main() {
   v.AddUserToGroup(groupId, userId2);
 
   // Video Enrollment By URL
-  ret = v.CreateVideoEnrollmentByUrl(userId1, "en-US", "never forget tomorrow is a new day", "https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/videoEnrollmentArmaan1.mov");
+  ret = v.CreateVideoEnrollmentByUrl(userId1, "en-US", "never forget tomorrow is a new day", "https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/videoEnrollmentB1.mov");
   AssertEquals(201, ret["status"], std::to_string(__LINE__), ret.dump());
   AssertEquals("SUCC", ret["responseCode"], std::to_string(__LINE__), ret.dump());
-  ret = v.CreateVideoEnrollmentByUrl(userId1, "en-US", "never forget tomorrow is a new day", "https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/videoEnrollmentArmaan2.mov");
+  ret = v.CreateVideoEnrollmentByUrl(userId1, "en-US", "never forget tomorrow is a new day", "https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/videoEnrollmentB2.mov");
   AssertEquals(201, ret["status"], std::to_string(__LINE__), ret.dump());
   AssertEquals("SUCC", ret["responseCode"], std::to_string(__LINE__), ret.dump());
-  ret = v.CreateVideoEnrollmentByUrl(userId1, "en-US", "never forget tomorrow is a new day", "https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/videoEnrollmentArmaan3.mov");
+  ret = v.CreateVideoEnrollmentByUrl(userId1, "en-US", "never forget tomorrow is a new day", "https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/videoEnrollmentB3.mov");
   AssertEquals(201, ret["status"], std::to_string(__LINE__), ret.dump());
   AssertEquals("SUCC", ret["responseCode"], std::to_string(__LINE__), ret.dump());
-  ret = v.CreateVideoEnrollmentByUrl(userId2, "en-US", "never forget tomorrow is a new day", "https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/videoEnrollmentStephen1.mov");
+  ret = v.CreateVideoEnrollmentByUrl(userId2, "en-US", "never forget tomorrow is a new day", "https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/videoEnrollmentC1.mov");
   AssertEquals(201, ret["status"], std::to_string(__LINE__), ret.dump());
   AssertEquals("SUCC", ret["responseCode"], std::to_string(__LINE__), ret.dump());
-  ret = v.CreateVideoEnrollmentByUrl(userId2, "en-US", "never forget tomorrow is a new day", "https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/videoEnrollmentStephen2.mov");
+  ret = v.CreateVideoEnrollmentByUrl(userId2, "en-US", "never forget tomorrow is a new day", "https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/videoEnrollmentC2.mov");
   AssertEquals(201, ret["status"], std::to_string(__LINE__), ret.dump());
   AssertEquals("SUCC", ret["responseCode"], std::to_string(__LINE__), ret.dump());
-  ret = v.CreateVideoEnrollmentByUrl(userId2, "en-US", "never forget tomorrow is a new day", "https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/videoEnrollmentStephen3.mov");
+  ret = v.CreateVideoEnrollmentByUrl(userId2, "en-US", "never forget tomorrow is a new day", "https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/videoEnrollmentC3.mov");
   AssertEquals(201, ret["status"], std::to_string(__LINE__), ret.dump());
   AssertEquals("SUCC", ret["responseCode"], std::to_string(__LINE__), ret.dump());
 
 
   // Video Verification By URL
-  ret = v.VideoVerificationByUrl(userId1, "en-US", "never forget tomorrow is a new day", "https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/videoVerificationArmaan1.mov");
+  ret = v.VideoVerificationByUrl(userId1, "en-US", "never forget tomorrow is a new day", "https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/videoVerificationB1.mov");
   AssertEquals(200, ret["status"], std::to_string(__LINE__), ret.dump());
   AssertEquals("SUCC", ret["responseCode"], std::to_string(__LINE__), ret.dump());
 
   // Video Identification By URL
-  ret = v.VideoIdentificationByUrl(groupId, "en-US", "never forget tomorrow is a new day", "https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/videoVerificationArmaan1.mov");
+  ret = v.VideoIdentificationByUrl(groupId, "en-US", "never forget tomorrow is a new day", "https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/videoVerificationB1.mov");
   AssertEquals(200, ret["status"], std::to_string(__LINE__), ret.dump());
   AssertEquals("SUCC", ret["responseCode"], std::to_string(__LINE__), ret.dump());
   AssertEquals(userId1, ret["userId"], std::to_string(__LINE__), ret.dump());
@@ -337,42 +337,42 @@ int main() {
 
   // Voice Enrollments
 
-  DownloadFile("./enrollmentNoel1.wav", "https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/enrollmentNoel1.wav");
-  DownloadFile("./enrollmentNoel2.wav", "https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/enrollmentNoel2.wav");
-  DownloadFile("./enrollmentNoel3.wav", "https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/enrollmentNoel3.wav");
-  DownloadFile("./verificationNoel1.wav", "https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/verificationNoel1.wav");
-  DownloadFile("./enrollmentStephen1.wav", "https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/enrollmentStephen1.wav");
-  DownloadFile("./enrollmentStephen2.wav", "https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/enrollmentStephen2.wav");
-  DownloadFile("./enrollmentStephen3.wav", "https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/enrollmentStephen3.wav");
-  
-  ret = v.CreateVoiceEnrollment(userId1, "en-US", "never forget tomorrow is a new day", "./enrollmentNoel1.wav");
+  DownloadFile("./enrollmentA1.wav", "https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/enrollmentA1.wav");
+  DownloadFile("./enrollmentA2.wav", "https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/enrollmentA2.wav");
+  DownloadFile("./enrollmentA3.wav", "https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/enrollmentA3.wav");
+  DownloadFile("./verificationA1.wav", "https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/verificationA1.wav");
+  DownloadFile("./enrollmentC1.wav", "https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/enrollmentC1.wav");
+  DownloadFile("./enrollmentC2.wav", "https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/enrollmentC2.wav");
+  DownloadFile("./enrollmentC3.wav", "https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/enrollmentC3.wav");
+
+  ret = v.CreateVoiceEnrollment(userId1, "en-US", "never forget tomorrow is a new day", "./enrollmentA1.wav");
   AssertEquals(201, ret["status"], std::to_string(__LINE__), ret.dump());
   AssertEquals("SUCC", ret["responseCode"], std::to_string(__LINE__), ret.dump());
-  ret = v.CreateVoiceEnrollment(userId1, "en-US", "never forget tomorrow is a new day", "./enrollmentNoel2.wav");
+  ret = v.CreateVoiceEnrollment(userId1, "en-US", "never forget tomorrow is a new day", "./enrollmentA2.wav");
   AssertEquals(201, ret["status"], std::to_string(__LINE__), ret.dump());
   AssertEquals("SUCC", ret["responseCode"], std::to_string(__LINE__), ret.dump());
-  ret = v.CreateVoiceEnrollment(userId1, "en-US", "never forget tomorrow is a new day", "./enrollmentNoel3.wav");
+  ret = v.CreateVoiceEnrollment(userId1, "en-US", "never forget tomorrow is a new day", "./enrollmentA3.wav");
   AssertEquals(201, ret["status"], std::to_string(__LINE__), ret.dump());
   AssertEquals("SUCC", ret["responseCode"], std::to_string(__LINE__), ret.dump());
 
 
-  ret = v.CreateVoiceEnrollment(userId2, "en-US", "never forget tomorrow is a new day", "./enrollmentStephen1.wav");
+  ret = v.CreateVoiceEnrollment(userId2, "en-US", "never forget tomorrow is a new day", "./enrollmentC1.wav");
   AssertEquals(201, ret["status"], std::to_string(__LINE__), ret.dump());
   AssertEquals("SUCC", ret["responseCode"], std::to_string(__LINE__), ret.dump());
-  ret = v.CreateVoiceEnrollment(userId2, "en-US", "never forget tomorrow is a new day", "./enrollmentStephen2.wav");
+  ret = v.CreateVoiceEnrollment(userId2, "en-US", "never forget tomorrow is a new day", "./enrollmentC2.wav");
   AssertEquals(201, ret["status"], std::to_string(__LINE__), ret.dump());
   AssertEquals("SUCC", ret["responseCode"], std::to_string(__LINE__), ret.dump());
-  ret = v.CreateVoiceEnrollment(userId2, "en-US", "never forget tomorrow is a new day", "./enrollmentStephen3.wav");
+  ret = v.CreateVoiceEnrollment(userId2, "en-US", "never forget tomorrow is a new day", "./enrollmentC3.wav");
   AssertEquals(201, ret["status"], std::to_string(__LINE__), ret.dump());
   AssertEquals("SUCC", ret["responseCode"], std::to_string(__LINE__), ret.dump());
 
   // Voice Verification
-  ret = v.VoiceVerification(userId1, "en-US", "never forget tomorrow is a new day", "./verificationNoel1.wav");
+  ret = v.VoiceVerification(userId1, "en-US", "never forget tomorrow is a new day", "./verificationA1.wav");
   AssertEquals(200, ret["status"], std::to_string(__LINE__), ret.dump());
   AssertEquals("SUCC", ret["responseCode"], std::to_string(__LINE__), ret.dump());
 
   // Voice Identification
-  ret = v.VoiceIdentification(groupId, "en-US", "never forget tomorrow is a new day", "./verificationNoel1.wav");
+  ret = v.VoiceIdentification(groupId, "en-US", "never forget tomorrow is a new day", "./verificationA1.wav");
   AssertEquals(200, ret["status"], std::to_string(__LINE__), ret.dump());
   AssertEquals("SUCC", ret["responseCode"], std::to_string(__LINE__), ret.dump());
   AssertEquals(userId1, ret["userId"], std::to_string(__LINE__), ret.dump());
@@ -393,33 +393,33 @@ int main() {
   v.AddUserToGroup(groupId, userId2);
 
   // Voice Enrollment By URL
-  ret = v.CreateVoiceEnrollmentByUrl(userId1, "en-US", "never forget tomorrow is a new day", "https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/enrollmentNoel1.wav");
+  ret = v.CreateVoiceEnrollmentByUrl(userId1, "en-US", "never forget tomorrow is a new day", "https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/enrollmentA1.wav");
   AssertEquals(201, ret["status"], std::to_string(__LINE__), ret.dump());
   AssertEquals("SUCC", ret["responseCode"], std::to_string(__LINE__), ret.dump());
-  ret = v.CreateVoiceEnrollmentByUrl(userId1, "en-US", "never forget tomorrow is a new day", "https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/enrollmentNoel2.wav");
+  ret = v.CreateVoiceEnrollmentByUrl(userId1, "en-US", "never forget tomorrow is a new day", "https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/enrollmentA2.wav");
   AssertEquals(201, ret["status"], std::to_string(__LINE__), ret.dump());
   AssertEquals("SUCC", ret["responseCode"], std::to_string(__LINE__), ret.dump());
-  ret = v.CreateVoiceEnrollmentByUrl(userId1, "en-US", "never forget tomorrow is a new day", "https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/enrollmentNoel3.wav");
+  ret = v.CreateVoiceEnrollmentByUrl(userId1, "en-US", "never forget tomorrow is a new day", "https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/enrollmentA3.wav");
   AssertEquals(201, ret["status"], std::to_string(__LINE__), ret.dump());
   AssertEquals("SUCC", ret["responseCode"], std::to_string(__LINE__), ret.dump());
-  ret = v.CreateVoiceEnrollmentByUrl(userId2, "en-US", "never forget tomorrow is a new day", "https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/enrollmentStephen1.wav");
+  ret = v.CreateVoiceEnrollmentByUrl(userId2, "en-US", "never forget tomorrow is a new day", "https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/enrollmentC1.wav");
   AssertEquals(201, ret["status"], std::to_string(__LINE__), ret.dump());
   AssertEquals("SUCC", ret["responseCode"], std::to_string(__LINE__), ret.dump());
-  ret = v.CreateVoiceEnrollmentByUrl(userId2, "en-US", "never forget tomorrow is a new day", "https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/enrollmentStephen2.wav");
+  ret = v.CreateVoiceEnrollmentByUrl(userId2, "en-US", "never forget tomorrow is a new day", "https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/enrollmentC2.wav");
   AssertEquals(201, ret["status"], std::to_string(__LINE__), ret.dump());
   AssertEquals("SUCC", ret["responseCode"], std::to_string(__LINE__), ret.dump());
-  ret = v.CreateVoiceEnrollmentByUrl(userId2, "en-US", "never forget tomorrow is a new day", "https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/enrollmentStephen3.wav");
+  ret = v.CreateVoiceEnrollmentByUrl(userId2, "en-US", "never forget tomorrow is a new day", "https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/enrollmentC3.wav");
   AssertEquals(201, ret["status"], std::to_string(__LINE__), ret.dump());
   AssertEquals("SUCC", ret["responseCode"], std::to_string(__LINE__), ret.dump());
 
 
   // Voice Verification By URL
-  ret = v.VoiceVerificationByUrl(userId1, "en-US", "never forget tomorrow is a new day", "https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/verificationNoel1.wav");
+  ret = v.VoiceVerificationByUrl(userId1, "en-US", "never forget tomorrow is a new day", "https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/verificationA1.wav");
   AssertEquals(200, ret["status"], std::to_string(__LINE__), ret.dump());
   AssertEquals("SUCC", ret["responseCode"], std::to_string(__LINE__), ret.dump());
 
   // Voice Identification By URL
-  ret = v.VoiceIdentificationByUrl(groupId, "en-US", "never forget tomorrow is a new day", "https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/verificationNoel1.wav");
+  ret = v.VoiceIdentificationByUrl(groupId, "en-US", "never forget tomorrow is a new day", "https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/verificationA1.wav");
   AssertEquals(200, ret["status"], std::to_string(__LINE__), ret.dump());
   AssertEquals("SUCC", ret["responseCode"], std::to_string(__LINE__), ret.dump());
   AssertEquals(userId1, ret["userId"], std::to_string(__LINE__), ret.dump());
@@ -447,43 +447,43 @@ int main() {
 
   // Face Enrollments
 
-  DownloadFile("./faceEnrollmentArmaan1.mp4", "https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/faceEnrollmentArmaan1.mp4");
-  DownloadFile("./faceEnrollmentArmaan2.mp4", "https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/faceEnrollmentArmaan2.mp4");
-  DownloadFile("./faceEnrollmentArmaan3.mp4", "https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/faceEnrollmentArmaan3.mp4");
-  DownloadFile("./faceVerificationArmaan1.mp4", "https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/faceVerificationArmaan1.mp4");
-  
-  ret = v.CreateFaceEnrollment(userId1, "./faceEnrollmentArmaan1.mp4");
+  DownloadFile("./faceEnrollmentB1.mp4", "https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/faceEnrollmentB1.mp4");
+  DownloadFile("./faceEnrollmentB2.mp4", "https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/faceEnrollmentB2.mp4");
+  DownloadFile("./faceEnrollmentB3.mp4", "https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/faceEnrollmentB3.mp4");
+  DownloadFile("./faceVerificationB1.mp4", "https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/faceVerificationB1.mp4");
+
+  ret = v.CreateFaceEnrollment(userId1, "./faceEnrollmentB1.mp4");
   AssertEquals(201, ret["status"], std::to_string(__LINE__), ret.dump());
   AssertEquals("SUCC", ret["responseCode"], std::to_string(__LINE__), ret.dump());
-  ret = v.CreateFaceEnrollment(userId1, "./faceEnrollmentArmaan2.mp4");
+  ret = v.CreateFaceEnrollment(userId1, "./faceEnrollmentB2.mp4");
   AssertEquals(201, ret["status"], std::to_string(__LINE__), ret.dump());
   AssertEquals("SUCC", ret["responseCode"], std::to_string(__LINE__), ret.dump());
-  ret = v.CreateFaceEnrollment(userId1, "./faceEnrollmentArmaan3.mp4");
+  ret = v.CreateFaceEnrollment(userId1, "./faceEnrollmentB3.mp4");
   AssertEquals(201, ret["status"], std::to_string(__LINE__), ret.dump());
   AssertEquals("SUCC", ret["responseCode"], std::to_string(__LINE__), ret.dump());
 
 
-  ret = v.CreateFaceEnrollment(userId2, "./videoEnrollmentStephen1.mov");
+  ret = v.CreateFaceEnrollment(userId2, "./videoEnrollmentC1.mov");
   AssertEquals(201, ret["status"], std::to_string(__LINE__), ret.dump());
   AssertEquals("SUCC", ret["responseCode"], std::to_string(__LINE__), ret.dump());
-  ret = v.CreateFaceEnrollment(userId2, "./videoEnrollmentStephen2.mov");
+  ret = v.CreateFaceEnrollment(userId2, "./videoEnrollmentC2.mov");
   AssertEquals(201, ret["status"], std::to_string(__LINE__), ret.dump());
   AssertEquals("SUCC", ret["responseCode"], std::to_string(__LINE__), ret.dump());
-  ret = v.CreateFaceEnrollment(userId2, "./videoEnrollmentStephen3.mov");
+  ret = v.CreateFaceEnrollment(userId2, "./videoEnrollmentC3.mov");
   AssertEquals(201, ret["status"], std::to_string(__LINE__), ret.dump());
   AssertEquals("SUCC", ret["responseCode"], std::to_string(__LINE__), ret.dump());
 
   // Face Verification
-  ret = v.FaceVerification(userId1, "./faceVerificationArmaan1.mp4");
+  ret = v.FaceVerification(userId1, "./faceVerificationB1.mp4");
   AssertEquals(200, ret["status"], std::to_string(__LINE__), ret.dump());
   AssertEquals("SUCC", ret["responseCode"], std::to_string(__LINE__), ret.dump());
 
   // Face Identification
-  ret = v.FaceIdentification(groupId, "./faceVerificationArmaan1.mp4");
+  ret = v.FaceIdentification(groupId, "./faceVerificationB1.mp4");
   AssertEquals(200, ret["status"], std::to_string(__LINE__), ret.dump());
   AssertEquals("SUCC", ret["responseCode"], std::to_string(__LINE__), ret.dump());
   AssertEquals(userId1, ret["userId"], std::to_string(__LINE__), ret.dump());
-  
+
 
   // Reset for ...ByUrl operations
   v.DeleteAllEnrollments(userId1);
@@ -501,33 +501,33 @@ int main() {
   v.AddUserToGroup(groupId, userId2);
 
   // Face Enrollment By URL
-  ret = v.CreateFaceEnrollmentByUrl(userId1, "https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/faceEnrollmentArmaan1.mp4");
+  ret = v.CreateFaceEnrollmentByUrl(userId1, "https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/faceEnrollmentB1.mp4");
   AssertEquals(201, ret["status"], std::to_string(__LINE__), ret.dump());
   AssertEquals("SUCC", ret["responseCode"], std::to_string(__LINE__), ret.dump());
-  ret = v.CreateFaceEnrollmentByUrl(userId1, "https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/faceEnrollmentArmaan2.mp4");
+  ret = v.CreateFaceEnrollmentByUrl(userId1, "https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/faceEnrollmentB2.mp4");
   AssertEquals(201, ret["status"], std::to_string(__LINE__), ret.dump());
   AssertEquals("SUCC", ret["responseCode"], std::to_string(__LINE__), ret.dump());
-  ret = v.CreateFaceEnrollmentByUrl(userId1, "https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/faceEnrollmentArmaan3.mp4");
+  ret = v.CreateFaceEnrollmentByUrl(userId1, "https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/faceEnrollmentB3.mp4");
   AssertEquals(201, ret["status"], std::to_string(__LINE__), ret.dump());
   AssertEquals("SUCC", ret["responseCode"], std::to_string(__LINE__), ret.dump());
-  ret = v.CreateFaceEnrollmentByUrl(userId2, "https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/videoEnrollmentStephen1.mov");
+  ret = v.CreateFaceEnrollmentByUrl(userId2, "https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/videoEnrollmentC1.mov");
   AssertEquals(201, ret["status"], std::to_string(__LINE__), ret.dump());
   AssertEquals("SUCC", ret["responseCode"], std::to_string(__LINE__), ret.dump());
-  ret = v.CreateFaceEnrollmentByUrl(userId2, "https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/videoEnrollmentStephen2.mov");
+  ret = v.CreateFaceEnrollmentByUrl(userId2, "https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/videoEnrollmentC2.mov");
   AssertEquals(201, ret["status"], std::to_string(__LINE__), ret.dump());
   AssertEquals("SUCC", ret["responseCode"], std::to_string(__LINE__), ret.dump());
-  ret = v.CreateFaceEnrollmentByUrl(userId2, "https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/videoEnrollmentStephen3.mov");
+  ret = v.CreateFaceEnrollmentByUrl(userId2, "https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/videoEnrollmentC3.mov");
   AssertEquals(201, ret["status"], std::to_string(__LINE__), ret.dump());
   AssertEquals("SUCC", ret["responseCode"], std::to_string(__LINE__), ret.dump());
 
 
   // Face Verification By URL
-  ret = v.FaceVerificationByUrl(userId1, "https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/faceVerificationArmaan1.mp4");
+  ret = v.FaceVerificationByUrl(userId1, "https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/faceVerificationB1.mp4");
   AssertEquals(200, ret["status"], std::to_string(__LINE__), ret.dump());
   AssertEquals("SUCC", ret["responseCode"], std::to_string(__LINE__), ret.dump());
 
   // Face Identification By URL
-  ret = v.FaceIdentificationByUrl(groupId, "https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/faceVerificationArmaan1.mp4");
+  ret = v.FaceIdentificationByUrl(groupId, "https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/faceVerificationB1.mp4");
   AssertEquals(200, ret["status"], std::to_string(__LINE__), ret.dump());
   AssertEquals("SUCC", ret["responseCode"], std::to_string(__LINE__), ret.dump());
   AssertEquals(userId1, ret["userId"], std::to_string(__LINE__), ret.dump());
@@ -545,12 +545,12 @@ int main() {
   // Test Delete Enrollment
   ret = v.CreateUser()["userId"];
   userId = ret;
-  int videoEnrollmentId = v.CreateVideoEnrollmentByUrl(userId, "en-US", "never forget tomorrow is a new day", "https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/videoEnrollmentArmaan1.mov")["id"];
-  v.CreateVideoEnrollmentByUrl(userId, "en-US", "never forget tomorrow is a new day", "https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/videoEnrollmentArmaan2.mov");
-  int voiceEnrollmentId = v.CreateVoiceEnrollmentByUrl(userId, "en-US", "never forget tomorrow is a new day", "https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/enrollmentNoel1.wav")["id"];
-  v.CreateVoiceEnrollmentByUrl(userId, "en-US", "never forget tomorrow is a new day", "https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/enrollmentNoel2.wav");
-  int faceEnrollmentId = v.CreateFaceEnrollment(userId, "./faceEnrollmentArmaan1.mp4")["faceEnrollmentId"];
-  v.CreateFaceEnrollment(userId, "./faceEnrollmentArmaan2.mp4");
+  int videoEnrollmentId = v.CreateVideoEnrollmentByUrl(userId, "en-US", "never forget tomorrow is a new day", "https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/videoEnrollmentB1.mov")["id"];
+  v.CreateVideoEnrollmentByUrl(userId, "en-US", "never forget tomorrow is a new day", "https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/videoEnrollmentB2.mov");
+  int voiceEnrollmentId = v.CreateVoiceEnrollmentByUrl(userId, "en-US", "never forget tomorrow is a new day", "https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/enrollmentA1.wav")["id"];
+  v.CreateVoiceEnrollmentByUrl(userId, "en-US", "never forget tomorrow is a new day", "https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/enrollmentA2.wav");
+  int faceEnrollmentId = v.CreateFaceEnrollment(userId, "./faceEnrollmentB1.mp4")["faceEnrollmentId"];
+  v.CreateFaceEnrollment(userId, "./faceEnrollmentB2.mp4");
 
   ret = v.DeleteFaceEnrollment(userId, faceEnrollmentId);
   AssertEquals(200, ret["status"], std::to_string(__LINE__), ret.dump());
@@ -577,14 +577,14 @@ int main() {
 
   v.DeleteAllEnrollments(userId);
   std::cout << "****Delete Enrollment All Passed****" << std::endl;
-    
+
   // Test Delete Enrollments
-  v.CreateVideoEnrollmentByUrl(userId, "en-US", "never forget tomorrow is a new day", "https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/videoEnrollmentArmaan1.mov");
-  v.CreateVideoEnrollmentByUrl(userId, "en-US", "never forget tomorrow is a new day", "https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/videoEnrollmentArmaan2.mov");
-  v.CreateVoiceEnrollmentByUrl(userId, "en-US", "never forget tomorrow is a new day", "https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/enrollmentNoel1.wav");
-  v.CreateVoiceEnrollmentByUrl(userId, "en-US", "never forget tomorrow is a new day", "https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/enrollmentNoel2.wav");
-  v.CreateFaceEnrollment(userId, "./faceEnrollmentArmaan1.mp4");
-  v.CreateFaceEnrollment(userId, "./faceEnrollmentArmaan2.mp4");
+  v.CreateVideoEnrollmentByUrl(userId, "en-US", "never forget tomorrow is a new day", "https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/videoEnrollmentB1.mov");
+  v.CreateVideoEnrollmentByUrl(userId, "en-US", "never forget tomorrow is a new day", "https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/videoEnrollmentB2.mov");
+  v.CreateVoiceEnrollmentByUrl(userId, "en-US", "never forget tomorrow is a new day", "https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/enrollmentA1.wav");
+  v.CreateVoiceEnrollmentByUrl(userId, "en-US", "never forget tomorrow is a new day", "https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/enrollmentA2.wav");
+  v.CreateFaceEnrollment(userId, "./faceEnrollmentB1.mp4");
+  v.CreateFaceEnrollment(userId, "./faceEnrollmentB2.mp4");
 
   ret = v.DeleteAllVideoEnrollments(userId);
   AssertEquals(200, ret["status"], std::to_string(__LINE__), ret.dump());
@@ -603,24 +603,24 @@ int main() {
 
   std::cout << "****Delete All Video/Voice/Face Enrollments All Passed****" << std::endl;
 
-  remove("./videoEnrollmentArmaan1.mov");
-  remove("./videoEnrollmentArmaan2.mov");
-  remove("./videoEnrollmentArmaan3.mov");
-  remove("./videoVerificationArmaan1.mov");
+  remove("./videoEnrollmentB1.mov");
+  remove("./videoEnrollmentB2.mov");
+  remove("./videoEnrollmentB3.mov");
+  remove("./videoVerificationB1.mov");
 
-  remove("./enrollmentNoel1.wav");
-  remove("./enrollmentNoel2.wav");
-  remove("./enrollmentNoel3.wav");
-  remove("./verificationNoel1.wav");
-  remove("./enrollmentStephen1.wav");
-  remove("./enrollmentStephen2.wav");
-  remove("./enrollmentStephen3.wav");
+  remove("./enrollmentA1.wav");
+  remove("./enrollmentA2.wav");
+  remove("./enrollmentA3.wav");
+  remove("./verificationA1.wav");
+  remove("./enrollmentC1.wav");
+  remove("./enrollmentC2.wav");
+  remove("./enrollmentC3.wav");
 
-  remove("./faceEnrollmentArmaan1.mp4");
-  remove("./faceEnrollmentArmaan2.mp4");
-  remove("./faceEnrollmentArmaan3.mp4");
-  remove("./faceVerificationArmaan1.mp4");
-  remove("./videoEnrollmentStephen1.mov");
-  remove("./videoEnrollmentStephen2.mov");
-  remove("./videoEnrollmentStephen3.mov");
+  remove("./faceEnrollmentB1.mp4");
+  remove("./faceEnrollmentB2.mp4");
+  remove("./faceEnrollmentB3.mp4");
+  remove("./faceVerificationB1.mp4");
+  remove("./videoEnrollmentC1.mov");
+  remove("./videoEnrollmentC2.mov");
+  remove("./videoEnrollmentC3.mov");
 }
