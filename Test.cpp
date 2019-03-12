@@ -3,7 +3,7 @@
 #endif
 
 #include "VoiceIt2.hpp"
-#include "json.h"
+#include "json.hpp"
 #include <fstream>
 #include <iostream>
 #include <string>
