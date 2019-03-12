@@ -1,3 +1,7 @@
+#ifdef _WIN32
+#include "pch.h"
+#endif
+
 #include "VoiceIt2.hpp"
 #include "json.h"
 #include <fstream>
@@ -11,37 +15,44 @@
 
 using json = nlohmann::json;
 
-void AssertEquals(std::string arg1, std::string arg2, std::string line, std::string message) {
-	if (arg1 != arg2) {
+void AssertEquals(std::string arg1, std::string arg2, std::string line, std::string message)
+{
+	if (arg1 != arg2)
+  {
 		std::cerr << arg1 + " does not equal " + arg2 + " on line " + line << std::endl;
 		std::cerr << "message: " << message << std::endl;
 		exit(1);
 	}
 }
 
-void AssertEquals(int arg1, int arg2, std::string line, std::string message) {
-	if (arg1 != arg2) {
+void AssertEquals(int arg1, int arg2, std::string line, std::string message)
+{
+	if (arg1 != arg2)
+  {
 		std::cerr << std::to_string(arg1) + " does not equal " + std::to_string(arg2) + " on line " + line << std::endl;
 		std::cerr << "message: " << message << std::endl;
 		exit(1);
 	}
 }
 
-size_t write_data(void *ptr, size_t size, size_t nmemb, FILE *stream) {
+size_t write_data(void *ptr, size_t size, size_t nmemb, FILE *stream)
+{
 	size_t written;
 	written = fwrite(ptr, size, nmemb, stream);
 	return written;
 }
 
 
-void DownloadFile(std::string destination, std::string source) {
+void DownloadFile(std::string destination, std::string source)
+{
 
 	CURL *curl;
 	curl_global_init(CURL_GLOBAL_ALL);
 	FILE *fp;
 	CURLcode res;
 	curl = curl_easy_init();
-	if (curl) {
+	if (curl)
+  {
 #ifndef _WIN32
 		fp = fopen(destination.c_str(), "wb");
 #else
@@ -57,11 +68,13 @@ void DownloadFile(std::string destination, std::string source) {
 
 }
 
-int main() {
+int main()
+{
 #ifndef _WIN32
 	VoiceIt2 v(getenv("VIAPIKEY"), getenv("VIAPITOKEN"));
 	std::string boxfuseenv = getenv("BOXFUSE_ENV");
-	if (boxfuseenv == "voiceittest") {
+	if (boxfuseenv == "voiceittest")
+  {
 		std::string home = getenv("HOME");
 		std::ofstream out(home + "/platformVersion");
 		out << v.GetVersion();
@@ -90,7 +103,8 @@ int main() {
 		std::cerr << "File check for CreateVideoEnrollment() failed" << std::endl;
 		exit(1);
 	}
-	catch (std::string msg) {
+	catch (std::string msg)
+  {
 		std::cout << "File check for CreateVideoEnrollment() worked" << std::endl;
 	}
 
@@ -99,7 +113,8 @@ int main() {
 		std::cerr << "File check for CreateVoiceEnrollment() failed" << std::endl;
 		exit(1);
 	}
-	catch (std::string msg) {
+	catch (std::string msg)
+  {
 		std::cout << "File check for CreateVoiceEnrollment() worked" << std::endl;
 	}
 
@@ -108,7 +123,8 @@ int main() {
 		std::cerr << "File check for CreateFaceEnrollment() failed" << std::endl;
 		exit(1);
 	}
-	catch (std::string msg) {
+	catch (std::string msg)
+  {
 		std::cout << "File check for CreateFaceEnrollment() worked" << std::endl;
 	}
 
@@ -117,7 +133,8 @@ int main() {
 		std::cerr << "File check for VideoVerification() failed" << std::endl;
 		exit(1);
 	}
-	catch (std::string msg) {
+	catch (std::string msg)
+  {
 		std::cout << "File check for VideoVerification() worked" << std::endl;
 	}
 
@@ -126,7 +143,8 @@ int main() {
 		std::cerr << "File check for VoiceVerification() failed" << std::endl;
 		exit(1);
 	}
-	catch (std::string msg) {
+	catch (std::string msg)
+  {
 		std::cout << "File check for VoiceVerification() worked" << std::endl;
 	}
 
@@ -135,7 +153,8 @@ int main() {
 		std::cerr << "File check for FaceVerification() failed" << std::endl;
 		exit(1);
 	}
-	catch (std::string msg) {
+	catch (std::string msg)
+  {
 		std::cout << "File check for FaceVerification() worked" << std::endl;
 	}
 
@@ -144,7 +163,8 @@ int main() {
 		std::cerr << "File check for VideoIdentification() failed" << std::endl;
 		exit(1);
 	}
-	catch (std::string msg) {
+	catch (std::string msg)
+  {
 		std::cout << "File check for VideoIdentification() worked" << std::endl;
 	}
 
@@ -153,7 +173,8 @@ int main() {
 		std::cerr << "File check for VoiceIdentification() failed" << std::endl;
 		exit(1);
 	}
-	catch (std::string msg) {
+	catch (std::string msg)
+  {
 		std::cout << "File check for VoiceIdentification() worked" << std::endl;
 	}
 
@@ -162,7 +183,8 @@ int main() {
 		std::cerr << "File check for FaceIdentification() failed" << std::endl;
 		exit(1);
 	}
-	catch (std::string msg) {
+	catch (std::string msg)
+  {
 		std::cout << "File check for FaceIdentification() worked" << std::endl;
 	}
 

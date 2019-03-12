@@ -19,35 +19,42 @@ class VoiceIt2
     std::string platformVersionHeader;
 
 
-    static size_t WriteCallback(char *contents, size_t size, size_t nmemb) {
+    static size_t WriteCallback(char *contents, size_t size, size_t nmemb)
+    {
         size_t realsize = size * nmemb;
         readBuffer.append(contents, realsize);
         return realsize;
     }
 
-    void FileExists(std::string path) {
+    void FileExists(std::string path)
+    {
       std::ifstream file(path);
-      if(file.fail()) {
+      if(file.fail())
+      {
         throw std::string("No such file: " + path);
       }
     }
 
   public:
 
-    VoiceIt2(std::string key, std::string token) {
+    VoiceIt2(std::string key, std::string token)
+    {
       auth = key + ":" + token;
       platformVersionHeader = "platformVersion: " + version;
     }
 
-    std::string GetVersion() {
+    std::string GetVersion()
+    {
       return version;
     }
 
-    void AddNotificationUrl(std::string url) {
+    void AddNotificationUrl(std::string url)
+    {
       CURL *curl;
       curl_global_init(CURL_GLOBAL_ALL);
       curl = curl_easy_init();
-      if (curl) {
+      if (curl)
+      {
         char *escaped = curl_easy_escape(curl, url.c_str(), 0);
         notificationUrl = std::string(escaped);
         curl_easy_cleanup(curl);
@@ -56,23 +63,28 @@ class VoiceIt2
       }
     }
 
-    void RemoveNotificationUrl() {
+    void RemoveNotificationUrl()
+    {
       notificationUrl = "";
     }
 
-    std::string GetNotificationUrl() {
+    std::string GetNotificationUrl()
+    {
       return notificationUrl;
     }
 
-    std::string GetAllUsers() {
+    std::string GetAllUsers()
+    {
       CURL *curl;
       curl_global_init(CURL_GLOBAL_ALL);
       curl = curl_easy_init();
-      if (curl) {
+      if (curl)
+      {
         readBuffer.clear();
         CURLcode res;
         std::stringstream url;
-        if (notificationUrl == "") {
+        if (notificationUrl == "")
+        {
           url << baseUrl << "/users";
         } else {
           url << baseUrl << "/users?notificationUrl=" << notificationUrl;
@@ -99,15 +111,18 @@ class VoiceIt2
 
     }
 
-    std::string CreateUser() {
+    std::string CreateUser()
+    {
       CURL *curl;
       curl_global_init(CURL_GLOBAL_ALL);
       curl = curl_easy_init();
-      if (curl) {
+      if (curl)
+      {
         readBuffer.clear();
         CURLcode res;
         std::stringstream url;
-        if (notificationUrl == "") {
+        if (notificationUrl == "")
+        {
           url << baseUrl << "/users";
         } else {
           url << baseUrl << "/users?notificationUrl=" << notificationUrl;
@@ -135,15 +150,18 @@ class VoiceIt2
     }
 
 
-    std::string CheckUserExists(std::string userId) {
+    std::string CheckUserExists(std::string userId)
+    {
       CURL *curl;
       curl_global_init(CURL_GLOBAL_ALL);
       curl = curl_easy_init();
-      if (curl) {
+      if (curl)
+      {
         readBuffer.clear();
         CURLcode res;
         std::stringstream url;
-        if (notificationUrl == "") {
+        if (notificationUrl == "")
+        {
           url << baseUrl << "/users/" << userId;
         } else {
           url << baseUrl << "/users/" << userId << "?notificationUrl=" << notificationUrl;
@@ -170,15 +188,18 @@ class VoiceIt2
       }
     }
 
-    std::string DeleteUser(std::string userId) {
+    std::string DeleteUser(std::string userId)
+    {
       CURL *curl;
       curl_global_init(CURL_GLOBAL_ALL);
       curl = curl_easy_init();
-      if (curl) {
+      if (curl)
+      {
         readBuffer.clear();
         CURLcode res;
         std::stringstream url;
-        if (notificationUrl == "") {
+        if (notificationUrl == "")
+        {
           url << baseUrl << "/users/" << userId;
         } else {
           url << baseUrl << "/users/" << userId << "?notificationUrl=" << notificationUrl;
@@ -205,15 +226,18 @@ class VoiceIt2
       }
     }
 
-    std::string GetGroupsForUser(std::string userId) {
+    std::string GetGroupsForUser(std::string userId)
+    {
       CURL *curl;
       curl_global_init(CURL_GLOBAL_ALL);
       curl = curl_easy_init();
-      if (curl) {
+      if (curl)
+      {
         readBuffer.clear();
         CURLcode res;
         std::stringstream url;
-        if (notificationUrl == "") {
+        if (notificationUrl == "")
+        {
           url << baseUrl << "/users/" << userId << "/groups";
         } else {
           url << baseUrl << "/users/" << userId << "/groups?notificationUrl=" << notificationUrl;
@@ -240,15 +264,18 @@ class VoiceIt2
       }
     }
 
-    std::string CreateUserToken(std::string userId, int secondsToTimeout) {
+    std::string CreateUserToken(std::string userId, int secondsToTimeout)
+    {
       CURL *curl;
       curl_global_init(CURL_GLOBAL_ALL);
       curl = curl_easy_init();
-      if (curl) {
+      if (curl)
+      {
         readBuffer.clear();
         CURLcode res;
         std::stringstream url;
-        if (notificationUrl == "") {
+        if (notificationUrl == "")
+        {
           url << baseUrl << "/users/" << userId << "/token?timeOut=" << secondsToTimeout;
         } else {
           url << baseUrl << "/users/" << userId << "/token?notificationUrl=" << notificationUrl << "t&imeOut=" << secondsToTimeout;
@@ -275,15 +302,18 @@ class VoiceIt2
       }
     }
 
-    std::string GetAllGroups() {
+    std::string GetAllGroups()
+    {
       CURL *curl;
       curl_global_init(CURL_GLOBAL_ALL);
       curl = curl_easy_init();
-      if (curl) {
+      if (curl)
+      {
         readBuffer.clear();
         CURLcode res;
         std::stringstream url;
-        if (notificationUrl == "") {
+        if (notificationUrl == "")
+        {
           url << baseUrl << "/groups";
         } else {
           url << baseUrl << "/groups" << "?notificationUrl=" << notificationUrl;
@@ -310,15 +340,18 @@ class VoiceIt2
       }
     }
 
-    std::string GetGroup(std::string groupId) {
+    std::string GetGroup(std::string groupId)
+    {
       CURL *curl;
       curl_global_init(CURL_GLOBAL_ALL);
       curl = curl_easy_init();
-      if (curl) {
+      if (curl)
+      {
         readBuffer.clear();
         CURLcode res;
         std::stringstream url;
-        if (notificationUrl == "") {
+        if (notificationUrl == "")
+        {
           url << baseUrl << "/groups/" << groupId;
         } else {
           url << baseUrl << "/groups/" << groupId << "?notificationUrl=" << notificationUrl;
@@ -345,15 +378,18 @@ class VoiceIt2
       }
     }
 
-    std::string CheckGroupExists(std::string groupId) {
+    std::string CheckGroupExists(std::string groupId)
+    {
       CURL *curl;
       curl_global_init(CURL_GLOBAL_ALL);
       curl = curl_easy_init();
-      if (curl) {
+      if (curl)
+      {
         readBuffer.clear();
         CURLcode res;
         std::stringstream url;
-        if (notificationUrl == "") {
+        if (notificationUrl == "")
+        {
           url << baseUrl << "/groups/" << groupId << "/exists";
         } else {
           url << baseUrl << "/groups/" << groupId << "/exists?notificationUrl=" << notificationUrl;
@@ -380,15 +416,18 @@ class VoiceIt2
       }
     }
 
-    std::string CreateGroup(std::string description="") {
+    std::string CreateGroup(std::string description="")
+    {
       CURL *curl;
       curl_global_init(CURL_GLOBAL_ALL);
       curl = curl_easy_init();
-      if (curl) {
+      if (curl)
+      {
         readBuffer.clear();
         CURLcode res;
         std::stringstream url;
-        if (notificationUrl == "") {
+        if (notificationUrl == "")
+        {
           url << baseUrl << "/groups";
         } else {
           url << baseUrl << "/groups?notificationUrl=" << notificationUrl;
@@ -429,15 +468,18 @@ class VoiceIt2
       }
     }
 
-    std::string AddUserToGroup(std::string groupId, std::string userId) {
+    std::string AddUserToGroup(std::string groupId, std::string userId)
+    {
       CURL *curl;
       curl_global_init(CURL_GLOBAL_ALL);
       curl = curl_easy_init();
-      if (curl) {
+      if (curl)
+      {
         readBuffer.clear();
         CURLcode res;
         std::stringstream url;
-        if (notificationUrl == "") {
+        if (notificationUrl == "")
+        {
           url << baseUrl << "/groups/addUser";
         } else {
           url << baseUrl << "/groups/addUser?notificationUrl=" << notificationUrl;
@@ -484,15 +526,18 @@ class VoiceIt2
       }
     }
 
-    std::string RemoveUserFromGroup(std::string groupId, std::string userId) {
+    std::string RemoveUserFromGroup(std::string groupId, std::string userId)
+    {
       CURL *curl;
       curl_global_init(CURL_GLOBAL_ALL);
       curl = curl_easy_init();
-      if (curl) {
+      if (curl)
+      {
         readBuffer.clear();
         CURLcode res;
         std::stringstream url;
-        if (notificationUrl == "") {
+        if (notificationUrl == "")
+        {
           url << baseUrl << "/groups/removeUser";
         } else {
           url << baseUrl << "/groups/removeUser?notificationUrl=" << notificationUrl;
@@ -539,15 +584,18 @@ class VoiceIt2
       }
     }
 
-    std::string DeleteGroup(std::string groupId) {
+    std::string DeleteGroup(std::string groupId)
+    {
       CURL *curl;
       curl_global_init(CURL_GLOBAL_ALL);
       curl = curl_easy_init();
-      if (curl) {
+      if (curl)
+      {
         readBuffer.clear();
         CURLcode res;
         std::stringstream url;
-        if (notificationUrl == "") {
+        if (notificationUrl == "")
+        {
           url << baseUrl << "/groups/" << groupId;
         } else {
           url << baseUrl << "/groups/" << groupId << "?notificationUrl=" << notificationUrl;
@@ -576,15 +624,18 @@ class VoiceIt2
       }
     }
 
-    std::string GetAllVoiceEnrollments(std::string userId) {
+    std::string GetAllVoiceEnrollments(std::string userId)
+    {
       CURL *curl;
       curl_global_init(CURL_GLOBAL_ALL);
       curl = curl_easy_init();
-      if (curl) {
+      if (curl)
+      {
         readBuffer.clear();
         CURLcode res;
         std::stringstream url;
-        if (notificationUrl == "") {
+        if (notificationUrl == "")
+        {
           url << baseUrl << "/enrollments/voice/" << userId;
         } else {
           url << baseUrl << "/enrollments/voice/" << userId << "?notificationUrl=" << notificationUrl;
@@ -613,15 +664,18 @@ class VoiceIt2
       }
     }
 
-    std::string GetAllFaceEnrollments(std::string userId) {
+    std::string GetAllFaceEnrollments(std::string userId)
+    {
       CURL *curl;
       curl_global_init(CURL_GLOBAL_ALL);
       curl = curl_easy_init();
-      if (curl) {
+      if (curl)
+      {
         readBuffer.clear();
         CURLcode res;
         std::stringstream url;
-        if (notificationUrl == "") {
+        if (notificationUrl == "")
+        {
           url << baseUrl << "/enrollments/face/" << userId;
         } else {
           url << baseUrl << "/enrollments/face/" << userId << "?notificationUrl=" << notificationUrl;
@@ -650,15 +704,18 @@ class VoiceIt2
       }
     }
 
-    std::string GetAllVideoEnrollments(std::string userId) {
+    std::string GetAllVideoEnrollments(std::string userId)
+    {
       CURL *curl;
       curl_global_init(CURL_GLOBAL_ALL);
       curl = curl_easy_init();
-      if (curl) {
+      if (curl)
+      {
         readBuffer.clear();
         CURLcode res;
         std::stringstream url;
-        if (notificationUrl == "") {
+        if (notificationUrl == "")
+        {
           url << baseUrl << "/enrollments/video/" << userId;
         } else {
           url << baseUrl << "/enrollments/video/" << userId << "?notificationUrl=" << notificationUrl;
@@ -687,16 +744,19 @@ class VoiceIt2
       }
     }
 
-    std::string CreateVoiceEnrollment(std::string userId, std::string contentLanguage, std::string phrase, std::string filePath) {
+    std::string CreateVoiceEnrollment(std::string userId, std::string contentLanguage, std::string phrase, std::string filePath)
+    {
       FileExists(filePath);
       CURL *curl;
       curl_global_init(CURL_GLOBAL_ALL);
       curl = curl_easy_init();
-      if (curl) {
+      if (curl)
+      {
         readBuffer.clear();
         CURLcode res;
         std::stringstream url;
-        if (notificationUrl == "") {
+        if (notificationUrl == "")
+        {
           url << baseUrl << "/enrollments/voice";
         } else {
           url << baseUrl << "/enrollments/voice?notificationUrl=" << notificationUrl;
@@ -756,15 +816,18 @@ class VoiceIt2
       }
     }
 
-    std::string CreateVoiceEnrollmentByUrl(std::string userId, std::string contentLanguage, std::string phrase, std::string fileUrl) {
+    std::string CreateVoiceEnrollmentByUrl(std::string userId, std::string contentLanguage, std::string phrase, std::string fileUrl)
+    {
       CURL *curl;
       curl_global_init(CURL_GLOBAL_ALL);
       curl = curl_easy_init();
-      if (curl) {
+      if (curl)
+      {
         readBuffer.clear();
         CURLcode res;
         std::stringstream url;
-        if (notificationUrl == "") {
+        if (notificationUrl == "")
+        {
           url << baseUrl << "/enrollments/voice/byUrl";
         } else {
           url << baseUrl << "/enrollments/voice/byUrl?notificationUrl=" << notificationUrl;
@@ -824,16 +887,19 @@ class VoiceIt2
       }
     }
 
-    std::string CreateFaceEnrollment(std::string userId, std::string filePath) {
+    std::string CreateFaceEnrollment(std::string userId, std::string filePath)
+    {
       FileExists(filePath);
       CURL *curl;
       curl_global_init(CURL_GLOBAL_ALL);
       curl = curl_easy_init();
-      if (curl) {
+      if (curl)
+      {
         readBuffer.clear();
         CURLcode res;
         std::stringstream url;
-        if (notificationUrl == "") {
+        if (notificationUrl == "")
+        {
           url << baseUrl << "/enrollments/face";
         } else {
           url << baseUrl << "/enrollments/face?notificationUrl=" << notificationUrl;
@@ -880,15 +946,18 @@ class VoiceIt2
       }
     }
 
-    std::string CreateFaceEnrollmentByUrl(std::string userId, std::string fileUrl) {
+    std::string CreateFaceEnrollmentByUrl(std::string userId, std::string fileUrl)
+    {
       CURL *curl;
       curl_global_init(CURL_GLOBAL_ALL);
       curl = curl_easy_init();
-      if (curl) {
+      if (curl)
+      {
         readBuffer.clear();
         CURLcode res;
         std::stringstream url;
-        if (notificationUrl == "") {
+        if (notificationUrl == "")
+        {
           url << baseUrl << "/enrollments/face/byUrl";
         } else {
           url << baseUrl << "/enrollments/face/byUrl?notificationUrl=" << notificationUrl;
@@ -935,16 +1004,19 @@ class VoiceIt2
       }
     }
 
-    std::string CreateVideoEnrollment(std::string userId, std::string contentLanguage, std::string phrase, std::string filePath) {
+    std::string CreateVideoEnrollment(std::string userId, std::string contentLanguage, std::string phrase, std::string filePath)
+    {
       FileExists(filePath);
       CURL *curl;
       curl_global_init(CURL_GLOBAL_ALL);
       curl = curl_easy_init();
-      if (curl) {
+      if (curl)
+      {
         readBuffer.clear();
         CURLcode res;
         std::stringstream url;
-        if (notificationUrl == "") {
+        if (notificationUrl == "")
+        {
           url << baseUrl << "/enrollments/video";
         } else {
           url << baseUrl << "/enrollments/video?notificationUrl=" << notificationUrl;
@@ -1004,15 +1076,18 @@ class VoiceIt2
       }
     }
 
-    std::string CreateVideoEnrollmentByUrl(std::string userId, std::string contentLanguage, std::string phrase, std::string fileUrl) {
+    std::string CreateVideoEnrollmentByUrl(std::string userId, std::string contentLanguage, std::string phrase, std::string fileUrl)
+    {
       CURL *curl;
       curl_global_init(CURL_GLOBAL_ALL);
       curl = curl_easy_init();
-      if (curl) {
+      if (curl)
+      {
         readBuffer.clear();
         CURLcode res;
         std::stringstream url;
-        if (notificationUrl == "") {
+        if (notificationUrl == "")
+        {
           url << baseUrl << "/enrollments/video/byUrl";
         } else {
           url << baseUrl << "/enrollments/video/byUrl?notificationUrl=" << notificationUrl;
@@ -1072,15 +1147,18 @@ class VoiceIt2
       }
     }
 
-    std::string DeleteVoiceEnrollment(std::string userId, int enrollmentId) {
+    std::string DeleteVoiceEnrollment(std::string userId, int enrollmentId)
+    {
       CURL *curl;
       curl_global_init(CURL_GLOBAL_ALL);
       curl = curl_easy_init();
-      if (curl) {
+      if (curl)
+      {
         readBuffer.clear();
         CURLcode res;
         std::stringstream url;
-        if (notificationUrl == "") {
+        if (notificationUrl == "")
+        {
           url << baseUrl << "/enrollments/voice/" << userId << "/" << enrollmentId;
         } else {
           url << baseUrl << "/enrollments/voice/" << userId << "/" << enrollmentId << "?notificationUrl=" << notificationUrl;
@@ -1109,15 +1187,18 @@ class VoiceIt2
       }
     }
 
-    std::string DeleteFaceEnrollment(std::string userId, int faceEnrollmentId) {
+    std::string DeleteFaceEnrollment(std::string userId, int faceEnrollmentId)
+    {
       CURL *curl;
       curl_global_init(CURL_GLOBAL_ALL);
       curl = curl_easy_init();
-      if (curl) {
+      if (curl)
+      {
         readBuffer.clear();
         CURLcode res;
         std::stringstream url;
-        if (notificationUrl == "") {
+        if (notificationUrl == "")
+        {
           url << baseUrl << "/enrollments/face/" << userId << "/" << faceEnrollmentId;
         } else {
           url << baseUrl << "/enrollments/face/" << userId << "/" << faceEnrollmentId << "?notificationUrl=" << notificationUrl;
@@ -1146,15 +1227,18 @@ class VoiceIt2
       }
     }
 
-    std::string DeleteVideoEnrollment(std::string userId, int enrollmentId) {
+    std::string DeleteVideoEnrollment(std::string userId, int enrollmentId)
+    {
       CURL *curl;
       curl_global_init(CURL_GLOBAL_ALL);
       curl = curl_easy_init();
-      if (curl) {
+      if (curl)
+      {
         readBuffer.clear();
         CURLcode res;
         std::stringstream url;
-        if (notificationUrl == "") {
+        if (notificationUrl == "")
+        {
           url << baseUrl << "/enrollments/video/" << userId << "/" << enrollmentId;
         } else {
           url << baseUrl << "/enrollments/video/" << userId << "/" << enrollmentId << "?notificationUrl=" << notificationUrl;
@@ -1183,15 +1267,18 @@ class VoiceIt2
       }
     }
 
-    std::string DeleteAllVoiceEnrollments(std::string userId) {
+    std::string DeleteAllVoiceEnrollments(std::string userId)
+    {
       CURL *curl;
       curl_global_init(CURL_GLOBAL_ALL);
       curl = curl_easy_init();
-      if (curl) {
+      if (curl)
+      {
         readBuffer.clear();
         CURLcode res;
         std::stringstream url;
-        if (notificationUrl == "") {
+        if (notificationUrl == "")
+        {
           url << baseUrl << "/enrollments/" << userId << "/voice";
         } else {
           url << baseUrl << "/enrollments/" << userId << "/voice?notificationUrl=" << notificationUrl;
@@ -1220,15 +1307,18 @@ class VoiceIt2
       }
     }
 
-    std::string DeleteAllFaceEnrollments(std::string userId) {
+    std::string DeleteAllFaceEnrollments(std::string userId)
+    {
       CURL *curl;
       curl_global_init(CURL_GLOBAL_ALL);
       curl = curl_easy_init();
-      if (curl) {
+      if (curl)
+      {
         readBuffer.clear();
         CURLcode res;
         std::stringstream url;
-        if (notificationUrl == "") {
+        if (notificationUrl == "")
+        {
           url << baseUrl << "/enrollments/" << userId << "/face";
         } else {
           url << baseUrl << "/enrollments/" << userId << "/face?notificationUrl=" << notificationUrl;
@@ -1257,15 +1347,18 @@ class VoiceIt2
       }
     }
 
-    std::string DeleteAllVideoEnrollments(std::string userId) {
+    std::string DeleteAllVideoEnrollments(std::string userId)
+    {
       CURL *curl;
       curl_global_init(CURL_GLOBAL_ALL);
       curl = curl_easy_init();
-      if (curl) {
+      if (curl)
+      {
         readBuffer.clear();
         CURLcode res;
         std::stringstream url;
-        if (notificationUrl == "") {
+        if (notificationUrl == "")
+        {
           url << baseUrl << "/enrollments/" << userId << "/video";
         } else {
           url << baseUrl << "/enrollments/" << userId << "/video?notificationUrl=" << notificationUrl;
@@ -1294,15 +1387,18 @@ class VoiceIt2
       }
     }
 
-    std::string DeleteAllEnrollments(std::string userId) {
+    std::string DeleteAllEnrollments(std::string userId)
+    {
       CURL *curl;
       curl_global_init(CURL_GLOBAL_ALL);
       curl = curl_easy_init();
-      if (curl) {
+      if (curl)
+      {
         readBuffer.clear();
         CURLcode res;
         std::stringstream url;
-        if (notificationUrl == "") {
+        if (notificationUrl == "")
+        {
           url << baseUrl << "/enrollments/" << userId << "/all";
         } else {
           url << baseUrl << "/enrollments/" << userId << "/all?notificationUrl=" << notificationUrl;
@@ -1331,16 +1427,19 @@ class VoiceIt2
       }
     }
 
-    std::string VoiceVerification(std::string userId, std::string contentLanguage, std::string phrase, std::string filePath) {
+    std::string VoiceVerification(std::string userId, std::string contentLanguage, std::string phrase, std::string filePath)
+    {
       FileExists(filePath);
       CURL *curl;
       curl_global_init(CURL_GLOBAL_ALL);
       curl = curl_easy_init();
-      if (curl) {
+      if (curl)
+      {
         readBuffer.clear();
         CURLcode res;
         std::stringstream url;
-        if (notificationUrl == "") {
+        if (notificationUrl == "")
+        {
           url << baseUrl << "/verification/voice";
         } else {
           url << baseUrl << "/verification/voice?notificationUrl=" << notificationUrl;
@@ -1401,15 +1500,18 @@ class VoiceIt2
     }
 
 
-    std::string VoiceVerificationByUrl(std::string userId, std::string contentLanguage, std::string phrase, std::string fileUrl) {
+    std::string VoiceVerificationByUrl(std::string userId, std::string contentLanguage, std::string phrase, std::string fileUrl)
+    {
       CURL *curl;
       curl_global_init(CURL_GLOBAL_ALL);
       curl = curl_easy_init();
-      if (curl) {
+      if (curl)
+      {
         readBuffer.clear();
         CURLcode res;
         std::stringstream url;
-        if (notificationUrl == "") {
+        if (notificationUrl == "")
+        {
           url << baseUrl << "/verification/voice/byUrl";
         } else {
           url << baseUrl << "/verification/voice/byUrl?notificationUrl=" << notificationUrl;
@@ -1469,16 +1571,19 @@ class VoiceIt2
       }
     }
 
-    std::string FaceVerification(std::string userId, std::string filePath) {
+    std::string FaceVerification(std::string userId, std::string filePath)
+    {
       FileExists(filePath);
       CURL *curl;
       curl_global_init(CURL_GLOBAL_ALL);
       curl = curl_easy_init();
-      if (curl) {
+      if (curl)
+      {
         readBuffer.clear();
         CURLcode res;
         std::stringstream url;
-        if (notificationUrl == "") {
+        if (notificationUrl == "")
+        {
           url << baseUrl << "/verification/face";
         } else {
           url << baseUrl << "/verification/face?notificationUrl=" << notificationUrl;
@@ -1525,15 +1630,18 @@ class VoiceIt2
       }
     }
 
-    std::string FaceVerificationByUrl(std::string userId, std::string fileUrl) {
+    std::string FaceVerificationByUrl(std::string userId, std::string fileUrl)
+    {
       CURL *curl;
       curl_global_init(CURL_GLOBAL_ALL);
       curl = curl_easy_init();
-      if (curl) {
+      if (curl)
+      {
         readBuffer.clear();
         CURLcode res;
         std::stringstream url;
-        if (notificationUrl == "") {
+        if (notificationUrl == "")
+        {
           url << baseUrl << "/verification/face/byUrl";
         } else {
           url << baseUrl << "/verification/face/byUrl?notificationUrl=" << notificationUrl;
@@ -1580,16 +1688,19 @@ class VoiceIt2
       }
     }
 
-    std::string VideoVerification(std::string userId, std::string contentLanguage, std::string phrase, std::string filePath) {
+    std::string VideoVerification(std::string userId, std::string contentLanguage, std::string phrase, std::string filePath)
+    {
       FileExists(filePath);
       CURL *curl;
       curl_global_init(CURL_GLOBAL_ALL);
       curl = curl_easy_init();
-      if (curl) {
+      if (curl)
+      {
         readBuffer.clear();
         CURLcode res;
         std::stringstream url;
-        if (notificationUrl == "") {
+        if (notificationUrl == "")
+        {
           url << baseUrl << "/verification/video";
         } else {
           url << baseUrl << "/verification/video?notificationUrl=" << notificationUrl;
@@ -1649,15 +1760,18 @@ class VoiceIt2
       }
     }
 
-    std::string VideoVerificationByUrl(std::string userId, std::string contentLanguage, std::string phrase, std::string fileUrl) {
+    std::string VideoVerificationByUrl(std::string userId, std::string contentLanguage, std::string phrase, std::string fileUrl)
+    {
       CURL *curl;
       curl_global_init(CURL_GLOBAL_ALL);
       curl = curl_easy_init();
-      if (curl) {
+      if (curl)
+      {
         readBuffer.clear();
         CURLcode res;
         std::stringstream url;
-        if (notificationUrl == "") {
+        if (notificationUrl == "")
+        {
           url << baseUrl << "/verification/video/byUrl";
         } else {
           url << baseUrl << "/verification/video/byUrl?notificationUrl=" << notificationUrl;
@@ -1717,16 +1831,19 @@ class VoiceIt2
       }
     }
 
-    std::string VoiceIdentification(std::string groupId, std::string contentLanguage, std::string phrase, std::string filePath) {
+    std::string VoiceIdentification(std::string groupId, std::string contentLanguage, std::string phrase, std::string filePath)
+    {
       FileExists(filePath);
       CURL *curl;
       curl_global_init(CURL_GLOBAL_ALL);
       curl = curl_easy_init();
-      if (curl) {
+      if (curl)
+      {
         readBuffer.clear();
         CURLcode res;
         std::stringstream url;
-        if (notificationUrl == "") {
+        if (notificationUrl == "")
+        {
           url << baseUrl << "/identification/voice";
         } else {
           url << baseUrl << "/identification/voice?notificationUrl=" << notificationUrl;
@@ -1786,15 +1903,18 @@ class VoiceIt2
       }
     }
 
-    std::string VoiceIdentificationByUrl(std::string groupId, std::string contentLanguage, std::string phrase, std::string fileUrl) {
+    std::string VoiceIdentificationByUrl(std::string groupId, std::string contentLanguage, std::string phrase, std::string fileUrl)
+    {
       CURL *curl;
       curl_global_init(CURL_GLOBAL_ALL);
       curl = curl_easy_init();
-      if (curl) {
+      if (curl)
+      {
         readBuffer.clear();
         CURLcode res;
         std::stringstream url;
-        if (notificationUrl == "") {
+        if (notificationUrl == "")
+        {
           url << baseUrl << "/identification/voice/byUrl";
         } else {
           url << baseUrl << "/identification/voice/byUrl?notificationUrl=" << notificationUrl;
@@ -1854,16 +1974,19 @@ class VoiceIt2
       }
     }
 
-    std::string VideoIdentification(std::string groupId, std::string contentLanguage, std::string phrase, std::string filePath) {
+    std::string VideoIdentification(std::string groupId, std::string contentLanguage, std::string phrase, std::string filePath)
+    {
       FileExists(filePath);
       CURL *curl;
       curl_global_init(CURL_GLOBAL_ALL);
       curl = curl_easy_init();
-      if (curl) {
+      if (curl)
+      {
         readBuffer.clear();
         CURLcode res;
         std::stringstream url;
-        if (notificationUrl == "") {
+        if (notificationUrl == "")
+        {
           url << baseUrl << "/identification/video";
         } else {
           url << baseUrl << "/identification/video?notificationUrl=" << notificationUrl;
@@ -1923,15 +2046,18 @@ class VoiceIt2
       }
     }
 
-    std::string VideoIdentificationByUrl(std::string groupId, std::string contentLanguage, std::string phrase, std::string fileUrl) {
+    std::string VideoIdentificationByUrl(std::string groupId, std::string contentLanguage, std::string phrase, std::string fileUrl)
+    {
       CURL *curl;
       curl_global_init(CURL_GLOBAL_ALL);
       curl = curl_easy_init();
-      if (curl) {
+      if (curl)
+      {
         readBuffer.clear();
         CURLcode res;
         std::stringstream url;
-        if (notificationUrl == "") {
+        if (notificationUrl == "")
+        {
           url << baseUrl << "/identification/video/byUrl";
         } else {
           url << baseUrl << "/identification/video/byUrl?notificationUrl=" << notificationUrl;
@@ -1991,16 +2117,19 @@ class VoiceIt2
       }
     }
 
-    std::string FaceIdentification(std::string groupId, std::string filePath) {
+    std::string FaceIdentification(std::string groupId, std::string filePath)
+    {
       FileExists(filePath);
       CURL *curl;
       curl_global_init(CURL_GLOBAL_ALL);
       curl = curl_easy_init();
-      if (curl) {
+      if (curl)
+      {
         readBuffer.clear();
         CURLcode res;
         std::stringstream url;
-        if (notificationUrl == "") {
+        if (notificationUrl == "")
+        {
           url << baseUrl << "/identification/face";
         } else {
           url << baseUrl << "/identification/face?notificationUrl=" << notificationUrl;
@@ -2047,15 +2176,18 @@ class VoiceIt2
       }
     }
 
-    std::string FaceIdentificationByUrl(std::string groupId, std::string fileUrl) {
+    std::string FaceIdentificationByUrl(std::string groupId, std::string fileUrl)
+    {
       CURL *curl;
       curl_global_init(CURL_GLOBAL_ALL);
       curl = curl_easy_init();
-      if (curl) {
+      if (curl)
+      {
         readBuffer.clear();
         CURLcode res;
         std::stringstream url;
-        if (notificationUrl == "") {
+        if (notificationUrl == "")
+        {
           url << baseUrl << "/identification/face/byUrl";
         } else {
           url << baseUrl << "/identification/face/byUrl?notificationUrl=" << notificationUrl;
@@ -2102,15 +2234,18 @@ class VoiceIt2
       }
     }
 
-    std::string GetPhrases(std::string contentLanguage) {
+    std::string GetPhrases(std::string contentLanguage)
+    {
       CURL *curl;
       curl_global_init(CURL_GLOBAL_ALL);
       curl = curl_easy_init();
-      if (curl) {
+      if (curl)
+      {
         readBuffer.clear();
         CURLcode res;
         std::stringstream url;
-        if (notificationUrl == "") {
+        if (notificationUrl == "")
+        {
           url << baseUrl << "/phrases/" << contentLanguage;
         } else {
           url << baseUrl << "/phrases/" << contentLanguage << "?notificationUrl=" << notificationUrl;
