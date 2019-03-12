@@ -1,19 +1,29 @@
 #include <string>
 #include <iostream>
 #include <fstream>
-#include <cpr/cpr.h>
-#include "json.hpp"
+#include <sstream>
+#include <curl/curl.h>
+#include <curl/easy.h>
+#include <cstring>
 
-using json = nlohmann::json;
+static std::string readBuffer;
 
 class VoiceIt2
 {
   private:
-    cpr::Authentication *auth;
     const std::string baseUrl = "https://api.voiceit.io";
-    const std::string version = "1.1.0";
+    const std::string version = "2.0.0";
     std::string notificationUrl = "";
-    cpr::Header *platformHeader;
+    std::string auth;
+    std::string platformIdHeader = "platformId: 34";
+    std::string platformVersionHeader;
+
+
+    static size_t WriteCallback(char *contents, size_t size, size_t nmemb) {
+        size_t realsize = size * nmemb;
+        readBuffer.append(contents, realsize);
+        return realsize;
+    }
 
     void FileExists(std::string path) {
       std::ifstream file(path);
@@ -24,499 +34,2107 @@ class VoiceIt2
 
   public:
 
-    VoiceIt2(std::string key, std::string token)
-    {
-      auth = new cpr::Authentication(key, token);
-      platformHeader = new cpr::Header{{"platformId", "34"}, {"platformVersion", version}};
+    VoiceIt2(std::string key, std::string token) {
+      auth = key + ":" + token;
+      platformVersionHeader = "platformVersion: " + version;
     }
 
-    std::string GetVersion()
-    {
+    std::string GetVersion() {
       return version;
     }
 
-    void AddNotificationUrl(std::string url)
-    {
-      notificationUrl = url;
+    void AddNotificationUrl(std::string url) {
+      CURL *curl;
+      curl_global_init(CURL_GLOBAL_ALL);
+      curl = curl_easy_init();
+      if (curl) {
+        char *escaped = curl_easy_escape(curl, url.c_str(), 0);
+        notificationUrl = std::string(escaped);
+        curl_easy_cleanup(curl);
+      } else {
+        throw std::string("curl_easy_escape() unable to encode string: " + url);
+      }
     }
 
-    void RemoveNotificationUrl()
-    {
+    void RemoveNotificationUrl() {
       notificationUrl = "";
     }
 
-    std::string GetNotificationUrl()
-    {
+    std::string GetNotificationUrl() {
       return notificationUrl;
     }
 
-    json GetAllUsers()
-    {
-      if (notificationUrl == "") {
-        const auto reqResponse = cpr::Get(cpr::Url{baseUrl + "/users"}, *auth, *platformHeader);
-        return json::parse(reqResponse.text);
+    std::string GetAllUsers() {
+      CURL *curl;
+      curl_global_init(CURL_GLOBAL_ALL);
+      curl = curl_easy_init();
+      if (curl) {
+        readBuffer.clear();
+        CURLcode res;
+        std::stringstream url;
+        if (notificationUrl == "") {
+          url << baseUrl << "/users";
+        } else {
+          url << baseUrl << "/users?notificationUrl=" << notificationUrl;
+        }
+
+        curl_easy_setopt(curl, CURLOPT_URL, url.str().c_str());
+        curl_easy_setopt(curl, CURLOPT_HTTPAUTH, CURLAUTH_ANY);
+        curl_easy_setopt(curl, CURLOPT_USERPWD, auth.c_str());
+        struct curl_slist *chunk = NULL;
+        chunk = curl_slist_append(chunk, platformVersionHeader.c_str());
+        chunk = curl_slist_append(chunk, platformIdHeader.c_str());
+        curl_easy_setopt(curl, CURLOPT_HTTPHEADER, chunk);
+        curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
+        curl_easy_setopt(curl, CURLOPT_WRITEDATA, &readBuffer);
+        res = curl_easy_perform(curl);
+
+        curl_easy_cleanup(curl);
+        curl_slist_free_all(chunk);
+        return readBuffer;
+
       } else {
-        const auto reqResponse = cpr::Get(cpr::Url{baseUrl + "/users"}, *auth, *platformHeader, cpr::Parameters{{"notificationURL", notificationUrl}});
-        return json::parse(reqResponse.text);
+        throw std::string("Cannot initialize curl object. Please ensure you have a working installation of the libcurl Library with the appropriate compile flag.");
+      }
+
+    }
+
+    std::string CreateUser() {
+      CURL *curl;
+      curl_global_init(CURL_GLOBAL_ALL);
+      curl = curl_easy_init();
+      if (curl) {
+        readBuffer.clear();
+        CURLcode res;
+        std::stringstream url;
+        if (notificationUrl == "") {
+          url << baseUrl << "/users";
+        } else {
+          url << baseUrl << "/users?notificationUrl=" << notificationUrl;
+        }
+
+        curl_easy_setopt(curl, CURLOPT_URL, url.str().c_str());
+        curl_easy_setopt(curl, CURLOPT_HTTPAUTH, CURLAUTH_ANY);
+        curl_easy_setopt(curl, CURLOPT_USERPWD, auth.c_str());
+        curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "POST");
+        struct curl_slist *chunk = NULL;
+        chunk = curl_slist_append(chunk, platformVersionHeader.c_str());
+        chunk = curl_slist_append(chunk, platformIdHeader.c_str());
+        curl_easy_setopt(curl, CURLOPT_HTTPHEADER, chunk);
+        curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
+        curl_easy_setopt(curl, CURLOPT_WRITEDATA, &readBuffer);
+        res = curl_easy_perform(curl);
+
+        curl_easy_cleanup(curl);
+        curl_slist_free_all(chunk);
+        return readBuffer;
+
+      } else {
+        throw std::string("Cannot initialize curl object. Please ensure you have a working installation of the libcurl Library with the appropriate compile flag.");
       }
     }
 
-    json CreateUser()
-    {
-      if (notificationUrl == "") {
-        const auto reqResponse = cpr::Post(cpr::Url{ baseUrl + "/users"}, *auth, *platformHeader);
-        return json::parse(reqResponse.text);
+
+    std::string CheckUserExists(std::string userId) {
+      CURL *curl;
+      curl_global_init(CURL_GLOBAL_ALL);
+      curl = curl_easy_init();
+      if (curl) {
+        readBuffer.clear();
+        CURLcode res;
+        std::stringstream url;
+        if (notificationUrl == "") {
+          url << baseUrl << "/users/" << userId;
+        } else {
+          url << baseUrl << "/users/" << userId << "?notificationUrl=" << notificationUrl;
+        }
+
+        curl_easy_setopt(curl, CURLOPT_URL, url.str().c_str());
+        curl_easy_setopt(curl, CURLOPT_HTTPAUTH, CURLAUTH_ANY);
+        curl_easy_setopt(curl, CURLOPT_USERPWD, auth.c_str());
+        curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "GET");
+        struct curl_slist *chunk = NULL;
+        chunk = curl_slist_append(chunk, platformVersionHeader.c_str());
+        chunk = curl_slist_append(chunk, platformIdHeader.c_str());
+        curl_easy_setopt(curl, CURLOPT_HTTPHEADER, chunk);
+        curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
+        curl_easy_setopt(curl, CURLOPT_WRITEDATA, &readBuffer);
+        res = curl_easy_perform(curl);
+
+        curl_easy_cleanup(curl);
+        curl_slist_free_all(chunk);
+        return readBuffer;
+
       } else {
-        const auto reqResponse = cpr::Post(cpr::Url{ baseUrl + "/users"}, *auth, *platformHeader, cpr::Parameters{{"notificationURL", notificationUrl}});
-        return json::parse(reqResponse.text);
+        throw std::string("Cannot initialize curl object. Please ensure you have a working installation of the libcurl Library with the appropriate compile flag.");
       }
     }
 
-    json DeleteUser(std::string userId)
-    {
-      if (notificationUrl == "") {
-        const auto reqResponse = cpr::Delete(cpr::Url{ baseUrl + "/users/" + userId}, *auth, *platformHeader);
-        return json::parse(reqResponse.text);
+    std::string DeleteUser(std::string userId) {
+      CURL *curl;
+      curl_global_init(CURL_GLOBAL_ALL);
+      curl = curl_easy_init();
+      if (curl) {
+        readBuffer.clear();
+        CURLcode res;
+        std::stringstream url;
+        if (notificationUrl == "") {
+          url << baseUrl << "/users/" << userId;
+        } else {
+          url << baseUrl << "/users/" << userId << "?notificationUrl=" << notificationUrl;
+        }
+
+        curl_easy_setopt(curl, CURLOPT_URL, url.str().c_str());
+        curl_easy_setopt(curl, CURLOPT_HTTPAUTH, CURLAUTH_ANY);
+        curl_easy_setopt(curl, CURLOPT_USERPWD, auth.c_str());
+        curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "DELETE");
+        struct curl_slist *chunk = NULL;
+        chunk = curl_slist_append(chunk, platformVersionHeader.c_str());
+        chunk = curl_slist_append(chunk, platformIdHeader.c_str());
+        curl_easy_setopt(curl, CURLOPT_HTTPHEADER, chunk);
+        curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
+        curl_easy_setopt(curl, CURLOPT_WRITEDATA, &readBuffer);
+        res = curl_easy_perform(curl);
+
+        curl_easy_cleanup(curl);
+        curl_slist_free_all(chunk);
+        return readBuffer;
+
       } else {
-        const auto reqResponse = cpr::Delete(cpr::Url{ baseUrl + "/users/" + userId}, *auth, *platformHeader, cpr::Parameters{{"notificationURL", notificationUrl}});
-        return json::parse(reqResponse.text);
+        throw std::string("Cannot initialize curl object. Please ensure you have a working installation of the libcurl Library with the appropriate compile flag.");
       }
     }
 
-    json GetGroupsForUser(std::string userId)
-    {
-      if (notificationUrl == "") {
-        const auto reqResponse = cpr::Get(cpr::Url{ baseUrl + "/users/" + userId + "/groups"}, *auth, *platformHeader);
-        return json::parse(reqResponse.text);
+    std::string GetGroupsForUser(std::string userId) {
+      CURL *curl;
+      curl_global_init(CURL_GLOBAL_ALL);
+      curl = curl_easy_init();
+      if (curl) {
+        readBuffer.clear();
+        CURLcode res;
+        std::stringstream url;
+        if (notificationUrl == "") {
+          url << baseUrl << "/users/" << userId << "/groups";
+        } else {
+          url << baseUrl << "/users/" << userId << "/groups?notificationUrl=" << notificationUrl;
+        }
+
+        curl_easy_setopt(curl, CURLOPT_URL, url.str().c_str());
+        curl_easy_setopt(curl, CURLOPT_HTTPAUTH, CURLAUTH_ANY);
+        curl_easy_setopt(curl, CURLOPT_USERPWD, auth.c_str());
+        curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "GET");
+        struct curl_slist *chunk = NULL;
+        chunk = curl_slist_append(chunk, platformVersionHeader.c_str());
+        chunk = curl_slist_append(chunk, platformIdHeader.c_str());
+        curl_easy_setopt(curl, CURLOPT_HTTPHEADER, chunk);
+        curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
+        curl_easy_setopt(curl, CURLOPT_WRITEDATA, &readBuffer);
+        res = curl_easy_perform(curl);
+
+        curl_easy_cleanup(curl);
+        curl_slist_free_all(chunk);
+        return readBuffer;
+
       } else {
-        const auto reqResponse = cpr::Get(cpr::Url{ baseUrl + "/users/" + userId + "/groups"}, *auth, *platformHeader, cpr::Parameters{{"notificationURL", notificationUrl}});
-        return json::parse(reqResponse.text);
+        throw std::string("Cannot initialize curl object. Please ensure you have a working installation of the libcurl Library with the appropriate compile flag.");
       }
     }
 
-    json CheckUserExists(std::string userId)
-    {
-      if (notificationUrl == "") {
-        const auto reqResponse = cpr::Get(cpr::Url{baseUrl + "/users/" + userId}, *auth, *platformHeader);
-        return json::parse(reqResponse.text);
+    std::string CreateUserToken(std::string userId, int secondsToTimeout) {
+      CURL *curl;
+      curl_global_init(CURL_GLOBAL_ALL);
+      curl = curl_easy_init();
+      if (curl) {
+        readBuffer.clear();
+        CURLcode res;
+        std::stringstream url;
+        if (notificationUrl == "") {
+          url << baseUrl << "/users/" << userId << "/token?timeOut=" << secondsToTimeout;
+        } else {
+          url << baseUrl << "/users/" << userId << "/token?notificationUrl=" << notificationUrl << "t&imeOut=" << secondsToTimeout;
+        }
+
+        curl_easy_setopt(curl, CURLOPT_URL, url.str().c_str());
+        curl_easy_setopt(curl, CURLOPT_HTTPAUTH, CURLAUTH_ANY);
+        curl_easy_setopt(curl, CURLOPT_USERPWD, auth.c_str());
+        curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "POST");
+        struct curl_slist *chunk = NULL;
+        chunk = curl_slist_append(chunk, platformVersionHeader.c_str());
+        chunk = curl_slist_append(chunk, platformIdHeader.c_str());
+        curl_easy_setopt(curl, CURLOPT_HTTPHEADER, chunk);
+        curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
+        curl_easy_setopt(curl, CURLOPT_WRITEDATA, &readBuffer);
+        res = curl_easy_perform(curl);
+
+        curl_easy_cleanup(curl);
+        curl_slist_free_all(chunk);
+        return readBuffer;
+
       } else {
-        const auto reqResponse = cpr::Get(cpr::Url{baseUrl + "/users/" + userId}, *auth, *platformHeader, cpr::Parameters{{"notificationURL", notificationUrl}});
-        return json::parse(reqResponse.text);
+        throw std::string("Cannot initialize curl object. Please ensure you have a working installation of the libcurl Library with the appropriate compile flag.");
       }
     }
 
-    json GetAllGroups()
-    {
-      if (notificationUrl == "") {
-        const auto reqResponse = cpr::Get(cpr::Url{baseUrl + "/groups"}, *auth, *platformHeader);
-        return json::parse(reqResponse.text);
+    std::string GetAllGroups() {
+      CURL *curl;
+      curl_global_init(CURL_GLOBAL_ALL);
+      curl = curl_easy_init();
+      if (curl) {
+        readBuffer.clear();
+        CURLcode res;
+        std::stringstream url;
+        if (notificationUrl == "") {
+          url << baseUrl << "/groups";
+        } else {
+          url << baseUrl << "/groups" << "?notificationUrl=" << notificationUrl;
+        }
+
+        curl_easy_setopt(curl, CURLOPT_URL, url.str().c_str());
+        curl_easy_setopt(curl, CURLOPT_HTTPAUTH, CURLAUTH_ANY);
+        curl_easy_setopt(curl, CURLOPT_USERPWD, auth.c_str());
+        curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "GET");
+        struct curl_slist *chunk = NULL;
+        chunk = curl_slist_append(chunk, platformVersionHeader.c_str());
+        chunk = curl_slist_append(chunk, platformIdHeader.c_str());
+        curl_easy_setopt(curl, CURLOPT_HTTPHEADER, chunk);
+        curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
+        curl_easy_setopt(curl, CURLOPT_WRITEDATA, &readBuffer);
+        res = curl_easy_perform(curl);
+
+        curl_easy_cleanup(curl);
+        curl_slist_free_all(chunk);
+        return readBuffer;
+
       } else {
-        const auto reqResponse = cpr::Get(cpr::Url{baseUrl + "/groups"}, *auth, *platformHeader, cpr::Parameters{{"notificationURL", notificationUrl}});
-        return json::parse(reqResponse.text);
+        throw std::string("Cannot initialize curl object. Please ensure you have a working installation of the libcurl Library with the appropriate compile flag.");
       }
     }
 
-    json GetGroup(std::string groupId)
-    {
-      if (notificationUrl == "") {
-        const auto reqResponse = cpr::Get(cpr::Url{baseUrl + "/groups/" + groupId}, *auth, *platformHeader);
-        return json::parse(reqResponse.text);
+    std::string GetGroup(std::string groupId) {
+      CURL *curl;
+      curl_global_init(CURL_GLOBAL_ALL);
+      curl = curl_easy_init();
+      if (curl) {
+        readBuffer.clear();
+        CURLcode res;
+        std::stringstream url;
+        if (notificationUrl == "") {
+          url << baseUrl << "/groups/" << groupId;
+        } else {
+          url << baseUrl << "/groups/" << groupId << "?notificationUrl=" << notificationUrl;
+        }
+
+        curl_easy_setopt(curl, CURLOPT_URL, url.str().c_str());
+        curl_easy_setopt(curl, CURLOPT_HTTPAUTH, CURLAUTH_ANY);
+        curl_easy_setopt(curl, CURLOPT_USERPWD, auth.c_str());
+        curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "GET");
+        struct curl_slist *chunk = NULL;
+        chunk = curl_slist_append(chunk, platformVersionHeader.c_str());
+        chunk = curl_slist_append(chunk, platformIdHeader.c_str());
+        curl_easy_setopt(curl, CURLOPT_HTTPHEADER, chunk);
+        curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
+        curl_easy_setopt(curl, CURLOPT_WRITEDATA, &readBuffer);
+        res = curl_easy_perform(curl);
+
+        curl_easy_cleanup(curl);
+        curl_slist_free_all(chunk);
+        return readBuffer;
+
       } else {
-        const auto reqResponse = cpr::Get(cpr::Url{baseUrl + "/groups/" + groupId}, *auth, *platformHeader, cpr::Parameters{{"notificationURL", notificationUrl}});
-        return json::parse(reqResponse.text);
+        throw std::string("Cannot initialize curl object. Please ensure you have a working installation of the libcurl Library with the appropriate compile flag.");
       }
     }
 
-    json CheckGroupExists(std::string groupId)
-    {
-      if (notificationUrl == "") {
-        const auto reqResponse = cpr::Get(cpr::Url{baseUrl + "/groups/" + groupId + "/exists"}, *auth, *platformHeader);
-        return json::parse(reqResponse.text);
+    std::string CheckGroupExists(std::string groupId) {
+      CURL *curl;
+      curl_global_init(CURL_GLOBAL_ALL);
+      curl = curl_easy_init();
+      if (curl) {
+        readBuffer.clear();
+        CURLcode res;
+        std::stringstream url;
+        if (notificationUrl == "") {
+          url << baseUrl << "/groups/" << groupId << "/exists";
+        } else {
+          url << baseUrl << "/groups/" << groupId << "/exists?notificationUrl=" << notificationUrl;
+        }
+
+        curl_easy_setopt(curl, CURLOPT_URL, url.str().c_str());
+        curl_easy_setopt(curl, CURLOPT_HTTPAUTH, CURLAUTH_ANY);
+        curl_easy_setopt(curl, CURLOPT_USERPWD, auth.c_str());
+        curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "GET");
+        struct curl_slist *chunk = NULL;
+        chunk = curl_slist_append(chunk, platformVersionHeader.c_str());
+        chunk = curl_slist_append(chunk, platformIdHeader.c_str());
+        curl_easy_setopt(curl, CURLOPT_HTTPHEADER, chunk);
+        curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
+        curl_easy_setopt(curl, CURLOPT_WRITEDATA, &readBuffer);
+        res = curl_easy_perform(curl);
+
+        curl_easy_cleanup(curl);
+        curl_slist_free_all(chunk);
+        return readBuffer;
+
       } else {
-        const auto reqResponse = cpr::Get(cpr::Url{baseUrl + "/groups/" + groupId + "/exists"}, *auth, *platformHeader, cpr::Parameters{{"notificationURL", notificationUrl}});
-        return json::parse(reqResponse.text);
+        throw std::string("Cannot initialize curl object. Please ensure you have a working installation of the libcurl Library with the appropriate compile flag.");
       }
     }
 
-    json CreateGroup(std::string description="")
-    {
-      if (notificationUrl == "") {
-        const auto reqResponse = cpr::Post(cpr::Url{baseUrl + "/groups"}, *auth, *platformHeader, cpr::Parameters{{"description", description}});
-        return json::parse(reqResponse.text);
+    std::string CreateGroup(std::string description="") {
+      CURL *curl;
+      curl_global_init(CURL_GLOBAL_ALL);
+      curl = curl_easy_init();
+      if (curl) {
+        readBuffer.clear();
+        CURLcode res;
+        std::stringstream url;
+        if (notificationUrl == "") {
+          url << baseUrl << "/groups";
+        } else {
+          url << baseUrl << "/groups?notificationUrl=" << notificationUrl;
+        }
+
+        curl_easy_setopt(curl, CURLOPT_URL, url.str().c_str());
+        curl_easy_setopt(curl, CURLOPT_HTTPAUTH, CURLAUTH_ANY);
+        curl_easy_setopt(curl, CURLOPT_USERPWD, auth.c_str());
+        curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "POST");
+
+        struct curl_slist *chunk = NULL;
+        chunk = curl_slist_append(chunk, platformVersionHeader.c_str());
+        chunk = curl_slist_append(chunk, platformIdHeader.c_str());
+        chunk = curl_slist_append(chunk, "Content-Type: multipart/form-data");
+        curl_easy_setopt(curl, CURLOPT_HTTPHEADER, chunk);
+
+        struct curl_httppost *formpost = NULL;
+        struct curl_httppost *lastptr = NULL;
+
+        curl_formadd(&formpost,
+             &lastptr,
+             CURLFORM_COPYNAME, "description",
+             CURLFORM_COPYCONTENTS, description.c_str(),
+             CURLFORM_END);
+
+        curl_easy_setopt(curl, CURLOPT_HTTPPOST, formpost);
+        curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
+        curl_easy_setopt(curl, CURLOPT_WRITEDATA, &readBuffer);
+        res = curl_easy_perform(curl);
+
+        curl_easy_cleanup(curl);
+        curl_formfree(formpost);
+        curl_slist_free_all(chunk);
+        return readBuffer;
+
       } else {
-        const auto reqResponse = cpr::Post(cpr::Url{baseUrl + "/groups"}, *auth, *platformHeader, cpr::Parameters{{"description", description}, {"notificationURL", notificationUrl}});
-        return json::parse(reqResponse.text);
+        throw std::string("Cannot initialize curl object. Please ensure you have a working installation of the libcurl Library with the appropriate compile flag.");
       }
     }
 
-    json AddUserToGroup(std::string groupId, std::string userId)
-    {
-      if (notificationUrl == "") {
-        const auto reqResponse = cpr::Put(cpr::Url{baseUrl + "/groups/addUser"}, *auth, *platformHeader, cpr::Parameters{{"groupId", groupId}, {"userId", userId}});
-        return json::parse(reqResponse.text);
+    std::string AddUserToGroup(std::string groupId, std::string userId) {
+      CURL *curl;
+      curl_global_init(CURL_GLOBAL_ALL);
+      curl = curl_easy_init();
+      if (curl) {
+        readBuffer.clear();
+        CURLcode res;
+        std::stringstream url;
+        if (notificationUrl == "") {
+          url << baseUrl << "/groups/addUser";
+        } else {
+          url << baseUrl << "/groups/addUser?notificationUrl=" << notificationUrl;
+        }
+
+        curl_easy_setopt(curl, CURLOPT_URL, url.str().c_str());
+        curl_easy_setopt(curl, CURLOPT_HTTPAUTH, CURLAUTH_ANY);
+        curl_easy_setopt(curl, CURLOPT_USERPWD, auth.c_str());
+        curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "PUT");
+
+        struct curl_slist *chunk = NULL;
+        chunk = curl_slist_append(chunk, platformVersionHeader.c_str());
+        chunk = curl_slist_append(chunk, platformIdHeader.c_str());
+        chunk = curl_slist_append(chunk, "Content-Type: multipart/form-data");
+        curl_easy_setopt(curl, CURLOPT_HTTPHEADER, chunk);
+
+        struct curl_httppost *formpost = NULL;
+        struct curl_httppost *lastptr = NULL;
+
+        curl_formadd(&formpost,
+             &lastptr,
+             CURLFORM_COPYNAME, "groupId",
+             CURLFORM_COPYCONTENTS, groupId.c_str(),
+             CURLFORM_END);
+
+        curl_formadd(&formpost,
+             &lastptr,
+             CURLFORM_COPYNAME, "userId",
+             CURLFORM_COPYCONTENTS, userId.c_str(),
+             CURLFORM_END);
+
+        curl_easy_setopt(curl, CURLOPT_HTTPPOST, formpost);
+        curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
+        curl_easy_setopt(curl, CURLOPT_WRITEDATA, &readBuffer);
+        res = curl_easy_perform(curl);
+
+        curl_easy_cleanup(curl);
+        curl_formfree(formpost);
+        curl_slist_free_all(chunk);
+        return readBuffer;
+
       } else {
-        const auto reqResponse = cpr::Put(cpr::Url{baseUrl + "/groups/addUser"}, *auth, *platformHeader, cpr::Parameters{{"groupId", groupId}, {"userId", userId}, {"notificationURL", notificationUrl}});
-        return json::parse(reqResponse.text);
+        throw std::string("Cannot initialize curl object. Please ensure you have a working installation of the libcurl Library with the appropriate compile flag.");
       }
     }
 
-    json RemoveUserFromGroup(std::string groupId, std::string userId)
-    {
-      if (notificationUrl == "") {
-        const auto reqResponse = cpr::Put(cpr::Url{baseUrl + "/groups/removeUser"}, *auth, *platformHeader, cpr::Parameters{{"groupId", groupId}, {"userId", userId}});
-        return json::parse(reqResponse.text);
+    std::string RemoveUserFromGroup(std::string groupId, std::string userId) {
+      CURL *curl;
+      curl_global_init(CURL_GLOBAL_ALL);
+      curl = curl_easy_init();
+      if (curl) {
+        readBuffer.clear();
+        CURLcode res;
+        std::stringstream url;
+        if (notificationUrl == "") {
+          url << baseUrl << "/groups/removeUser";
+        } else {
+          url << baseUrl << "/groups/removeUser?notificationUrl=" << notificationUrl;
+        }
+
+        curl_easy_setopt(curl, CURLOPT_URL, url.str().c_str());
+        curl_easy_setopt(curl, CURLOPT_HTTPAUTH, CURLAUTH_ANY);
+        curl_easy_setopt(curl, CURLOPT_USERPWD, auth.c_str());
+        curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "PUT");
+
+        struct curl_slist *chunk = NULL;
+        chunk = curl_slist_append(chunk, platformVersionHeader.c_str());
+        chunk = curl_slist_append(chunk, platformIdHeader.c_str());
+        chunk = curl_slist_append(chunk, "Content-Type: multipart/form-data");
+        curl_easy_setopt(curl, CURLOPT_HTTPHEADER, chunk);
+
+        struct curl_httppost *formpost = NULL;
+        struct curl_httppost *lastptr = NULL;
+
+        curl_formadd(&formpost,
+             &lastptr,
+             CURLFORM_COPYNAME, "groupId",
+             CURLFORM_COPYCONTENTS, groupId.c_str(),
+             CURLFORM_END);
+
+        curl_formadd(&formpost,
+             &lastptr,
+             CURLFORM_COPYNAME, "userId",
+             CURLFORM_COPYCONTENTS, userId.c_str(),
+             CURLFORM_END);
+
+        curl_easy_setopt(curl, CURLOPT_HTTPPOST, formpost);
+        curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
+        curl_easy_setopt(curl, CURLOPT_WRITEDATA, &readBuffer);
+        res = curl_easy_perform(curl);
+
+        curl_easy_cleanup(curl);
+        curl_formfree(formpost);
+        curl_slist_free_all(chunk);
+        return readBuffer;
+
       } else {
-        const auto reqResponse = cpr::Put(cpr::Url{baseUrl + "/groups/removeUser"}, *auth, *platformHeader, cpr::Parameters{{"groupId", groupId}, {"userId", userId}, {"notificationURL", notificationUrl}});
-        return json::parse(reqResponse.text);
+        throw std::string("Cannot initialize curl object. Please ensure you have a working installation of the libcurl Library with the appropriate compile flag.");
       }
     }
 
-    json DeleteGroup(std::string groupId)
-    {
-      if (notificationUrl == "") {
-        const auto reqResponse = cpr::Delete(cpr::Url{baseUrl + "/groups/" + groupId}, *auth, *platformHeader);
-        return json::parse(reqResponse.text);
+    std::string DeleteGroup(std::string groupId) {
+      CURL *curl;
+      curl_global_init(CURL_GLOBAL_ALL);
+      curl = curl_easy_init();
+      if (curl) {
+        readBuffer.clear();
+        CURLcode res;
+        std::stringstream url;
+        if (notificationUrl == "") {
+          url << baseUrl << "/groups/" << groupId;
+        } else {
+          url << baseUrl << "/groups/" << groupId << "?notificationUrl=" << notificationUrl;
+        }
+
+        curl_easy_setopt(curl, CURLOPT_URL, url.str().c_str());
+        curl_easy_setopt(curl, CURLOPT_HTTPAUTH, CURLAUTH_ANY);
+        curl_easy_setopt(curl, CURLOPT_USERPWD, auth.c_str());
+        curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "DELETE");
+
+        struct curl_slist *chunk = NULL;
+        chunk = curl_slist_append(chunk, platformVersionHeader.c_str());
+        chunk = curl_slist_append(chunk, platformIdHeader.c_str());
+        curl_easy_setopt(curl, CURLOPT_HTTPHEADER, chunk);
+
+        curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
+        curl_easy_setopt(curl, CURLOPT_WRITEDATA, &readBuffer);
+        res = curl_easy_perform(curl);
+
+        curl_easy_cleanup(curl);
+        curl_slist_free_all(chunk);
+        return readBuffer;
+
       } else {
-        const auto reqResponse = cpr::Delete(cpr::Url{baseUrl + "/groups/" + groupId}, *auth, *platformHeader, cpr::Parameters{{"notificationURL", notificationUrl}});
-        return json::parse(reqResponse.text);
+        throw std::string("Cannot initialize curl object. Please ensure you have a working installation of the libcurl Library with the appropriate compile flag.");
       }
     }
 
-    json GetAllVideoEnrollments(std::string userId)
-    {
-      if (notificationUrl == "") {
-        const auto reqResponse = cpr::Get(cpr::Url{baseUrl + "/enrollments/video/" + userId}, *auth, *platformHeader);
-        return json::parse(reqResponse.text);
+    std::string GetAllVoiceEnrollments(std::string userId) {
+      CURL *curl;
+      curl_global_init(CURL_GLOBAL_ALL);
+      curl = curl_easy_init();
+      if (curl) {
+        readBuffer.clear();
+        CURLcode res;
+        std::stringstream url;
+        if (notificationUrl == "") {
+          url << baseUrl << "/enrollments/voice/" << userId;
+        } else {
+          url << baseUrl << "/enrollments/voice/" << userId << "?notificationUrl=" << notificationUrl;
+        }
+
+        curl_easy_setopt(curl, CURLOPT_URL, url.str().c_str());
+        curl_easy_setopt(curl, CURLOPT_HTTPAUTH, CURLAUTH_ANY);
+        curl_easy_setopt(curl, CURLOPT_USERPWD, auth.c_str());
+        curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "GET");
+
+        struct curl_slist *chunk = NULL;
+        chunk = curl_slist_append(chunk, platformVersionHeader.c_str());
+        chunk = curl_slist_append(chunk, platformIdHeader.c_str());
+        curl_easy_setopt(curl, CURLOPT_HTTPHEADER, chunk);
+
+        curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
+        curl_easy_setopt(curl, CURLOPT_WRITEDATA, &readBuffer);
+        res = curl_easy_perform(curl);
+
+        curl_easy_cleanup(curl);
+        curl_slist_free_all(chunk);
+        return readBuffer;
+
       } else {
-        const auto reqResponse = cpr::Get(cpr::Url{baseUrl + "/enrollments/video/" + userId}, *auth, *platformHeader, cpr::Parameters{{"notificationURL", notificationUrl}});
-        return json::parse(reqResponse.text);
+        throw std::string("Cannot initialize curl object. Please ensure you have a working installation of the libcurl Library with the appropriate compile flag.");
       }
     }
 
-    json GetAllVoiceEnrollments(std::string userId)
-    {
-      if (notificationUrl == "") {
-        const auto reqResponse = cpr::Get(cpr::Url{baseUrl + "/enrollments/voice/" + userId}, *auth, *platformHeader);
-        return json::parse(reqResponse.text);
+    std::string GetAllFaceEnrollments(std::string userId) {
+      CURL *curl;
+      curl_global_init(CURL_GLOBAL_ALL);
+      curl = curl_easy_init();
+      if (curl) {
+        readBuffer.clear();
+        CURLcode res;
+        std::stringstream url;
+        if (notificationUrl == "") {
+          url << baseUrl << "/enrollments/face/" << userId;
+        } else {
+          url << baseUrl << "/enrollments/face/" << userId << "?notificationUrl=" << notificationUrl;
+        }
+
+        curl_easy_setopt(curl, CURLOPT_URL, url.str().c_str());
+        curl_easy_setopt(curl, CURLOPT_HTTPAUTH, CURLAUTH_ANY);
+        curl_easy_setopt(curl, CURLOPT_USERPWD, auth.c_str());
+        curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "GET");
+
+        struct curl_slist *chunk = NULL;
+        chunk = curl_slist_append(chunk, platformVersionHeader.c_str());
+        chunk = curl_slist_append(chunk, platformIdHeader.c_str());
+        curl_easy_setopt(curl, CURLOPT_HTTPHEADER, chunk);
+
+        curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
+        curl_easy_setopt(curl, CURLOPT_WRITEDATA, &readBuffer);
+        res = curl_easy_perform(curl);
+
+        curl_easy_cleanup(curl);
+        curl_slist_free_all(chunk);
+        return readBuffer;
+
       } else {
-        const auto reqResponse = cpr::Get(cpr::Url{baseUrl + "/enrollments/voice/" + userId}, *auth, *platformHeader, cpr::Parameters{{"notificationURL", notificationUrl}});
-        return json::parse(reqResponse.text);
+        throw std::string("Cannot initialize curl object. Please ensure you have a working installation of the libcurl Library with the appropriate compile flag.");
       }
     }
 
-    json GetAllFaceEnrollments(std::string userId)
-    {
-      if (notificationUrl == "") {
-        const auto reqResponse = cpr::Get(cpr::Url{baseUrl + "/enrollments/face/" + userId}, *auth, *platformHeader);
-        return json::parse(reqResponse.text);
+    std::string GetAllVideoEnrollments(std::string userId) {
+      CURL *curl;
+      curl_global_init(CURL_GLOBAL_ALL);
+      curl = curl_easy_init();
+      if (curl) {
+        readBuffer.clear();
+        CURLcode res;
+        std::stringstream url;
+        if (notificationUrl == "") {
+          url << baseUrl << "/enrollments/video/" << userId;
+        } else {
+          url << baseUrl << "/enrollments/video/" << userId << "?notificationUrl=" << notificationUrl;
+        }
+
+        curl_easy_setopt(curl, CURLOPT_URL, url.str().c_str());
+        curl_easy_setopt(curl, CURLOPT_HTTPAUTH, CURLAUTH_ANY);
+        curl_easy_setopt(curl, CURLOPT_USERPWD, auth.c_str());
+        curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "GET");
+
+        struct curl_slist *chunk = NULL;
+        chunk = curl_slist_append(chunk, platformVersionHeader.c_str());
+        chunk = curl_slist_append(chunk, platformIdHeader.c_str());
+        curl_easy_setopt(curl, CURLOPT_HTTPHEADER, chunk);
+
+        curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
+        curl_easy_setopt(curl, CURLOPT_WRITEDATA, &readBuffer);
+        res = curl_easy_perform(curl);
+
+        curl_easy_cleanup(curl);
+        curl_slist_free_all(chunk);
+        return readBuffer;
+
       } else {
-        const auto reqResponse = cpr::Get(cpr::Url{baseUrl + "/enrollments/face/" + userId}, *auth, *platformHeader, cpr::Parameters{{"notificationURL", notificationUrl}});
-        return json::parse(reqResponse.text);
+        throw std::string("Cannot initialize curl object. Please ensure you have a working installation of the libcurl Library with the appropriate compile flag.");
       }
     }
 
-    json CreateVoiceEnrollment(std::string userId, std::string contentLanguage, std::string phrase, std::string filePath)
-    {
+    std::string CreateVoiceEnrollment(std::string userId, std::string contentLanguage, std::string phrase, std::string filePath) {
       FileExists(filePath);
-      if (notificationUrl == "") {
-        const auto reqResponse = cpr::Post(cpr::Url{baseUrl + "/enrollments/voice"}, *auth, *platformHeader, cpr::Multipart{{"userId", userId}, {"contentLanguage", contentLanguage}, {"phrase", phrase}, {"recording", cpr::File{filePath}}});
-        return json::parse(reqResponse.text);
+      CURL *curl;
+      curl_global_init(CURL_GLOBAL_ALL);
+      curl = curl_easy_init();
+      if (curl) {
+        readBuffer.clear();
+        CURLcode res;
+        std::stringstream url;
+        if (notificationUrl == "") {
+          url << baseUrl << "/enrollments/voice";
+        } else {
+          url << baseUrl << "/enrollments/voice?notificationUrl=" << notificationUrl;
+        }
+
+        curl_easy_setopt(curl, CURLOPT_URL, url.str().c_str());
+        curl_easy_setopt(curl, CURLOPT_HTTPAUTH, CURLAUTH_ANY);
+        curl_easy_setopt(curl, CURLOPT_USERPWD, auth.c_str());
+        curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "POST");
+
+        struct curl_slist *chunk = NULL;
+        chunk = curl_slist_append(chunk, platformVersionHeader.c_str());
+        chunk = curl_slist_append(chunk, platformIdHeader.c_str());
+        chunk = curl_slist_append(chunk, "Content-Type: multipart/form-data");
+        curl_easy_setopt(curl, CURLOPT_HTTPHEADER, chunk);
+
+        struct curl_httppost *formpost = NULL;
+        struct curl_httppost *lastptr = NULL;
+
+        curl_formadd(&formpost,
+             &lastptr,
+             CURLFORM_COPYNAME, "userId",
+             CURLFORM_COPYCONTENTS, userId.c_str(),
+             CURLFORM_END);
+
+        curl_formadd(&formpost,
+             &lastptr,
+             CURLFORM_COPYNAME, "contentLanguage",
+             CURLFORM_COPYCONTENTS, contentLanguage.c_str(),
+             CURLFORM_END);
+
+        curl_formadd(&formpost,
+             &lastptr,
+             CURLFORM_COPYNAME, "phrase",
+             CURLFORM_COPYCONTENTS, phrase.c_str(),
+             CURLFORM_END);
+
+
+        curl_formadd(&formpost,
+             &lastptr,
+             CURLFORM_COPYNAME, "recording",
+             CURLFORM_FILE, filePath.c_str(),
+             CURLFORM_END);
+
+        curl_easy_setopt(curl, CURLOPT_HTTPPOST, formpost);
+        curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
+        curl_easy_setopt(curl, CURLOPT_WRITEDATA, &readBuffer);
+        res = curl_easy_perform(curl);
+
+        curl_easy_cleanup(curl);
+        curl_formfree(formpost);
+        curl_slist_free_all(chunk);
+        return readBuffer;
+
       } else {
-        const auto reqResponse = cpr::Post(cpr::Url{baseUrl + "/enrollments/voice"}, *auth, *platformHeader, cpr::Parameters{{"notificationURL", notificationUrl}}, cpr::Multipart{{"userId", userId}, {"contentLanguage", contentLanguage}, {"phrase", phrase}, {"recording", cpr::File{filePath}}});
-        return json::parse(reqResponse.text);
+        throw std::string("Cannot initialize curl object. Please ensure you have a working installation of the libcurl Library with the appropriate compile flag.");
       }
     }
 
-    json CreateVoiceEnrollmentByUrl(std::string userId, std::string contentLanguage, std::string phrase, std::string fileUrl)
-    {
-      if (notificationUrl == "") {
-        const auto reqResponse = cpr::Post(cpr::Url{baseUrl + "/enrollments/voice/byUrl"}, *auth, *platformHeader, cpr::Multipart{{"userId", userId}, {"contentLanguage", contentLanguage}, {"phrase", phrase}, {"fileUrl", fileUrl}});
-        return json::parse(reqResponse.text);
+    std::string CreateVoiceEnrollmentByUrl(std::string userId, std::string contentLanguage, std::string phrase, std::string fileUrl) {
+      CURL *curl;
+      curl_global_init(CURL_GLOBAL_ALL);
+      curl = curl_easy_init();
+      if (curl) {
+        readBuffer.clear();
+        CURLcode res;
+        std::stringstream url;
+        if (notificationUrl == "") {
+          url << baseUrl << "/enrollments/voice/byUrl";
+        } else {
+          url << baseUrl << "/enrollments/voice/byUrl?notificationUrl=" << notificationUrl;
+        }
+
+        curl_easy_setopt(curl, CURLOPT_URL, url.str().c_str());
+        curl_easy_setopt(curl, CURLOPT_HTTPAUTH, CURLAUTH_ANY);
+        curl_easy_setopt(curl, CURLOPT_USERPWD, auth.c_str());
+        curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "POST");
+
+        struct curl_slist *chunk = NULL;
+        chunk = curl_slist_append(chunk, platformVersionHeader.c_str());
+        chunk = curl_slist_append(chunk, platformIdHeader.c_str());
+        chunk = curl_slist_append(chunk, "Content-Type: multipart/form-data");
+        curl_easy_setopt(curl, CURLOPT_HTTPHEADER, chunk);
+
+        struct curl_httppost *formpost = NULL;
+        struct curl_httppost *lastptr = NULL;
+
+        curl_formadd(&formpost,
+             &lastptr,
+             CURLFORM_COPYNAME, "userId",
+             CURLFORM_COPYCONTENTS, userId.c_str(),
+             CURLFORM_END);
+
+        curl_formadd(&formpost,
+             &lastptr,
+             CURLFORM_COPYNAME, "contentLanguage",
+             CURLFORM_COPYCONTENTS, contentLanguage.c_str(),
+             CURLFORM_END);
+
+        curl_formadd(&formpost,
+             &lastptr,
+             CURLFORM_COPYNAME, "phrase",
+             CURLFORM_COPYCONTENTS, phrase.c_str(),
+             CURLFORM_END);
+
+
+        curl_formadd(&formpost,
+             &lastptr,
+             CURLFORM_COPYNAME, "fileUrl",
+             CURLFORM_COPYCONTENTS, fileUrl.c_str(),
+             CURLFORM_END);
+
+        curl_easy_setopt(curl, CURLOPT_HTTPPOST, formpost);
+        curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
+        curl_easy_setopt(curl, CURLOPT_WRITEDATA, &readBuffer);
+        res = curl_easy_perform(curl);
+
+        curl_easy_cleanup(curl);
+        curl_formfree(formpost);
+        curl_slist_free_all(chunk);
+        return readBuffer;
+
       } else {
-        const auto reqResponse = cpr::Post(cpr::Url{baseUrl + "/enrollments/voice/byUrl"}, *auth, *platformHeader, cpr::Parameters{{"notificationURL", notificationUrl}}, cpr::Multipart{{"userId", userId}, {"contentLanguage", contentLanguage}, {"phrase", phrase}, {"fileUrl", fileUrl}});
-        return json::parse(reqResponse.text);
+        throw std::string("Cannot initialize curl object. Please ensure you have a working installation of the libcurl Library with the appropriate compile flag.");
       }
     }
 
-    json CreateFaceEnrollment(std::string userId, std::string filePath)
-    {
+    std::string CreateFaceEnrollment(std::string userId, std::string filePath) {
       FileExists(filePath);
-      if (notificationUrl == "") {
-        const auto reqResponse = cpr::Post(cpr::Url{baseUrl + "/enrollments/face"}, *auth, *platformHeader, cpr::Multipart{{"userId", userId}, {"video", cpr::File{filePath}}});
-        return json::parse(reqResponse.text);
+      CURL *curl;
+      curl_global_init(CURL_GLOBAL_ALL);
+      curl = curl_easy_init();
+      if (curl) {
+        readBuffer.clear();
+        CURLcode res;
+        std::stringstream url;
+        if (notificationUrl == "") {
+          url << baseUrl << "/enrollments/face";
+        } else {
+          url << baseUrl << "/enrollments/face?notificationUrl=" << notificationUrl;
+        }
+
+        curl_easy_setopt(curl, CURLOPT_URL, url.str().c_str());
+        curl_easy_setopt(curl, CURLOPT_HTTPAUTH, CURLAUTH_ANY);
+        curl_easy_setopt(curl, CURLOPT_USERPWD, auth.c_str());
+        curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "POST");
+
+        struct curl_slist *chunk = NULL;
+        chunk = curl_slist_append(chunk, platformVersionHeader.c_str());
+        chunk = curl_slist_append(chunk, platformIdHeader.c_str());
+        chunk = curl_slist_append(chunk, "Content-Type: multipart/form-data");
+        curl_easy_setopt(curl, CURLOPT_HTTPHEADER, chunk);
+
+        struct curl_httppost *formpost = NULL;
+        struct curl_httppost *lastptr = NULL;
+
+        curl_formadd(&formpost,
+             &lastptr,
+             CURLFORM_COPYNAME, "userId",
+             CURLFORM_COPYCONTENTS, userId.c_str(),
+             CURLFORM_END);
+
+        curl_formadd(&formpost,
+             &lastptr,
+             CURLFORM_COPYNAME, "video",
+             CURLFORM_FILE, filePath.c_str(),
+             CURLFORM_END);
+
+        curl_easy_setopt(curl, CURLOPT_HTTPPOST, formpost);
+        curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
+        curl_easy_setopt(curl, CURLOPT_WRITEDATA, &readBuffer);
+        res = curl_easy_perform(curl);
+
+        curl_easy_cleanup(curl);
+        curl_formfree(formpost);
+        curl_slist_free_all(chunk);
+        return readBuffer;
+
       } else {
-        const auto reqResponse = cpr::Post(cpr::Url{baseUrl + "/enrollments/face"}, *auth, *platformHeader, cpr::Parameters{{"notificationURL", notificationUrl}}, cpr::Multipart{{"userId", userId}, {"video", cpr::File{filePath}}});
-        return json::parse(reqResponse.text);
+        throw std::string("Cannot initialize curl object. Please ensure you have a working installation of the libcurl Library with the appropriate compile flag.");
       }
     }
 
-    json CreateFaceEnrollmentByUrl(std::string userId, std::string fileUrl)
-    {
-      if (notificationUrl == "") {
-        const auto reqResponse = cpr::Post(cpr::Url{baseUrl + "/enrollments/face/byUrl"}, *auth, *platformHeader, cpr::Multipart{{"userId", userId}, {"fileUrl", fileUrl}});
-        return json::parse(reqResponse.text);
+    std::string CreateFaceEnrollmentByUrl(std::string userId, std::string fileUrl) {
+      CURL *curl;
+      curl_global_init(CURL_GLOBAL_ALL);
+      curl = curl_easy_init();
+      if (curl) {
+        readBuffer.clear();
+        CURLcode res;
+        std::stringstream url;
+        if (notificationUrl == "") {
+          url << baseUrl << "/enrollments/face/byUrl";
+        } else {
+          url << baseUrl << "/enrollments/face/byUrl?notificationUrl=" << notificationUrl;
+        }
+
+        curl_easy_setopt(curl, CURLOPT_URL, url.str().c_str());
+        curl_easy_setopt(curl, CURLOPT_HTTPAUTH, CURLAUTH_ANY);
+        curl_easy_setopt(curl, CURLOPT_USERPWD, auth.c_str());
+        curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "POST");
+
+        struct curl_slist *chunk = NULL;
+        chunk = curl_slist_append(chunk, platformVersionHeader.c_str());
+        chunk = curl_slist_append(chunk, platformIdHeader.c_str());
+        chunk = curl_slist_append(chunk, "Content-Type: multipart/form-data");
+        curl_easy_setopt(curl, CURLOPT_HTTPHEADER, chunk);
+
+        struct curl_httppost *formpost = NULL;
+        struct curl_httppost *lastptr = NULL;
+
+        curl_formadd(&formpost,
+             &lastptr,
+             CURLFORM_COPYNAME, "userId",
+             CURLFORM_COPYCONTENTS, userId.c_str(),
+             CURLFORM_END);
+
+        curl_formadd(&formpost,
+             &lastptr,
+             CURLFORM_COPYNAME, "fileUrl",
+             CURLFORM_COPYCONTENTS, fileUrl.c_str(),
+             CURLFORM_END);
+
+        curl_easy_setopt(curl, CURLOPT_HTTPPOST, formpost);
+        curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
+        curl_easy_setopt(curl, CURLOPT_WRITEDATA, &readBuffer);
+        res = curl_easy_perform(curl);
+
+        curl_easy_cleanup(curl);
+        curl_formfree(formpost);
+        curl_slist_free_all(chunk);
+        return readBuffer;
+
       } else {
-        const auto reqResponse = cpr::Post(cpr::Url{baseUrl + "/enrollments/face/byUrl"}, *auth, *platformHeader, cpr::Parameters{{"notificationURL", notificationUrl}}, cpr::Multipart{{"userId", userId}, {"fileUrl", fileUrl}});
-        return json::parse(reqResponse.text);
+        throw std::string("Cannot initialize curl object. Please ensure you have a working installation of the libcurl Library with the appropriate compile flag.");
       }
     }
 
-    json CreateVideoEnrollment(std::string userId, std::string contentLanguage, std::string phrase, std::string filePath)
-    {
+    std::string CreateVideoEnrollment(std::string userId, std::string contentLanguage, std::string phrase, std::string filePath) {
       FileExists(filePath);
-      if (notificationUrl == "") {
-        const auto reqResponse = cpr::Post(cpr::Url{baseUrl + "/enrollments/video"}, *auth, *platformHeader, cpr::Multipart{{"userId", userId}, {"contentLanguage", contentLanguage}, {"phrase", phrase}, {"video", cpr::File{filePath}}});
-        return json::parse(reqResponse.text);
+      CURL *curl;
+      curl_global_init(CURL_GLOBAL_ALL);
+      curl = curl_easy_init();
+      if (curl) {
+        readBuffer.clear();
+        CURLcode res;
+        std::stringstream url;
+        if (notificationUrl == "") {
+          url << baseUrl << "/enrollments/video";
+        } else {
+          url << baseUrl << "/enrollments/video?notificationUrl=" << notificationUrl;
+        }
+
+        curl_easy_setopt(curl, CURLOPT_URL, url.str().c_str());
+        curl_easy_setopt(curl, CURLOPT_HTTPAUTH, CURLAUTH_ANY);
+        curl_easy_setopt(curl, CURLOPT_USERPWD, auth.c_str());
+        curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "POST");
+
+        struct curl_slist *chunk = NULL;
+        chunk = curl_slist_append(chunk, platformVersionHeader.c_str());
+        chunk = curl_slist_append(chunk, platformIdHeader.c_str());
+        chunk = curl_slist_append(chunk, "Content-Type: multipart/form-data");
+        curl_easy_setopt(curl, CURLOPT_HTTPHEADER, chunk);
+
+        struct curl_httppost *formpost = NULL;
+        struct curl_httppost *lastptr = NULL;
+
+        curl_formadd(&formpost,
+             &lastptr,
+             CURLFORM_COPYNAME, "userId",
+             CURLFORM_COPYCONTENTS, userId.c_str(),
+             CURLFORM_END);
+
+        curl_formadd(&formpost,
+             &lastptr,
+             CURLFORM_COPYNAME, "contentLanguage",
+             CURLFORM_COPYCONTENTS, contentLanguage.c_str(),
+             CURLFORM_END);
+
+        curl_formadd(&formpost,
+             &lastptr,
+             CURLFORM_COPYNAME, "phrase",
+             CURLFORM_COPYCONTENTS, phrase.c_str(),
+             CURLFORM_END);
+
+
+        curl_formadd(&formpost,
+             &lastptr,
+             CURLFORM_COPYNAME, "video",
+             CURLFORM_FILE, filePath.c_str(),
+             CURLFORM_END);
+
+        curl_easy_setopt(curl, CURLOPT_HTTPPOST, formpost);
+        curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
+        curl_easy_setopt(curl, CURLOPT_WRITEDATA, &readBuffer);
+        res = curl_easy_perform(curl);
+
+        curl_easy_cleanup(curl);
+        curl_formfree(formpost);
+        curl_slist_free_all(chunk);
+        return readBuffer;
+
       } else {
-        const auto reqResponse = cpr::Post(cpr::Url{baseUrl + "/enrollments/video"}, *auth, *platformHeader, cpr::Parameters{{"notificationURL", notificationUrl}}, cpr::Multipart{{"userId", userId}, {"contentLanguage", contentLanguage}, {"phrase", phrase}, {"video", cpr::File{filePath}}});
-        return json::parse(reqResponse.text);
+        throw std::string("Cannot initialize curl object. Please ensure you have a working installation of the libcurl Library with the appropriate compile flag.");
       }
     }
 
-    json CreateVideoEnrollmentByUrl(std::string userId, std::string contentLanguage, std::string phrase, std::string fileUrl)
-    {
-      if (notificationUrl == "") {
-        const auto reqResponse = cpr::Post(cpr::Url{baseUrl + "/enrollments/video/byUrl"}, *auth, *platformHeader, cpr::Multipart{{"userId", userId}, {"contentLanguage", contentLanguage}, {"phrase", phrase}, {"fileUrl", fileUrl}});
-        return json::parse(reqResponse.text);
+    std::string CreateVideoEnrollmentByUrl(std::string userId, std::string contentLanguage, std::string phrase, std::string fileUrl) {
+      CURL *curl;
+      curl_global_init(CURL_GLOBAL_ALL);
+      curl = curl_easy_init();
+      if (curl) {
+        readBuffer.clear();
+        CURLcode res;
+        std::stringstream url;
+        if (notificationUrl == "") {
+          url << baseUrl << "/enrollments/video/byUrl";
+        } else {
+          url << baseUrl << "/enrollments/video/byUrl?notificationUrl=" << notificationUrl;
+        }
+
+        curl_easy_setopt(curl, CURLOPT_URL, url.str().c_str());
+        curl_easy_setopt(curl, CURLOPT_HTTPAUTH, CURLAUTH_ANY);
+        curl_easy_setopt(curl, CURLOPT_USERPWD, auth.c_str());
+        curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "POST");
+
+        struct curl_slist *chunk = NULL;
+        chunk = curl_slist_append(chunk, platformVersionHeader.c_str());
+        chunk = curl_slist_append(chunk, platformIdHeader.c_str());
+        chunk = curl_slist_append(chunk, "Content-Type: multipart/form-data");
+        curl_easy_setopt(curl, CURLOPT_HTTPHEADER, chunk);
+
+        struct curl_httppost *formpost = NULL;
+        struct curl_httppost *lastptr = NULL;
+
+        curl_formadd(&formpost,
+             &lastptr,
+             CURLFORM_COPYNAME, "userId",
+             CURLFORM_COPYCONTENTS, userId.c_str(),
+             CURLFORM_END);
+
+        curl_formadd(&formpost,
+             &lastptr,
+             CURLFORM_COPYNAME, "contentLanguage",
+             CURLFORM_COPYCONTENTS, contentLanguage.c_str(),
+             CURLFORM_END);
+
+        curl_formadd(&formpost,
+             &lastptr,
+             CURLFORM_COPYNAME, "phrase",
+             CURLFORM_COPYCONTENTS, phrase.c_str(),
+             CURLFORM_END);
+
+
+        curl_formadd(&formpost,
+             &lastptr,
+             CURLFORM_COPYNAME, "fileUrl",
+             CURLFORM_COPYCONTENTS, fileUrl.c_str(),
+             CURLFORM_END);
+
+        curl_easy_setopt(curl, CURLOPT_HTTPPOST, formpost);
+        curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
+        curl_easy_setopt(curl, CURLOPT_WRITEDATA, &readBuffer);
+        res = curl_easy_perform(curl);
+
+        curl_easy_cleanup(curl);
+        curl_formfree(formpost);
+        curl_slist_free_all(chunk);
+        return readBuffer;
+
       } else {
-        const auto reqResponse = cpr::Post(cpr::Url{baseUrl + "/enrollments/video/byUrl"}, *auth, *platformHeader, cpr::Parameters{{"notificationURL", notificationUrl}}, cpr::Multipart{{"userId", userId}, {"contentLanguage", contentLanguage}, {"phrase", phrase}, {"fileUrl", fileUrl}});
-        return json::parse(reqResponse.text);
+        throw std::string("Cannot initialize curl object. Please ensure you have a working installation of the libcurl Library with the appropriate compile flag.");
       }
     }
 
-    json DeleteVideoEnrollment(std::string userId, int enrollmentId)
-    {
-      std::string stringEnrollmentId = std::to_string(enrollmentId);
-      if (notificationUrl == "") {
-        const auto reqResponse = cpr::Delete(cpr::Url{baseUrl + "/enrollments/video/" + userId + "/" + stringEnrollmentId}, *auth, *platformHeader);
-        return json::parse(reqResponse.text);
+    std::string DeleteVoiceEnrollment(std::string userId, int enrollmentId) {
+      CURL *curl;
+      curl_global_init(CURL_GLOBAL_ALL);
+      curl = curl_easy_init();
+      if (curl) {
+        readBuffer.clear();
+        CURLcode res;
+        std::stringstream url;
+        if (notificationUrl == "") {
+          url << baseUrl << "/enrollments/voice/" << userId << "/" << enrollmentId;
+        } else {
+          url << baseUrl << "/enrollments/voice/" << userId << "/" << enrollmentId << "?notificationUrl=" << notificationUrl;
+        }
+
+        curl_easy_setopt(curl, CURLOPT_URL, url.str().c_str());
+        curl_easy_setopt(curl, CURLOPT_HTTPAUTH, CURLAUTH_ANY);
+        curl_easy_setopt(curl, CURLOPT_USERPWD, auth.c_str());
+        curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "DELETE");
+
+        struct curl_slist *chunk = NULL;
+        chunk = curl_slist_append(chunk, platformVersionHeader.c_str());
+        chunk = curl_slist_append(chunk, platformIdHeader.c_str());
+        curl_easy_setopt(curl, CURLOPT_HTTPHEADER, chunk);
+
+        curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
+        curl_easy_setopt(curl, CURLOPT_WRITEDATA, &readBuffer);
+        res = curl_easy_perform(curl);
+
+        curl_easy_cleanup(curl);
+        curl_slist_free_all(chunk);
+        return readBuffer;
+
       } else {
-        const auto reqResponse = cpr::Delete(cpr::Url{baseUrl + "/enrollments/video/" + userId + "/" + stringEnrollmentId}, *auth, *platformHeader, cpr::Parameters{{"notificationURL", notificationUrl}});
-        return json::parse(reqResponse.text);
+        throw std::string("Cannot initialize curl object. Please ensure you have a working installation of the libcurl Library with the appropriate compile flag.");
       }
     }
 
-    json DeleteAllVideoEnrollments(std::string userId)
-    {
-      if (notificationUrl == "") {
-        const auto reqResponse = cpr::Delete(cpr::Url{baseUrl + "/enrollments/" + userId + "/video"}, *auth, *platformHeader);
-        return json::parse(reqResponse.text);
+    std::string DeleteFaceEnrollment(std::string userId, int faceEnrollmentId) {
+      CURL *curl;
+      curl_global_init(CURL_GLOBAL_ALL);
+      curl = curl_easy_init();
+      if (curl) {
+        readBuffer.clear();
+        CURLcode res;
+        std::stringstream url;
+        if (notificationUrl == "") {
+          url << baseUrl << "/enrollments/face/" << userId << "/" << faceEnrollmentId;
+        } else {
+          url << baseUrl << "/enrollments/face/" << userId << "/" << faceEnrollmentId << "?notificationUrl=" << notificationUrl;
+        }
+
+        curl_easy_setopt(curl, CURLOPT_URL, url.str().c_str());
+        curl_easy_setopt(curl, CURLOPT_HTTPAUTH, CURLAUTH_ANY);
+        curl_easy_setopt(curl, CURLOPT_USERPWD, auth.c_str());
+        curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "DELETE");
+
+        struct curl_slist *chunk = NULL;
+        chunk = curl_slist_append(chunk, platformVersionHeader.c_str());
+        chunk = curl_slist_append(chunk, platformIdHeader.c_str());
+        curl_easy_setopt(curl, CURLOPT_HTTPHEADER, chunk);
+
+        curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
+        curl_easy_setopt(curl, CURLOPT_WRITEDATA, &readBuffer);
+        res = curl_easy_perform(curl);
+
+        curl_easy_cleanup(curl);
+        curl_slist_free_all(chunk);
+        return readBuffer;
+
       } else {
-        const auto reqResponse = cpr::Delete(cpr::Url{baseUrl + "/enrollments/" + userId + "/video"}, *auth, *platformHeader, cpr::Parameters{{"notificationURL", notificationUrl}});
-        return json::parse(reqResponse.text);
+        throw std::string("Cannot initialize curl object. Please ensure you have a working installation of the libcurl Library with the appropriate compile flag.");
       }
     }
 
-    json DeleteVoiceEnrollment(std::string userId, int enrollmentId)
-    {
-      std::string stringEnrollmentId = std::to_string(enrollmentId);
-      if (notificationUrl == "") {
-        const auto reqResponse = cpr::Delete(cpr::Url{baseUrl + "/enrollments/voice/" + userId + "/" + stringEnrollmentId}, *auth, *platformHeader);
-        return json::parse(reqResponse.text);
+    std::string DeleteVideoEnrollment(std::string userId, int enrollmentId) {
+      CURL *curl;
+      curl_global_init(CURL_GLOBAL_ALL);
+      curl = curl_easy_init();
+      if (curl) {
+        readBuffer.clear();
+        CURLcode res;
+        std::stringstream url;
+        if (notificationUrl == "") {
+          url << baseUrl << "/enrollments/video/" << userId << "/" << enrollmentId;
+        } else {
+          url << baseUrl << "/enrollments/video/" << userId << "/" << enrollmentId << "?notificationUrl=" << notificationUrl;
+        }
+
+        curl_easy_setopt(curl, CURLOPT_URL, url.str().c_str());
+        curl_easy_setopt(curl, CURLOPT_HTTPAUTH, CURLAUTH_ANY);
+        curl_easy_setopt(curl, CURLOPT_USERPWD, auth.c_str());
+        curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "DELETE");
+
+        struct curl_slist *chunk = NULL;
+        chunk = curl_slist_append(chunk, platformVersionHeader.c_str());
+        chunk = curl_slist_append(chunk, platformIdHeader.c_str());
+        curl_easy_setopt(curl, CURLOPT_HTTPHEADER, chunk);
+
+        curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
+        curl_easy_setopt(curl, CURLOPT_WRITEDATA, &readBuffer);
+        res = curl_easy_perform(curl);
+
+        curl_easy_cleanup(curl);
+        curl_slist_free_all(chunk);
+        return readBuffer;
+
       } else {
-        const auto reqResponse = cpr::Delete(cpr::Url{baseUrl + "/enrollments/voice/" + userId + "/" + stringEnrollmentId}, *auth, *platformHeader, cpr::Parameters{{"notificationURL", notificationUrl}});
-        return json::parse(reqResponse.text);
+        throw std::string("Cannot initialize curl object. Please ensure you have a working installation of the libcurl Library with the appropriate compile flag.");
       }
     }
 
-    json DeleteAllVoiceEnrollments(std::string userId)
-    {
-      if (notificationUrl == "") {
-        const auto reqResponse = cpr::Delete(cpr::Url{baseUrl + "/enrollments/" + userId + "/voice"}, *auth, *platformHeader);
-        return json::parse(reqResponse.text);
+    std::string DeleteAllVoiceEnrollments(std::string userId) {
+      CURL *curl;
+      curl_global_init(CURL_GLOBAL_ALL);
+      curl = curl_easy_init();
+      if (curl) {
+        readBuffer.clear();
+        CURLcode res;
+        std::stringstream url;
+        if (notificationUrl == "") {
+          url << baseUrl << "/enrollments/" << userId << "/voice";
+        } else {
+          url << baseUrl << "/enrollments/" << userId << "/voice?notificationUrl=" << notificationUrl;
+        }
+
+        curl_easy_setopt(curl, CURLOPT_URL, url.str().c_str());
+        curl_easy_setopt(curl, CURLOPT_HTTPAUTH, CURLAUTH_ANY);
+        curl_easy_setopt(curl, CURLOPT_USERPWD, auth.c_str());
+        curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "DELETE");
+
+        struct curl_slist *chunk = NULL;
+        chunk = curl_slist_append(chunk, platformVersionHeader.c_str());
+        chunk = curl_slist_append(chunk, platformIdHeader.c_str());
+        curl_easy_setopt(curl, CURLOPT_HTTPHEADER, chunk);
+
+        curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
+        curl_easy_setopt(curl, CURLOPT_WRITEDATA, &readBuffer);
+        res = curl_easy_perform(curl);
+
+        curl_easy_cleanup(curl);
+        curl_slist_free_all(chunk);
+        return readBuffer;
+
       } else {
-        const auto reqResponse = cpr::Delete(cpr::Url{baseUrl + "/enrollments/" + userId + "/voice"}, *auth, *platformHeader, cpr::Parameters{{"notificationURL", notificationUrl}});
-        return json::parse(reqResponse.text);
+        throw std::string("Cannot initialize curl object. Please ensure you have a working installation of the libcurl Library with the appropriate compile flag.");
       }
     }
 
-    json DeleteFaceEnrollment(std::string userId, int faceEnrollmentId)
-    {
-      std::string stringFaceEnrollmentId = std::to_string(faceEnrollmentId);
-      if (notificationUrl == "") {
-        const auto reqResponse = cpr::Delete(cpr::Url{baseUrl + "/enrollments/face/" + userId + "/" + stringFaceEnrollmentId}, *auth, *platformHeader);
-        return json::parse(reqResponse.text);
+    std::string DeleteAllFaceEnrollments(std::string userId) {
+      CURL *curl;
+      curl_global_init(CURL_GLOBAL_ALL);
+      curl = curl_easy_init();
+      if (curl) {
+        readBuffer.clear();
+        CURLcode res;
+        std::stringstream url;
+        if (notificationUrl == "") {
+          url << baseUrl << "/enrollments/" << userId << "/face";
+        } else {
+          url << baseUrl << "/enrollments/" << userId << "/face?notificationUrl=" << notificationUrl;
+        }
+
+        curl_easy_setopt(curl, CURLOPT_URL, url.str().c_str());
+        curl_easy_setopt(curl, CURLOPT_HTTPAUTH, CURLAUTH_ANY);
+        curl_easy_setopt(curl, CURLOPT_USERPWD, auth.c_str());
+        curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "DELETE");
+
+        struct curl_slist *chunk = NULL;
+        chunk = curl_slist_append(chunk, platformVersionHeader.c_str());
+        chunk = curl_slist_append(chunk, platformIdHeader.c_str());
+        curl_easy_setopt(curl, CURLOPT_HTTPHEADER, chunk);
+
+        curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
+        curl_easy_setopt(curl, CURLOPT_WRITEDATA, &readBuffer);
+        res = curl_easy_perform(curl);
+
+        curl_easy_cleanup(curl);
+        curl_slist_free_all(chunk);
+        return readBuffer;
+
       } else {
-        const auto reqResponse = cpr::Delete(cpr::Url{baseUrl + "/enrollments/face/" + userId + "/" + stringFaceEnrollmentId}, *auth, *platformHeader, cpr::Parameters{{"notificationURL", notificationUrl}});
-        return json::parse(reqResponse.text);
+        throw std::string("Cannot initialize curl object. Please ensure you have a working installation of the libcurl Library with the appropriate compile flag.");
       }
     }
 
-    json DeleteAllFaceEnrollments(std::string userId)
-    {
-      if (notificationUrl == "") {
-        const auto reqResponse = cpr::Delete(cpr::Url{baseUrl + "/enrollments/" + userId + "/face"}, *auth, *platformHeader);
-        return json::parse(reqResponse.text);
+    std::string DeleteAllVideoEnrollments(std::string userId) {
+      CURL *curl;
+      curl_global_init(CURL_GLOBAL_ALL);
+      curl = curl_easy_init();
+      if (curl) {
+        readBuffer.clear();
+        CURLcode res;
+        std::stringstream url;
+        if (notificationUrl == "") {
+          url << baseUrl << "/enrollments/" << userId << "/video";
+        } else {
+          url << baseUrl << "/enrollments/" << userId << "/video?notificationUrl=" << notificationUrl;
+        }
+
+        curl_easy_setopt(curl, CURLOPT_URL, url.str().c_str());
+        curl_easy_setopt(curl, CURLOPT_HTTPAUTH, CURLAUTH_ANY);
+        curl_easy_setopt(curl, CURLOPT_USERPWD, auth.c_str());
+        curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "DELETE");
+
+        struct curl_slist *chunk = NULL;
+        chunk = curl_slist_append(chunk, platformVersionHeader.c_str());
+        chunk = curl_slist_append(chunk, platformIdHeader.c_str());
+        curl_easy_setopt(curl, CURLOPT_HTTPHEADER, chunk);
+
+        curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
+        curl_easy_setopt(curl, CURLOPT_WRITEDATA, &readBuffer);
+        res = curl_easy_perform(curl);
+
+        curl_easy_cleanup(curl);
+        curl_slist_free_all(chunk);
+        return readBuffer;
+
       } else {
-        const auto reqResponse = cpr::Delete(cpr::Url{baseUrl + "/enrollments/" + userId + "/face"}, *auth, *platformHeader, cpr::Parameters{{"notificationURL", notificationUrl}});
-        return json::parse(reqResponse.text);
+        throw std::string("Cannot initialize curl object. Please ensure you have a working installation of the libcurl Library with the appropriate compile flag.");
       }
     }
 
-    json DeleteAllEnrollments(std::string userId)
-    {
-      if (notificationUrl == "") {
-        const auto reqResponse = cpr::Delete(cpr::Url{baseUrl + "/enrollments/" + userId + "/all"}, *auth, *platformHeader);
-        return json::parse(reqResponse.text);
+    std::string DeleteAllEnrollments(std::string userId) {
+      CURL *curl;
+      curl_global_init(CURL_GLOBAL_ALL);
+      curl = curl_easy_init();
+      if (curl) {
+        readBuffer.clear();
+        CURLcode res;
+        std::stringstream url;
+        if (notificationUrl == "") {
+          url << baseUrl << "/enrollments/" << userId << "/all";
+        } else {
+          url << baseUrl << "/enrollments/" << userId << "/all?notificationUrl=" << notificationUrl;
+        }
+
+        curl_easy_setopt(curl, CURLOPT_URL, url.str().c_str());
+        curl_easy_setopt(curl, CURLOPT_HTTPAUTH, CURLAUTH_ANY);
+        curl_easy_setopt(curl, CURLOPT_USERPWD, auth.c_str());
+        curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "DELETE");
+
+        struct curl_slist *chunk = NULL;
+        chunk = curl_slist_append(chunk, platformVersionHeader.c_str());
+        chunk = curl_slist_append(chunk, platformIdHeader.c_str());
+        curl_easy_setopt(curl, CURLOPT_HTTPHEADER, chunk);
+
+        curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
+        curl_easy_setopt(curl, CURLOPT_WRITEDATA, &readBuffer);
+        res = curl_easy_perform(curl);
+
+        curl_easy_cleanup(curl);
+        curl_slist_free_all(chunk);
+        return readBuffer;
+
       } else {
-        const auto reqResponse = cpr::Delete(cpr::Url{baseUrl + "/enrollments/" + userId + "/all"}, *auth, *platformHeader, cpr::Parameters{{"notificationURL", notificationUrl}});
-        return json::parse(reqResponse.text);
+        throw std::string("Cannot initialize curl object. Please ensure you have a working installation of the libcurl Library with the appropriate compile flag.");
       }
     }
 
-    json VoiceVerification(std::string userId, std::string contentLanguage, std::string phrase, std::string filePath)
-    {
+    std::string VoiceVerification(std::string userId, std::string contentLanguage, std::string phrase, std::string filePath) {
       FileExists(filePath);
-      if (notificationUrl == "") {
-        const auto reqResponse = cpr::Post(cpr::Url{baseUrl + "/verification/voice"}, *auth, *platformHeader, cpr::Multipart{{"userId", userId}, {"contentLanguage", contentLanguage}, {"phrase", phrase}, {"recording", cpr::File{filePath}}});
-        return json::parse(reqResponse.text);
+      CURL *curl;
+      curl_global_init(CURL_GLOBAL_ALL);
+      curl = curl_easy_init();
+      if (curl) {
+        readBuffer.clear();
+        CURLcode res;
+        std::stringstream url;
+        if (notificationUrl == "") {
+          url << baseUrl << "/verification/voice";
+        } else {
+          url << baseUrl << "/verification/voice?notificationUrl=" << notificationUrl;
+        }
+
+        curl_easy_setopt(curl, CURLOPT_URL, url.str().c_str());
+        curl_easy_setopt(curl, CURLOPT_HTTPAUTH, CURLAUTH_ANY);
+        curl_easy_setopt(curl, CURLOPT_USERPWD, auth.c_str());
+        curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "POST");
+
+        struct curl_slist *chunk = NULL;
+        chunk = curl_slist_append(chunk, platformVersionHeader.c_str());
+        chunk = curl_slist_append(chunk, platformIdHeader.c_str());
+        chunk = curl_slist_append(chunk, "Content-Type: multipart/form-data");
+        curl_easy_setopt(curl, CURLOPT_HTTPHEADER, chunk);
+
+        struct curl_httppost *formpost = NULL;
+        struct curl_httppost *lastptr = NULL;
+
+        curl_formadd(&formpost,
+             &lastptr,
+             CURLFORM_COPYNAME, "userId",
+             CURLFORM_COPYCONTENTS, userId.c_str(),
+             CURLFORM_END);
+
+        curl_formadd(&formpost,
+             &lastptr,
+             CURLFORM_COPYNAME, "contentLanguage",
+             CURLFORM_COPYCONTENTS, contentLanguage.c_str(),
+             CURLFORM_END);
+
+        curl_formadd(&formpost,
+             &lastptr,
+             CURLFORM_COPYNAME, "phrase",
+             CURLFORM_COPYCONTENTS, phrase.c_str(),
+             CURLFORM_END);
+
+
+        curl_formadd(&formpost,
+             &lastptr,
+             CURLFORM_COPYNAME, "recording",
+             CURLFORM_FILE, filePath.c_str(),
+             CURLFORM_END);
+
+        curl_easy_setopt(curl, CURLOPT_HTTPPOST, formpost);
+        curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
+        curl_easy_setopt(curl, CURLOPT_WRITEDATA, &readBuffer);
+        res = curl_easy_perform(curl);
+
+        curl_easy_cleanup(curl);
+        curl_formfree(formpost);
+        curl_slist_free_all(chunk);
+        return readBuffer;
+
       } else {
-        const auto reqResponse = cpr::Post(cpr::Url{baseUrl + "/verification/voice"}, *auth, *platformHeader, cpr::Parameters{{"notificationURL", notificationUrl}}, cpr::Multipart{{"userId", userId}, {"contentLanguage", contentLanguage}, {"phrase", phrase}, {"recording", cpr::File{filePath}}});
-        return json::parse(reqResponse.text);
+        throw std::string("Cannot initialize curl object. Please ensure you have a working installation of the libcurl Library with the appropriate compile flag.");
       }
     }
 
 
-    json VoiceVerificationByUrl(std::string userId, std::string contentLanguage, std::string phrase, std::string fileUrl)
-    {
-      if (notificationUrl == "") {
-        const auto reqResponse = cpr::Post(cpr::Url{baseUrl + "/verification/voice/byUrl"}, *auth, *platformHeader, cpr::Multipart{{"userId", userId}, {"contentLanguage", contentLanguage}, {"phrase", phrase}, {"fileUrl", fileUrl}});
-        return json::parse(reqResponse.text);
+    std::string VoiceVerificationByUrl(std::string userId, std::string contentLanguage, std::string phrase, std::string fileUrl) {
+      CURL *curl;
+      curl_global_init(CURL_GLOBAL_ALL);
+      curl = curl_easy_init();
+      if (curl) {
+        readBuffer.clear();
+        CURLcode res;
+        std::stringstream url;
+        if (notificationUrl == "") {
+          url << baseUrl << "/verification/voice/byUrl";
+        } else {
+          url << baseUrl << "/verification/voice/byUrl?notificationUrl=" << notificationUrl;
+        }
+
+        curl_easy_setopt(curl, CURLOPT_URL, url.str().c_str());
+        curl_easy_setopt(curl, CURLOPT_HTTPAUTH, CURLAUTH_ANY);
+        curl_easy_setopt(curl, CURLOPT_USERPWD, auth.c_str());
+        curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "POST");
+
+        struct curl_slist *chunk = NULL;
+        chunk = curl_slist_append(chunk, platformVersionHeader.c_str());
+        chunk = curl_slist_append(chunk, platformIdHeader.c_str());
+        chunk = curl_slist_append(chunk, "Content-Type: multipart/form-data");
+        curl_easy_setopt(curl, CURLOPT_HTTPHEADER, chunk);
+
+        struct curl_httppost *formpost = NULL;
+        struct curl_httppost *lastptr = NULL;
+
+        curl_formadd(&formpost,
+             &lastptr,
+             CURLFORM_COPYNAME, "userId",
+             CURLFORM_COPYCONTENTS, userId.c_str(),
+             CURLFORM_END);
+
+        curl_formadd(&formpost,
+             &lastptr,
+             CURLFORM_COPYNAME, "contentLanguage",
+             CURLFORM_COPYCONTENTS, contentLanguage.c_str(),
+             CURLFORM_END);
+
+        curl_formadd(&formpost,
+             &lastptr,
+             CURLFORM_COPYNAME, "phrase",
+             CURLFORM_COPYCONTENTS, phrase.c_str(),
+             CURLFORM_END);
+
+
+        curl_formadd(&formpost,
+             &lastptr,
+             CURLFORM_COPYNAME, "fileUrl",
+             CURLFORM_COPYCONTENTS, fileUrl.c_str(),
+             CURLFORM_END);
+
+        curl_easy_setopt(curl, CURLOPT_HTTPPOST, formpost);
+        curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
+        curl_easy_setopt(curl, CURLOPT_WRITEDATA, &readBuffer);
+        res = curl_easy_perform(curl);
+
+        curl_easy_cleanup(curl);
+        curl_formfree(formpost);
+        curl_slist_free_all(chunk);
+        return readBuffer;
+
       } else {
-        const auto reqResponse = cpr::Post(cpr::Url{baseUrl + "/verification/voice/byUrl"}, *auth, *platformHeader, cpr::Parameters{{"notificationURL", notificationUrl}}, cpr::Multipart{{"userId", userId}, {"contentLanguage", contentLanguage}, {"phrase", phrase}, {"fileUrl", fileUrl}});
-        return json::parse(reqResponse.text);
+        throw std::string("Cannot initialize curl object. Please ensure you have a working installation of the libcurl Library with the appropriate compile flag.");
       }
     }
 
-    json FaceVerification(std::string userId, std::string filePath)
-    {
+    std::string FaceVerification(std::string userId, std::string filePath) {
       FileExists(filePath);
-      if (notificationUrl == "") {
-        const auto reqResponse = cpr::Post(cpr::Url{baseUrl + "/verification/face"}, *auth, *platformHeader, cpr::Multipart{{"userId", userId}, {"video", cpr::File{filePath}}});
-        return json::parse(reqResponse.text);
+      CURL *curl;
+      curl_global_init(CURL_GLOBAL_ALL);
+      curl = curl_easy_init();
+      if (curl) {
+        readBuffer.clear();
+        CURLcode res;
+        std::stringstream url;
+        if (notificationUrl == "") {
+          url << baseUrl << "/verification/face";
+        } else {
+          url << baseUrl << "/verification/face?notificationUrl=" << notificationUrl;
+        }
+
+        curl_easy_setopt(curl, CURLOPT_URL, url.str().c_str());
+        curl_easy_setopt(curl, CURLOPT_HTTPAUTH, CURLAUTH_ANY);
+        curl_easy_setopt(curl, CURLOPT_USERPWD, auth.c_str());
+        curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "POST");
+
+        struct curl_slist *chunk = NULL;
+        chunk = curl_slist_append(chunk, platformVersionHeader.c_str());
+        chunk = curl_slist_append(chunk, platformIdHeader.c_str());
+        chunk = curl_slist_append(chunk, "Content-Type: multipart/form-data");
+        curl_easy_setopt(curl, CURLOPT_HTTPHEADER, chunk);
+
+        struct curl_httppost *formpost = NULL;
+        struct curl_httppost *lastptr = NULL;
+
+        curl_formadd(&formpost,
+             &lastptr,
+             CURLFORM_COPYNAME, "userId",
+             CURLFORM_COPYCONTENTS, userId.c_str(),
+             CURLFORM_END);
+
+        curl_formadd(&formpost,
+             &lastptr,
+             CURLFORM_COPYNAME, "video",
+             CURLFORM_FILE, filePath.c_str(),
+             CURLFORM_END);
+
+        curl_easy_setopt(curl, CURLOPT_HTTPPOST, formpost);
+        curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
+        curl_easy_setopt(curl, CURLOPT_WRITEDATA, &readBuffer);
+        res = curl_easy_perform(curl);
+
+        curl_easy_cleanup(curl);
+        curl_formfree(formpost);
+        curl_slist_free_all(chunk);
+        return readBuffer;
+
       } else {
-        const auto reqResponse = cpr::Post(cpr::Url{baseUrl + "/verification/face"}, *auth, *platformHeader, cpr::Parameters{{"notificationURL", notificationUrl}}, cpr::Multipart{{"userId", userId}, {"video", cpr::File{filePath}}});
-        return json::parse(reqResponse.text);
+        throw std::string("Cannot initialize curl object. Please ensure you have a working installation of the libcurl Library with the appropriate compile flag.");
       }
     }
 
-    json FaceVerificationByUrl(std::string userId, std::string fileUrl)
-    {
-      if (notificationUrl == "") {
-        const auto reqResponse = cpr::Post(cpr::Url{baseUrl + "/verification/face/byUrl"}, *auth, *platformHeader, cpr::Multipart{{"userId", userId}, {"fileUrl", fileUrl}});
-        return json::parse(reqResponse.text);
+    std::string FaceVerificationByUrl(std::string userId, std::string fileUrl) {
+      CURL *curl;
+      curl_global_init(CURL_GLOBAL_ALL);
+      curl = curl_easy_init();
+      if (curl) {
+        readBuffer.clear();
+        CURLcode res;
+        std::stringstream url;
+        if (notificationUrl == "") {
+          url << baseUrl << "/verification/face/byUrl";
+        } else {
+          url << baseUrl << "/verification/face/byUrl?notificationUrl=" << notificationUrl;
+        }
+
+        curl_easy_setopt(curl, CURLOPT_URL, url.str().c_str());
+        curl_easy_setopt(curl, CURLOPT_HTTPAUTH, CURLAUTH_ANY);
+        curl_easy_setopt(curl, CURLOPT_USERPWD, auth.c_str());
+        curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "POST");
+
+        struct curl_slist *chunk = NULL;
+        chunk = curl_slist_append(chunk, platformVersionHeader.c_str());
+        chunk = curl_slist_append(chunk, platformIdHeader.c_str());
+        chunk = curl_slist_append(chunk, "Content-Type: multipart/form-data");
+        curl_easy_setopt(curl, CURLOPT_HTTPHEADER, chunk);
+
+        struct curl_httppost *formpost = NULL;
+        struct curl_httppost *lastptr = NULL;
+
+        curl_formadd(&formpost,
+             &lastptr,
+             CURLFORM_COPYNAME, "userId",
+             CURLFORM_COPYCONTENTS, userId.c_str(),
+             CURLFORM_END);
+
+        curl_formadd(&formpost,
+             &lastptr,
+             CURLFORM_COPYNAME, "fileUrl",
+             CURLFORM_COPYCONTENTS, fileUrl.c_str(),
+             CURLFORM_END);
+
+        curl_easy_setopt(curl, CURLOPT_HTTPPOST, formpost);
+        curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
+        curl_easy_setopt(curl, CURLOPT_WRITEDATA, &readBuffer);
+        res = curl_easy_perform(curl);
+
+        curl_easy_cleanup(curl);
+        curl_formfree(formpost);
+        curl_slist_free_all(chunk);
+        return readBuffer;
+
       } else {
-        const auto reqResponse = cpr::Post(cpr::Url{baseUrl + "/verification/face/byUrl"}, *auth, *platformHeader, cpr::Parameters{{"notificationURL", notificationUrl}}, cpr::Multipart{{"userId", userId}, {"fileUrl", fileUrl}});
-        return json::parse(reqResponse.text);
+        throw std::string("Cannot initialize curl object. Please ensure you have a working installation of the libcurl Library with the appropriate compile flag.");
       }
     }
 
-    json VideoVerification(std::string userId, std::string contentLanguage, std::string phrase, std::string filePath)
-    {
+    std::string VideoVerification(std::string userId, std::string contentLanguage, std::string phrase, std::string filePath) {
       FileExists(filePath);
-      if (notificationUrl == "") {
-        const auto reqResponse = cpr::Post(cpr::Url{baseUrl + "/verification/video"}, *auth, *platformHeader, cpr::Multipart{{"userId", userId}, {"contentLanguage", contentLanguage}, {"phrase", phrase}, {"video", cpr::File{filePath}}});
-        return json::parse(reqResponse.text);
+      CURL *curl;
+      curl_global_init(CURL_GLOBAL_ALL);
+      curl = curl_easy_init();
+      if (curl) {
+        readBuffer.clear();
+        CURLcode res;
+        std::stringstream url;
+        if (notificationUrl == "") {
+          url << baseUrl << "/verification/video";
+        } else {
+          url << baseUrl << "/verification/video?notificationUrl=" << notificationUrl;
+        }
+
+        curl_easy_setopt(curl, CURLOPT_URL, url.str().c_str());
+        curl_easy_setopt(curl, CURLOPT_HTTPAUTH, CURLAUTH_ANY);
+        curl_easy_setopt(curl, CURLOPT_USERPWD, auth.c_str());
+        curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "POST");
+
+        struct curl_slist *chunk = NULL;
+        chunk = curl_slist_append(chunk, platformVersionHeader.c_str());
+        chunk = curl_slist_append(chunk, platformIdHeader.c_str());
+        chunk = curl_slist_append(chunk, "Content-Type: multipart/form-data");
+        curl_easy_setopt(curl, CURLOPT_HTTPHEADER, chunk);
+
+        struct curl_httppost *formpost = NULL;
+        struct curl_httppost *lastptr = NULL;
+
+        curl_formadd(&formpost,
+             &lastptr,
+             CURLFORM_COPYNAME, "userId",
+             CURLFORM_COPYCONTENTS, userId.c_str(),
+             CURLFORM_END);
+
+        curl_formadd(&formpost,
+             &lastptr,
+             CURLFORM_COPYNAME, "contentLanguage",
+             CURLFORM_COPYCONTENTS, contentLanguage.c_str(),
+             CURLFORM_END);
+
+        curl_formadd(&formpost,
+             &lastptr,
+             CURLFORM_COPYNAME, "phrase",
+             CURLFORM_COPYCONTENTS, phrase.c_str(),
+             CURLFORM_END);
+
+
+        curl_formadd(&formpost,
+             &lastptr,
+             CURLFORM_COPYNAME, "video",
+             CURLFORM_FILE, filePath.c_str(),
+             CURLFORM_END);
+
+        curl_easy_setopt(curl, CURLOPT_HTTPPOST, formpost);
+        curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
+        curl_easy_setopt(curl, CURLOPT_WRITEDATA, &readBuffer);
+        res = curl_easy_perform(curl);
+
+        curl_easy_cleanup(curl);
+        curl_formfree(formpost);
+        curl_slist_free_all(chunk);
+        return readBuffer;
+
       } else {
-        const auto reqResponse = cpr::Post(cpr::Url{baseUrl + "/verification/video"}, *auth, *platformHeader, cpr::Parameters{{"notificationURL", notificationUrl}}, cpr::Multipart{{"userId", userId}, {"contentLanguage", contentLanguage}, {"phrase", phrase}, {"video", cpr::File{filePath}}});
-        return json::parse(reqResponse.text);
+        throw std::string("Cannot initialize curl object. Please ensure you have a working installation of the libcurl Library with the appropriate compile flag.");
       }
     }
 
-    json VideoVerificationByUrl(std::string userId, std::string contentLanguage, std::string phrase, std::string fileUrl)
-    {
-      if (notificationUrl == "") {
-        const auto reqResponse = cpr::Post(cpr::Url{baseUrl + "/verification/video/byUrl"}, *auth, *platformHeader, cpr::Multipart{{"userId", userId}, {"contentLanguage", contentLanguage}, {"phrase", phrase}, {"fileUrl", fileUrl}});
-        return json::parse(reqResponse.text);
+    std::string VideoVerificationByUrl(std::string userId, std::string contentLanguage, std::string phrase, std::string fileUrl) {
+      CURL *curl;
+      curl_global_init(CURL_GLOBAL_ALL);
+      curl = curl_easy_init();
+      if (curl) {
+        readBuffer.clear();
+        CURLcode res;
+        std::stringstream url;
+        if (notificationUrl == "") {
+          url << baseUrl << "/verification/video/byUrl";
+        } else {
+          url << baseUrl << "/verification/video/byUrl?notificationUrl=" << notificationUrl;
+        }
+
+        curl_easy_setopt(curl, CURLOPT_URL, url.str().c_str());
+        curl_easy_setopt(curl, CURLOPT_HTTPAUTH, CURLAUTH_ANY);
+        curl_easy_setopt(curl, CURLOPT_USERPWD, auth.c_str());
+        curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "POST");
+
+        struct curl_slist *chunk = NULL;
+        chunk = curl_slist_append(chunk, platformVersionHeader.c_str());
+        chunk = curl_slist_append(chunk, platformIdHeader.c_str());
+        chunk = curl_slist_append(chunk, "Content-Type: multipart/form-data");
+        curl_easy_setopt(curl, CURLOPT_HTTPHEADER, chunk);
+
+        struct curl_httppost *formpost = NULL;
+        struct curl_httppost *lastptr = NULL;
+
+        curl_formadd(&formpost,
+             &lastptr,
+             CURLFORM_COPYNAME, "userId",
+             CURLFORM_COPYCONTENTS, userId.c_str(),
+             CURLFORM_END);
+
+        curl_formadd(&formpost,
+             &lastptr,
+             CURLFORM_COPYNAME, "contentLanguage",
+             CURLFORM_COPYCONTENTS, contentLanguage.c_str(),
+             CURLFORM_END);
+
+        curl_formadd(&formpost,
+             &lastptr,
+             CURLFORM_COPYNAME, "phrase",
+             CURLFORM_COPYCONTENTS, phrase.c_str(),
+             CURLFORM_END);
+
+
+        curl_formadd(&formpost,
+             &lastptr,
+             CURLFORM_COPYNAME, "fileUrl",
+             CURLFORM_COPYCONTENTS, fileUrl.c_str(),
+             CURLFORM_END);
+
+        curl_easy_setopt(curl, CURLOPT_HTTPPOST, formpost);
+        curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
+        curl_easy_setopt(curl, CURLOPT_WRITEDATA, &readBuffer);
+        res = curl_easy_perform(curl);
+
+        curl_easy_cleanup(curl);
+        curl_formfree(formpost);
+        curl_slist_free_all(chunk);
+        return readBuffer;
+
       } else {
-        const auto reqResponse = cpr::Post(cpr::Url{baseUrl + "/verification/video/byUrl"}, *auth, *platformHeader, cpr::Parameters{{"notificationURL", notificationUrl}}, cpr::Multipart{{"userId", userId}, {"contentLanguage", contentLanguage}, {"phrase", phrase}, {"fileUrl", fileUrl}});
-        return json::parse(reqResponse.text);
+        throw std::string("Cannot initialize curl object. Please ensure you have a working installation of the libcurl Library with the appropriate compile flag.");
       }
     }
 
-    json VoiceIdentification(std::string groupId, std::string contentLanguage, std::string phrase, std::string filePath)
-    {
+    std::string VoiceIdentification(std::string groupId, std::string contentLanguage, std::string phrase, std::string filePath) {
       FileExists(filePath);
-      if (notificationUrl == "") {
-        const auto reqResponse = cpr::Post(cpr::Url{baseUrl + "/identification/voice"}, *auth, *platformHeader, cpr::Multipart{{"groupId", groupId}, {"contentLanguage", contentLanguage}, {"phrase", phrase}, {"recording", cpr::File{filePath}}});
-        return json::parse(reqResponse.text);
+      CURL *curl;
+      curl_global_init(CURL_GLOBAL_ALL);
+      curl = curl_easy_init();
+      if (curl) {
+        readBuffer.clear();
+        CURLcode res;
+        std::stringstream url;
+        if (notificationUrl == "") {
+          url << baseUrl << "/identification/voice";
+        } else {
+          url << baseUrl << "/identification/voice?notificationUrl=" << notificationUrl;
+        }
+
+        curl_easy_setopt(curl, CURLOPT_URL, url.str().c_str());
+        curl_easy_setopt(curl, CURLOPT_HTTPAUTH, CURLAUTH_ANY);
+        curl_easy_setopt(curl, CURLOPT_USERPWD, auth.c_str());
+        curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "POST");
+
+        struct curl_slist *chunk = NULL;
+        chunk = curl_slist_append(chunk, platformVersionHeader.c_str());
+        chunk = curl_slist_append(chunk, platformIdHeader.c_str());
+        chunk = curl_slist_append(chunk, "Content-Type: multipart/form-data");
+        curl_easy_setopt(curl, CURLOPT_HTTPHEADER, chunk);
+
+        struct curl_httppost *formpost = NULL;
+        struct curl_httppost *lastptr = NULL;
+
+        curl_formadd(&formpost,
+             &lastptr,
+             CURLFORM_COPYNAME, "groupId",
+             CURLFORM_COPYCONTENTS, groupId.c_str(),
+             CURLFORM_END);
+
+        curl_formadd(&formpost,
+             &lastptr,
+             CURLFORM_COPYNAME, "contentLanguage",
+             CURLFORM_COPYCONTENTS, contentLanguage.c_str(),
+             CURLFORM_END);
+
+        curl_formadd(&formpost,
+             &lastptr,
+             CURLFORM_COPYNAME, "phrase",
+             CURLFORM_COPYCONTENTS, phrase.c_str(),
+             CURLFORM_END);
+
+
+        curl_formadd(&formpost,
+             &lastptr,
+             CURLFORM_COPYNAME, "recording",
+             CURLFORM_FILE, filePath.c_str(),
+             CURLFORM_END);
+
+        curl_easy_setopt(curl, CURLOPT_HTTPPOST, formpost);
+        curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
+        curl_easy_setopt(curl, CURLOPT_WRITEDATA, &readBuffer);
+        res = curl_easy_perform(curl);
+
+        curl_easy_cleanup(curl);
+        curl_formfree(formpost);
+        curl_slist_free_all(chunk);
+        return readBuffer;
+
       } else {
-        const auto reqResponse = cpr::Post(cpr::Url{baseUrl + "/identification/voice"}, *auth, *platformHeader, cpr::Parameters{{"notificationURL", notificationUrl}}, cpr::Multipart{{"groupId", groupId}, {"contentLanguage", contentLanguage}, {"phrase", phrase}, {"recording", cpr::File{filePath}}});
-        return json::parse(reqResponse.text);
+        throw std::string("Cannot initialize curl object. Please ensure you have a working installation of the libcurl Library with the appropriate compile flag.");
       }
     }
 
-    json VoiceIdentificationByUrl(std::string groupId, std::string contentLanguage, std::string phrase, std::string fileUrl)
-    {
-      if (notificationUrl == "") {
-        const auto reqResponse = cpr::Post(cpr::Url{baseUrl + "/identification/voice/byUrl"}, *auth, *platformHeader, cpr::Multipart{{"groupId", groupId}, {"contentLanguage", contentLanguage}, {"phrase", phrase}, {"fileUrl", fileUrl}});
-        return json::parse(reqResponse.text);
+    std::string VoiceIdentificationByUrl(std::string groupId, std::string contentLanguage, std::string phrase, std::string fileUrl) {
+      CURL *curl;
+      curl_global_init(CURL_GLOBAL_ALL);
+      curl = curl_easy_init();
+      if (curl) {
+        readBuffer.clear();
+        CURLcode res;
+        std::stringstream url;
+        if (notificationUrl == "") {
+          url << baseUrl << "/identification/voice/byUrl";
+        } else {
+          url << baseUrl << "/identification/voice/byUrl?notificationUrl=" << notificationUrl;
+        }
+
+        curl_easy_setopt(curl, CURLOPT_URL, url.str().c_str());
+        curl_easy_setopt(curl, CURLOPT_HTTPAUTH, CURLAUTH_ANY);
+        curl_easy_setopt(curl, CURLOPT_USERPWD, auth.c_str());
+        curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "POST");
+
+        struct curl_slist *chunk = NULL;
+        chunk = curl_slist_append(chunk, platformVersionHeader.c_str());
+        chunk = curl_slist_append(chunk, platformIdHeader.c_str());
+        chunk = curl_slist_append(chunk, "Content-Type: multipart/form-data");
+        curl_easy_setopt(curl, CURLOPT_HTTPHEADER, chunk);
+
+        struct curl_httppost *formpost = NULL;
+        struct curl_httppost *lastptr = NULL;
+
+        curl_formadd(&formpost,
+             &lastptr,
+             CURLFORM_COPYNAME, "groupId",
+             CURLFORM_COPYCONTENTS, groupId.c_str(),
+             CURLFORM_END);
+
+        curl_formadd(&formpost,
+             &lastptr,
+             CURLFORM_COPYNAME, "contentLanguage",
+             CURLFORM_COPYCONTENTS, contentLanguage.c_str(),
+             CURLFORM_END);
+
+        curl_formadd(&formpost,
+             &lastptr,
+             CURLFORM_COPYNAME, "phrase",
+             CURLFORM_COPYCONTENTS, phrase.c_str(),
+             CURLFORM_END);
+
+
+        curl_formadd(&formpost,
+             &lastptr,
+             CURLFORM_COPYNAME, "fileUrl",
+             CURLFORM_COPYCONTENTS, fileUrl.c_str(),
+             CURLFORM_END);
+
+        curl_easy_setopt(curl, CURLOPT_HTTPPOST, formpost);
+        curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
+        curl_easy_setopt(curl, CURLOPT_WRITEDATA, &readBuffer);
+        res = curl_easy_perform(curl);
+
+        curl_easy_cleanup(curl);
+        curl_formfree(formpost);
+        curl_slist_free_all(chunk);
+        return readBuffer;
+
       } else {
-        const auto reqResponse = cpr::Post(cpr::Url{baseUrl + "/identification/voice/byUrl"}, *auth, *platformHeader, cpr::Parameters{{"notificationURL", notificationUrl}}, cpr::Multipart{{"groupId", groupId}, {"contentLanguage", contentLanguage}, {"phrase", phrase}, {"fileUrl", fileUrl}});
-        return json::parse(reqResponse.text);
+        throw std::string("Cannot initialize curl object. Please ensure you have a working installation of the libcurl Library with the appropriate compile flag.");
       }
     }
 
-    json VideoIdentification(std::string groupId, std::string contentLanguage, std::string phrase, std::string filePath)
-    {
+    std::string VideoIdentification(std::string groupId, std::string contentLanguage, std::string phrase, std::string filePath) {
       FileExists(filePath);
-      if (notificationUrl == "") {
-        const auto reqResponse = cpr::Post(cpr::Url{baseUrl + "/identification/video"}, *auth, *platformHeader, cpr::Multipart{{"groupId", groupId}, {"contentLanguage", contentLanguage}, {"phrase", phrase}, {"video", cpr::File{filePath}}});
-        return json::parse(reqResponse.text);
+      CURL *curl;
+      curl_global_init(CURL_GLOBAL_ALL);
+      curl = curl_easy_init();
+      if (curl) {
+        readBuffer.clear();
+        CURLcode res;
+        std::stringstream url;
+        if (notificationUrl == "") {
+          url << baseUrl << "/identification/video";
+        } else {
+          url << baseUrl << "/identification/video?notificationUrl=" << notificationUrl;
+        }
+
+        curl_easy_setopt(curl, CURLOPT_URL, url.str().c_str());
+        curl_easy_setopt(curl, CURLOPT_HTTPAUTH, CURLAUTH_ANY);
+        curl_easy_setopt(curl, CURLOPT_USERPWD, auth.c_str());
+        curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "POST");
+
+        struct curl_slist *chunk = NULL;
+        chunk = curl_slist_append(chunk, platformVersionHeader.c_str());
+        chunk = curl_slist_append(chunk, platformIdHeader.c_str());
+        chunk = curl_slist_append(chunk, "Content-Type: multipart/form-data");
+        curl_easy_setopt(curl, CURLOPT_HTTPHEADER, chunk);
+
+        struct curl_httppost *formpost = NULL;
+        struct curl_httppost *lastptr = NULL;
+
+        curl_formadd(&formpost,
+             &lastptr,
+             CURLFORM_COPYNAME, "groupId",
+             CURLFORM_COPYCONTENTS, groupId.c_str(),
+             CURLFORM_END);
+
+        curl_formadd(&formpost,
+             &lastptr,
+             CURLFORM_COPYNAME, "contentLanguage",
+             CURLFORM_COPYCONTENTS, contentLanguage.c_str(),
+             CURLFORM_END);
+
+        curl_formadd(&formpost,
+             &lastptr,
+             CURLFORM_COPYNAME, "phrase",
+             CURLFORM_COPYCONTENTS, phrase.c_str(),
+             CURLFORM_END);
+
+
+        curl_formadd(&formpost,
+             &lastptr,
+             CURLFORM_COPYNAME, "video",
+             CURLFORM_FILE, filePath.c_str(),
+             CURLFORM_END);
+
+        curl_easy_setopt(curl, CURLOPT_HTTPPOST, formpost);
+        curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
+        curl_easy_setopt(curl, CURLOPT_WRITEDATA, &readBuffer);
+        res = curl_easy_perform(curl);
+
+        curl_easy_cleanup(curl);
+        curl_formfree(formpost);
+        curl_slist_free_all(chunk);
+        return readBuffer;
+
       } else {
-        const auto reqResponse = cpr::Post(cpr::Url{baseUrl + "/identification/video"}, *auth, *platformHeader, cpr::Parameters{{"notificationURL", notificationUrl}}, cpr::Multipart{{"groupId", groupId}, {"contentLanguage", contentLanguage}, {"phrase", phrase}, {"video", cpr::File{filePath}}});
-        return json::parse(reqResponse.text);
+        throw std::string("Cannot initialize curl object. Please ensure you have a working installation of the libcurl Library with the appropriate compile flag.");
       }
     }
 
-    json VideoIdentificationByUrl(std::string groupId, std::string contentLanguage, std::string phrase, std::string fileUrl)
-    {
-      if (notificationUrl == "") {
-        const auto reqResponse = cpr::Post(cpr::Url{baseUrl + "/identification/video/byUrl"}, *auth, *platformHeader, cpr::Multipart{{"groupId", groupId}, {"contentLanguage", contentLanguage}, {"phrase", phrase}, {"fileUrl", fileUrl}});
-        return json::parse(reqResponse.text);
+    std::string VideoIdentificationByUrl(std::string groupId, std::string contentLanguage, std::string phrase, std::string fileUrl) {
+      CURL *curl;
+      curl_global_init(CURL_GLOBAL_ALL);
+      curl = curl_easy_init();
+      if (curl) {
+        readBuffer.clear();
+        CURLcode res;
+        std::stringstream url;
+        if (notificationUrl == "") {
+          url << baseUrl << "/identification/video/byUrl";
+        } else {
+          url << baseUrl << "/identification/video/byUrl?notificationUrl=" << notificationUrl;
+        }
+
+        curl_easy_setopt(curl, CURLOPT_URL, url.str().c_str());
+        curl_easy_setopt(curl, CURLOPT_HTTPAUTH, CURLAUTH_ANY);
+        curl_easy_setopt(curl, CURLOPT_USERPWD, auth.c_str());
+        curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "POST");
+
+        struct curl_slist *chunk = NULL;
+        chunk = curl_slist_append(chunk, platformVersionHeader.c_str());
+        chunk = curl_slist_append(chunk, platformIdHeader.c_str());
+        chunk = curl_slist_append(chunk, "Content-Type: multipart/form-data");
+        curl_easy_setopt(curl, CURLOPT_HTTPHEADER, chunk);
+
+        struct curl_httppost *formpost = NULL;
+        struct curl_httppost *lastptr = NULL;
+
+        curl_formadd(&formpost,
+             &lastptr,
+             CURLFORM_COPYNAME, "groupId",
+             CURLFORM_COPYCONTENTS, groupId.c_str(),
+             CURLFORM_END);
+
+        curl_formadd(&formpost,
+             &lastptr,
+             CURLFORM_COPYNAME, "contentLanguage",
+             CURLFORM_COPYCONTENTS, contentLanguage.c_str(),
+             CURLFORM_END);
+
+        curl_formadd(&formpost,
+             &lastptr,
+             CURLFORM_COPYNAME, "phrase",
+             CURLFORM_COPYCONTENTS, phrase.c_str(),
+             CURLFORM_END);
+
+
+        curl_formadd(&formpost,
+             &lastptr,
+             CURLFORM_COPYNAME, "fileUrl",
+             CURLFORM_COPYCONTENTS, fileUrl.c_str(),
+             CURLFORM_END);
+
+        curl_easy_setopt(curl, CURLOPT_HTTPPOST, formpost);
+        curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
+        curl_easy_setopt(curl, CURLOPT_WRITEDATA, &readBuffer);
+        res = curl_easy_perform(curl);
+
+        curl_easy_cleanup(curl);
+        curl_formfree(formpost);
+        curl_slist_free_all(chunk);
+        return readBuffer;
+
       } else {
-        const auto reqResponse = cpr::Post(cpr::Url{baseUrl + "/identification/video/byUrl"}, *auth, *platformHeader, cpr::Parameters{{"notificationURL", notificationUrl}}, cpr::Multipart{{"groupId", groupId}, {"contentLanguage", contentLanguage}, {"phrase", phrase}, {"fileUrl", fileUrl}});
-        return json::parse(reqResponse.text);
+        throw std::string("Cannot initialize curl object. Please ensure you have a working installation of the libcurl Library with the appropriate compile flag.");
       }
     }
 
-    json FaceIdentification(std::string groupId, std::string filePath)
-    {
+    std::string FaceIdentification(std::string groupId, std::string filePath) {
       FileExists(filePath);
-      if (notificationUrl == "") {
-        const auto reqResponse = cpr::Post(cpr::Url{baseUrl + "/identification/face"}, *auth, *platformHeader, cpr::Multipart{{"groupId", groupId}, {"video", cpr::File{filePath}}});
-        return json::parse(reqResponse.text);
+      CURL *curl;
+      curl_global_init(CURL_GLOBAL_ALL);
+      curl = curl_easy_init();
+      if (curl) {
+        readBuffer.clear();
+        CURLcode res;
+        std::stringstream url;
+        if (notificationUrl == "") {
+          url << baseUrl << "/identification/face";
+        } else {
+          url << baseUrl << "/identification/face?notificationUrl=" << notificationUrl;
+        }
+
+        curl_easy_setopt(curl, CURLOPT_URL, url.str().c_str());
+        curl_easy_setopt(curl, CURLOPT_HTTPAUTH, CURLAUTH_ANY);
+        curl_easy_setopt(curl, CURLOPT_USERPWD, auth.c_str());
+        curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "POST");
+
+        struct curl_slist *chunk = NULL;
+        chunk = curl_slist_append(chunk, platformVersionHeader.c_str());
+        chunk = curl_slist_append(chunk, platformIdHeader.c_str());
+        chunk = curl_slist_append(chunk, "Content-Type: multipart/form-data");
+        curl_easy_setopt(curl, CURLOPT_HTTPHEADER, chunk);
+
+        struct curl_httppost *formpost = NULL;
+        struct curl_httppost *lastptr = NULL;
+
+        curl_formadd(&formpost,
+             &lastptr,
+             CURLFORM_COPYNAME, "groupId",
+             CURLFORM_COPYCONTENTS, groupId.c_str(),
+             CURLFORM_END);
+
+        curl_formadd(&formpost,
+             &lastptr,
+             CURLFORM_COPYNAME, "video",
+             CURLFORM_FILE, filePath.c_str(),
+             CURLFORM_END);
+
+        curl_easy_setopt(curl, CURLOPT_HTTPPOST, formpost);
+        curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
+        curl_easy_setopt(curl, CURLOPT_WRITEDATA, &readBuffer);
+        res = curl_easy_perform(curl);
+
+        curl_easy_cleanup(curl);
+        curl_formfree(formpost);
+        curl_slist_free_all(chunk);
+        return readBuffer;
+
       } else {
-        const auto reqResponse = cpr::Post(cpr::Url{baseUrl + "/identification/face"}, *auth, *platformHeader, cpr::Parameters{{"notificationURL", notificationUrl}}, cpr::Multipart{{"groupId", groupId}, {"video", cpr::File{filePath}}});
-        return json::parse(reqResponse.text);
+        throw std::string("Cannot initialize curl object. Please ensure you have a working installation of the libcurl Library with the appropriate compile flag.");
       }
     }
 
-    json FaceIdentificationByUrl(std::string groupId, std::string fileUrl)
-    {
-      if (notificationUrl == "") {
-        const auto reqResponse = cpr::Post(cpr::Url{baseUrl + "/identification/face/byUrl"}, *auth, *platformHeader, cpr::Multipart{{"groupId", groupId}, {"fileUrl", fileUrl}});
-        return json::parse(reqResponse.text);
+    std::string FaceIdentificationByUrl(std::string groupId, std::string fileUrl) {
+      CURL *curl;
+      curl_global_init(CURL_GLOBAL_ALL);
+      curl = curl_easy_init();
+      if (curl) {
+        readBuffer.clear();
+        CURLcode res;
+        std::stringstream url;
+        if (notificationUrl == "") {
+          url << baseUrl << "/identification/face/byUrl";
+        } else {
+          url << baseUrl << "/identification/face/byUrl?notificationUrl=" << notificationUrl;
+        }
+
+        curl_easy_setopt(curl, CURLOPT_URL, url.str().c_str());
+        curl_easy_setopt(curl, CURLOPT_HTTPAUTH, CURLAUTH_ANY);
+        curl_easy_setopt(curl, CURLOPT_USERPWD, auth.c_str());
+        curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "POST");
+
+        struct curl_slist *chunk = NULL;
+        chunk = curl_slist_append(chunk, platformVersionHeader.c_str());
+        chunk = curl_slist_append(chunk, platformIdHeader.c_str());
+        chunk = curl_slist_append(chunk, "Content-Type: multipart/form-data");
+        curl_easy_setopt(curl, CURLOPT_HTTPHEADER, chunk);
+
+        struct curl_httppost *formpost = NULL;
+        struct curl_httppost *lastptr = NULL;
+
+        curl_formadd(&formpost,
+             &lastptr,
+             CURLFORM_COPYNAME, "groupId",
+             CURLFORM_COPYCONTENTS, groupId.c_str(),
+             CURLFORM_END);
+
+        curl_formadd(&formpost,
+             &lastptr,
+             CURLFORM_COPYNAME, "fileUrl",
+             CURLFORM_COPYCONTENTS, fileUrl.c_str(),
+             CURLFORM_END);
+
+        curl_easy_setopt(curl, CURLOPT_HTTPPOST, formpost);
+        curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
+        curl_easy_setopt(curl, CURLOPT_WRITEDATA, &readBuffer);
+        res = curl_easy_perform(curl);
+
+        curl_easy_cleanup(curl);
+        curl_formfree(formpost);
+        curl_slist_free_all(chunk);
+        return readBuffer;
+
       } else {
-        const auto reqResponse = cpr::Post(cpr::Url{baseUrl + "/identification/face/byUrl"}, *auth, *platformHeader, cpr::Parameters{{"notificationURL", notificationUrl}}, cpr::Multipart{{"groupId", groupId}, {"fileUrl", fileUrl}});
-        return json::parse(reqResponse.text);
+        throw std::string("Cannot initialize curl object. Please ensure you have a working installation of the libcurl Library with the appropriate compile flag.");
       }
     }
 
-    json GetPhrases(std::string contentLanguage)
-    {
-      if (notificationUrl == "") {
-        const auto reqResponse = cpr::Get(cpr::Url{baseUrl + "/phrases/" + contentLanguage}, *auth, *platformHeader);
-        return json::parse(reqResponse.text);
+    std::string GetPhrases(std::string contentLanguage) {
+      CURL *curl;
+      curl_global_init(CURL_GLOBAL_ALL);
+      curl = curl_easy_init();
+      if (curl) {
+        readBuffer.clear();
+        CURLcode res;
+        std::stringstream url;
+        if (notificationUrl == "") {
+          url << baseUrl << "/phrases/" << contentLanguage;
+        } else {
+          url << baseUrl << "/phrases/" << contentLanguage << "?notificationUrl=" << notificationUrl;
+        }
+
+        curl_easy_setopt(curl, CURLOPT_URL, url.str().c_str());
+        curl_easy_setopt(curl, CURLOPT_HTTPAUTH, CURLAUTH_ANY);
+        curl_easy_setopt(curl, CURLOPT_USERPWD, auth.c_str());
+        curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "GET");
+        struct curl_slist *chunk = NULL;
+        chunk = curl_slist_append(chunk, platformVersionHeader.c_str());
+        chunk = curl_slist_append(chunk, platformIdHeader.c_str());
+        curl_easy_setopt(curl, CURLOPT_HTTPHEADER, chunk);
+        curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
+        curl_easy_setopt(curl, CURLOPT_WRITEDATA, &readBuffer);
+        res = curl_easy_perform(curl);
+
+        curl_easy_cleanup(curl);
+        curl_slist_free_all(chunk);
+        return readBuffer;
+
       } else {
-        const auto reqResponse = cpr::Get(cpr::Url{baseUrl + "/phrases/" + contentLanguage}, *auth, *platformHeader, cpr::Parameters{{"notificationURL", notificationUrl}});
-        return json::parse(reqResponse.text);
+        throw std::string("Cannot initialize curl object. Please ensure you have a working installation of the libcurl Library with the appropriate compile flag.");
       }
     }
 
-    json CreateUserToken(std::string userId, int secondsToTimeout)
-    {
-      const auto reqResponse = cpr::Post(cpr::Url{baseUrl + "/users/" + userId + "/token"}, *auth, *platformHeader, cpr::Parameters{{"timeOut", std::to_string(secondsToTimeout)}});
-      return json::parse(reqResponse.text);
-    }
   };

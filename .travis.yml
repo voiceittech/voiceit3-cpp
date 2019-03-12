@@ -9,17 +9,15 @@ addons:
       - g++-8
       - libssl-dev
       - cmake
+      - libcurl4-gnutls-dev
 before_script:
   - export CC=gcc-8
   - export CXX=g++-8
-  - cd Test
-  - mv ../VoiceIt2.hpp .
-  - mv ../json.hpp .
-  - git submodule add https://github.com/whoshuu/cpr.git
-  - git submodule update --init --recursive
-  - cmake -D -CMAKE_CXX_COMPILER="/usr/bin/g++-8"
-  - make CC=/usr/bin/gcc-8 CPP=/usr/bin/g++-8 CXX=/usr/bin/g++-8 LD=/usr/bin/g++-8
-script: "./Test"
+  - wget https://github.com/nlohmann/json/releases/download/v3.5.0/json.hpp
+  - echo "curl-config --libs"
+  - curl-config --libs
+  - g++-8 -std=c++11 Test.cpp -o test -lcurl
+script: "./test"
 after_success:
   - ./release.sh
   - ./email.sh
