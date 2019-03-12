@@ -12,7 +12,7 @@ class VoiceIt2
 {
   private:
     const std::string baseUrl = "https://api.voiceit.io";
-    const std::string version = "2.0.0";
+    const std::string version = "2.0.1";
     std::string notificationUrl = "";
     std::string auth;
     std::string platformIdHeader = "platformId: 34";
