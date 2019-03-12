@@ -63,7 +63,8 @@ then
 
   if [[ $wrapperplatformversion = $version ]];
   then
-    curl -u $GITHUBUSERNAME:$GITHUBPASSWORD -H "Content-Type: application/json" --request POST --data '{"tag_name": "'$version'", "target_commitish": "master", "name": "'$version'", "body": "", "draft": false, "prerelease": false}' https://api.github.com/repos/voiceittech/VoiceIt2-Cpp/releases 1>&2
+    uploadurl=$(curl -s -u $GITHUBUSERNAME:$GITHUBPASSWORD -H "Content-Type: application/json" -X POST --data '{"tag_name": "'$version'", "target_commitish": "master", "name": "'$version'", "body": "", "draft": false, "prerelease": false}' https://api.github.com/repos/voiceittech/VoiceIt2-Cpp/releases | grep upload_url | awk '{print $2}' | cut -d '"' -f2 | cut -f1 -d '{')
+    curl -u $GITHUBUSERNAME:$GITHUBPASSWORD -H "Content-Type: text/x-c" -X POST -F 'data=@./VoiceIt2.hpp' $uploadurl'?name=VoiceIt2.hpp' 1>&2
 
     if [ "$?" != "0" ]
     then
