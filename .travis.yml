@@ -13,10 +13,7 @@ addons:
 before_script:
   - export CC=gcc-8
   - export CXX=g++-8
-  - wget https://github.com/nlohmann/json/releases/download/v3.5.0/json.hpp
-  - echo "curl-config --libs"
-  - curl-config --libs
-  - g++-8 -std=c++11 Test.cpp -o test -lcurl
+  - g++-8 -std=c++11 Test.cpp -o test -L/usr/lib/x86_64-linux-gnu -lcurl
 script: "./test"
 after_success:
   - ./release.sh
