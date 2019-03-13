@@ -110,6 +110,7 @@ then
       json='{"authenticationPassword":"'$EMAILAUTHPASS'", "messages" : "'$formattedmessages'", "packageManaged": false, "instructions": "https://github.com/voiceittech/VoiceIt2-Cpp/releases/download/'$wrapperplatformversion'/VoiceIt2.hpp"}'
       curl -X POST -H "Content-Type: application/json" -d $json "https://api.voiceit.io/platform/34"
     fi
+    exit 0
 
   else
     curl -X POST -H 'Content-type: application/json' --data '{
