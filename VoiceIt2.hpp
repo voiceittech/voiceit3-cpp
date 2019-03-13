@@ -93,6 +93,7 @@ class VoiceIt2
         curl_easy_setopt(curl, CURLOPT_URL, url.str().c_str());
         curl_easy_setopt(curl, CURLOPT_HTTPAUTH, CURLAUTH_ANY);
         curl_easy_setopt(curl, CURLOPT_USERPWD, auth.c_str());
+        curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "GET");
         struct curl_slist *chunk = NULL;
         chunk = curl_slist_append(chunk, platformVersionHeader.c_str());
         chunk = curl_slist_append(chunk, platformIdHeader.c_str());
