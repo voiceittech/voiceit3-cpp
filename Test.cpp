@@ -90,6 +90,7 @@ int main()
 	std::string userId2;
 	std::string groupId;
 	int enrollmentId1;
+  std::string str;
 
 	// Test Webhooks
 	v.AddNotificationUrl("https://voiceit.io");
@@ -189,76 +190,118 @@ int main()
 	}
 
 	// Test Basics
-	ret = json::parse(v.CreateUser());
+  str = v.CreateUser();
+  // std::cout << "str: " << str << std::endl;
+	ret = json::parse(str);
 	AssertEquals(201, ret["status"], std::to_string(__LINE__), ret.dump());
 	AssertEquals("SUCC", ret["responseCode"], std::to_string(__LINE__), ret.dump());
 	userId = ret["userId"].get<std::string>();
 
-	ret = json::parse(v.GetAllUsers());
+  str = v.GetAllUsers();
+  // std::cout << "str: " << str << std::endl;
+	ret = json::parse(str);
 	AssertEquals(200, ret["status"], std::to_string(__LINE__), ret.dump());
 	AssertEquals("SUCC", ret["responseCode"], std::to_string(__LINE__), ret.dump());
 
-	ret = json::parse(v.CheckUserExists(userId));
+  str = v.CheckUserExists(userId);
+  // std::cout << "str: " << str << std::endl;
+	ret = json::parse(str);
 	AssertEquals(200, ret["status"], std::to_string(__LINE__), ret.dump());
 	AssertEquals("SUCC", ret["responseCode"], std::to_string(__LINE__), ret.dump());
 
-	ret = json::parse(v.CreateGroup("Sample Group Description"));
+  str = v.CreateGroup("Sample Group Description");
+  // std::cout << "str: " << str << std::endl;
+	ret = json::parse(str);
 	AssertEquals(201, ret["status"], std::to_string(__LINE__), ret.dump());
 	AssertEquals("SUCC", ret["responseCode"], std::to_string(__LINE__), ret.dump());
 	groupId = ret["groupId"].get<std::string>();
 
-	ret = json::parse(v.GetAllGroups());
+  str = v.GetAllGroups();
+  // std::cout << "str: " << str << std::endl;
+	ret = json::parse(str);
 	AssertEquals(200, ret["status"], std::to_string(__LINE__), ret.dump());
 	AssertEquals("SUCC", ret["responseCode"], std::to_string(__LINE__), ret.dump());
 
-	ret = json::parse(v.CheckGroupExists(groupId));
+  str = v.CheckGroupExists(groupId);
+  // std::cout << "str: " << str << std::endl;
+	ret = json::parse(str);
 	AssertEquals(200, ret["status"], std::to_string(__LINE__), ret.dump());
 	AssertEquals("SUCC", ret["responseCode"], std::to_string(__LINE__), ret.dump());
 
-	ret = json::parse(v.GetGroup(groupId));
+  str = v.GetGroup(groupId);
+  // std::cout << "str: " << str << std::endl;
+	ret = json::parse(str);
 	AssertEquals(200, ret["status"], std::to_string(__LINE__), ret.dump());
 	AssertEquals("SUCC", ret["responseCode"], std::to_string(__LINE__), ret.dump());
 
-	ret = json::parse(v.GetGroup(groupId));
+  str = v.GetGroup(groupId);
+  // std::cout << "str: " << str << std::endl;
+	ret = json::parse(str);
 	AssertEquals(200, ret["status"], std::to_string(__LINE__), ret.dump());
 	AssertEquals("SUCC", ret["responseCode"], std::to_string(__LINE__), ret.dump());
 
-	ret = json::parse(v.AddUserToGroup(groupId, userId));
+  str = v.AddUserToGroup(groupId, userId);
+  // std::cout << "str: " << str << std::endl;
+	ret = json::parse(str);
 	AssertEquals(200, ret["status"], std::to_string(__LINE__), ret.dump());
 	AssertEquals("SUCC", ret["responseCode"], std::to_string(__LINE__), ret.dump());
 
-	ret = json::parse(v.GetGroupsForUser(userId));
+  str = v.GetGroupsForUser(userId);
+  // std::cout << "str: " << str << std::endl;
+	ret = json::parse(str);
 	AssertEquals(200, ret["status"], std::to_string(__LINE__), ret.dump());
 	AssertEquals("SUCC", ret["responseCode"], std::to_string(__LINE__), ret.dump());
 
-	ret = json::parse(v.RemoveUserFromGroup(groupId, userId));
+  str = v.RemoveUserFromGroup(groupId, userId);
+  // std::cout << "str: " << str << std::endl;
+	ret = json::parse(str);
 	AssertEquals(200, ret["status"], std::to_string(__LINE__), ret.dump());
 	AssertEquals("SUCC", ret["responseCode"], std::to_string(__LINE__), ret.dump());
 
-	ret = json::parse(v.CreateUserToken(userId, 10));
+  str = v.CreateUserToken(userId, 10);
+  // std::cout << "str: " << str << std::endl;
+	ret = json::parse(str);
 	AssertEquals(201, ret["status"], std::to_string(__LINE__), ret.dump());
 	AssertEquals("SUCC", ret["responseCode"], std::to_string(__LINE__), ret.dump());
 
-	ret = json::parse(v.DeleteUser(userId));
+  str = v.ExpireUserTokens(userId);
+  // std::cout << "str: " << str << std::endl;
+	ret = json::parse(str);
+	AssertEquals(201, ret["status"], std::to_string(__LINE__), ret.dump());
+	AssertEquals("SUCC", ret["responseCode"], std::to_string(__LINE__), ret.dump());
+
+  str = v.DeleteUser(userId);
+  // std::cout << "str: " << str << std::endl;
+	ret = json::parse(str);
 	AssertEquals(200, ret["status"], std::to_string(__LINE__), ret.dump());
 	AssertEquals("SUCC", ret["responseCode"], std::to_string(__LINE__), ret.dump());
 
-	ret = json::parse(v.DeleteGroup(groupId));
+  str = v.DeleteGroup(groupId);
+  // std::cout << "str: " << str << std::endl;
+	ret = json::parse(str);
 	AssertEquals(200, ret["status"], std::to_string(__LINE__), ret.dump());
 	AssertEquals("SUCC", ret["responseCode"], std::to_string(__LINE__), ret.dump());
 
-	ret = json::parse(v.GetPhrases("en-US"));
+  str = v.GetPhrases("en-US");
+  // std::cout << "str: " << str << std::endl;
+	ret = json::parse(str);
 	AssertEquals(200, ret["status"], std::to_string(__LINE__), ret.dump());
 	AssertEquals("SUCC", ret["responseCode"], std::to_string(__LINE__), ret.dump());
 	std::cout << "****Test Basics All Passed****" << std::endl;
 
 	// Test Video
 
-	ret = json::parse(v.CreateUser());
+  str = v.CreateUser();
+  // std::cout << "str: " << str << std::endl;
+	ret = json::parse(str);
 	userId1 = ret["userId"].get<std::string>();
-	ret = json::parse(v.CreateUser());
+  str = v.CreateUser();
+  // std::cout << "str: " << str << std::endl;
+	ret = json::parse(str);
 	userId2 = ret["userId"].get<std::string>();
-	ret = json::parse(v.CreateGroup("Sample Group Description"));
+  str = v.CreateGroup("Sample Group Description");
+  // std::cout << "str: " << str << std::endl;
+	ret = json::parse(str);
 	groupId = ret["groupId"].get<std::string>();
 	v.AddUserToGroup(groupId, userId1);
 	v.AddUserToGroup(groupId, userId2);
@@ -273,46 +316,66 @@ int main()
 	DownloadFile("./videoEnrollmentC2.mov", "https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/videoEnrollmentC2.mov");
 	DownloadFile("./videoEnrollmentC3.mov", "https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/videoEnrollmentC3.mov");
 
-	ret = json::parse(v.CreateVideoEnrollment(userId1, "en-US", "never forget tomorrow is a new day", "./videoEnrollmentB1.mov"));
+  str = v.CreateVideoEnrollment(userId1, "en-US", "never forget tomorrow is a new day", "./videoEnrollmentB1.mov");
+  // std::cout << "str: " << str << std::endl;
+	ret = json::parse(str);
 	AssertEquals(201, ret["status"], std::to_string(__LINE__), ret.dump());
 	AssertEquals("SUCC", ret["responseCode"], std::to_string(__LINE__), ret.dump());
 	enrollmentId1 = ret["id"].get<int>();
-	ret = json::parse(v.CreateVideoEnrollment(userId1, "en-US", "never forget tomorrow is a new day", "./videoEnrollmentB2.mov"));
+  str = v.CreateVideoEnrollment(userId1, "en-US", "never forget tomorrow is a new day", "./videoEnrollmentB2.mov");
+  // std::cout << "str: " << str << std::endl;
+	ret = json::parse(str);
 	AssertEquals(201, ret["status"], std::to_string(__LINE__), ret.dump());
 	AssertEquals("SUCC", ret["responseCode"], std::to_string(__LINE__), ret.dump());
-	ret = json::parse(v.CreateVideoEnrollment(userId1, "en-US", "never forget tomorrow is a new day", "./videoEnrollmentB3.mov"));
+  str = v.CreateVideoEnrollment(userId1, "en-US", "never forget tomorrow is a new day", "./videoEnrollmentB3.mov");
+  // std::cout << "str: " << str << std::endl;
+	ret = json::parse(str);
 	AssertEquals(201, ret["status"], std::to_string(__LINE__), ret.dump());
 	AssertEquals("SUCC", ret["responseCode"], std::to_string(__LINE__), ret.dump());
 
 
-	ret = json::parse(v.CreateVideoEnrollment(userId2, "en-US", "never forget tomorrow is a new day", "./videoEnrollmentC1.mov"));
+  str = v.CreateVideoEnrollment(userId2, "en-US", "never forget tomorrow is a new day", "./videoEnrollmentC1.mov");
+  // std::cout << "str: " << str << std::endl;
+	ret = json::parse(str);
 	AssertEquals(201, ret["status"], std::to_string(__LINE__), ret.dump());
 	AssertEquals("SUCC", ret["responseCode"], std::to_string(__LINE__), ret.dump());
-	ret = json::parse(v.CreateVideoEnrollment(userId2, "en-US", "never forget tomorrow is a new day", "./videoEnrollmentC2.mov"));
+  str = v.CreateVideoEnrollment(userId2, "en-US", "never forget tomorrow is a new day", "./videoEnrollmentC2.mov");
+  // std::cout << "str: " << str << std::endl;
+	ret = json::parse(str);
 	AssertEquals(201, ret["status"], std::to_string(__LINE__), ret.dump());
 	AssertEquals("SUCC", ret["responseCode"], std::to_string(__LINE__), ret.dump());
-	ret = json::parse(v.CreateVideoEnrollment(userId2, "en-US", "never forget tomorrow is a new day", "./videoEnrollmentC3.mov"));
+  str = v.CreateVideoEnrollment(userId2, "en-US", "never forget tomorrow is a new day", "./videoEnrollmentC3.mov");
+  // std::cout << "str: " << str << std::endl;
+	ret = json::parse(str);
 	AssertEquals(201, ret["status"], std::to_string(__LINE__), ret.dump());
 	AssertEquals("SUCC", ret["responseCode"], std::to_string(__LINE__), ret.dump());
 
 	// Video Verification
-	ret = json::parse(v.VideoVerification(userId1, "en-US", "never forget tomorrow is a new day", "./videoVerificationB1.mov"));
+  str = v.VideoVerification(userId1, "en-US", "never forget tomorrow is a new day", "./videoVerificationB1.mov");
+  // std::cout << "str: " << str << std::endl;
+	ret = json::parse(str);
 	AssertEquals(200, ret["status"], std::to_string(__LINE__), ret.dump());
 	AssertEquals("SUCC", ret["responseCode"], std::to_string(__LINE__), ret.dump());
 
 	// Video Identification
-	ret = json::parse(v.VideoIdentification(groupId, "en-US", "never forget tomorrow is a new day", "./videoVerificationB1.mov"));
+  str = v.VideoIdentification(groupId, "en-US", "never forget tomorrow is a new day", "./videoVerificationB1.mov");
+  // std::cout << "str: " << str << std::endl;
+	ret = json::parse(str);
 	AssertEquals(200, ret["status"], std::to_string(__LINE__), ret.dump());
 	AssertEquals("SUCC", ret["responseCode"], std::to_string(__LINE__), ret.dump());
 	AssertEquals(userId1, ret["userId"], std::to_string(__LINE__), ret.dump());
 
 	// Delete Enrollment
-	ret = json::parse(v.DeleteVideoEnrollment(userId1, enrollmentId1));
+  str = v.DeleteVideoEnrollment(userId1, enrollmentId1);
+  // std::cout << "str: " << str << std::endl;
+	ret = json::parse(str);
 	AssertEquals(200, ret["status"], std::to_string(__LINE__), ret.dump());
 	AssertEquals("SUCC", ret["responseCode"], std::to_string(__LINE__), ret.dump());
 
 	// Delete All Enrollments
-	ret = json::parse(v.DeleteAllEnrollments(userId1));
+  str = v.DeleteAllEnrollments(userId1);
+  // std::cout << "str: " << str << std::endl;
+	ret = json::parse(str);
 	AssertEquals(200, ret["status"], std::to_string(__LINE__), ret.dump());
 	AssertEquals("SUCC", ret["responseCode"], std::to_string(__LINE__), ret.dump());
 	v.DeleteAllEnrollments(userId2);
@@ -322,43 +385,65 @@ int main()
 	v.DeleteUser(userId2);
 	v.DeleteGroup(groupId);
 
-	ret = json::parse(v.CreateUser());
+  str = v.CreateUser();
+  // std::cout << "str: " << str << std::endl;
+	ret = json::parse(str);
 	userId1 = ret["userId"].get<std::string>();
-	ret = json::parse(v.CreateUser());
+  str = v.CreateUser();
+  // std::cout << "str: " << str << std::endl;
+	ret = json::parse(str);
 	userId2 = ret["userId"].get<std::string>();
-	ret = json::parse(v.CreateGroup("Sample Group Description"));
+  str = v.CreateGroup("Sample Group Description");
+  // std::cout << "str: " << str << std::endl;
+	ret = json::parse(str);
 	groupId = ret["groupId"].get<std::string>();
 	v.AddUserToGroup(groupId, userId1);
 	v.AddUserToGroup(groupId, userId2);
 
 	// Video Enrollment By URL
-	ret = json::parse(v.CreateVideoEnrollmentByUrl(userId1, "en-US", "never forget tomorrow is a new day", "https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/videoEnrollmentB1.mov"));
+  str = v.CreateVideoEnrollmentByUrl(userId1, "en-US", "never forget tomorrow is a new day", "https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/videoEnrollmentB1.mov");
+  // std::cout << "str: " << str << std::endl;
+	ret = json::parse(str);
 	AssertEquals(201, ret["status"], std::to_string(__LINE__), ret.dump());
 	AssertEquals("SUCC", ret["responseCode"], std::to_string(__LINE__), ret.dump());
-	ret = json::parse(v.CreateVideoEnrollmentByUrl(userId1, "en-US", "never forget tomorrow is a new day", "https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/videoEnrollmentB2.mov"));
+  str = v.CreateVideoEnrollmentByUrl(userId1, "en-US", "never forget tomorrow is a new day", "https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/videoEnrollmentB2.mov");
+  // std::cout << "str: " << str << std::endl;
+	ret = json::parse(str);
 	AssertEquals(201, ret["status"], std::to_string(__LINE__), ret.dump());
 	AssertEquals("SUCC", ret["responseCode"], std::to_string(__LINE__), ret.dump());
-	ret = json::parse(v.CreateVideoEnrollmentByUrl(userId1, "en-US", "never forget tomorrow is a new day", "https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/videoEnrollmentB3.mov"));
+  str = v.CreateVideoEnrollmentByUrl(userId1, "en-US", "never forget tomorrow is a new day", "https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/videoEnrollmentB3.mov");
+  // std::cout << "str: " << str << std::endl;
+	ret = json::parse(str);
 	AssertEquals(201, ret["status"], std::to_string(__LINE__), ret.dump());
 	AssertEquals("SUCC", ret["responseCode"], std::to_string(__LINE__), ret.dump());
-	ret = json::parse(v.CreateVideoEnrollmentByUrl(userId2, "en-US", "never forget tomorrow is a new day", "https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/videoEnrollmentC1.mov"));
+  str = v.CreateVideoEnrollmentByUrl(userId2, "en-US", "never forget tomorrow is a new day", "https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/videoEnrollmentC1.mov");
+  // std::cout << "str: " << str << std::endl;
+	ret = json::parse(str);
 	AssertEquals(201, ret["status"], std::to_string(__LINE__), ret.dump());
 	AssertEquals("SUCC", ret["responseCode"], std::to_string(__LINE__), ret.dump());
-	ret = json::parse(v.CreateVideoEnrollmentByUrl(userId2, "en-US", "never forget tomorrow is a new day", "https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/videoEnrollmentC2.mov"));
+  str = v.CreateVideoEnrollmentByUrl(userId2, "en-US", "never forget tomorrow is a new day", "https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/videoEnrollmentC2.mov");
+  // std::cout << "str: " << str << std::endl;
+	ret = json::parse(str);
 	AssertEquals(201, ret["status"], std::to_string(__LINE__), ret.dump());
 	AssertEquals("SUCC", ret["responseCode"], std::to_string(__LINE__), ret.dump());
-	ret = json::parse(v.CreateVideoEnrollmentByUrl(userId2, "en-US", "never forget tomorrow is a new day", "https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/videoEnrollmentC3.mov"));
+  str = v.CreateVideoEnrollmentByUrl(userId2, "en-US", "never forget tomorrow is a new day", "https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/videoEnrollmentC3.mov");
+  // std::cout << "str: " << str << std::endl;
+	ret = json::parse(str);
 	AssertEquals(201, ret["status"], std::to_string(__LINE__), ret.dump());
 	AssertEquals("SUCC", ret["responseCode"], std::to_string(__LINE__), ret.dump());
 
 
 	// Video Verification By URL
-	ret = json::parse(v.VideoVerificationByUrl(userId1, "en-US", "never forget tomorrow is a new day", "https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/videoVerificationB1.mov"));
+  str = v.VideoVerificationByUrl(userId1, "en-US", "never forget tomorrow is a new day", "https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/videoVerificationB1.mov");
+  // std::cout << "str: " << str << std::endl;
+	ret = json::parse(str);
 	AssertEquals(200, ret["status"], std::to_string(__LINE__), ret.dump());
 	AssertEquals("SUCC", ret["responseCode"], std::to_string(__LINE__), ret.dump());
 
 	// Video Identification By URL
-	ret = json::parse(v.VideoIdentificationByUrl(groupId, "en-US", "never forget tomorrow is a new day", "https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/videoVerificationB1.mov"));
+  str = v.VideoIdentificationByUrl(groupId, "en-US", "never forget tomorrow is a new day", "https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/videoVerificationB1.mov");
+  // std::cout << "str: " << str << std::endl;
+	ret = json::parse(str);
 	AssertEquals(200, ret["status"], std::to_string(__LINE__), ret.dump());
 	AssertEquals("SUCC", ret["responseCode"], std::to_string(__LINE__), ret.dump());
 	AssertEquals(userId1, ret["userId"], std::to_string(__LINE__), ret.dump());
@@ -375,11 +460,17 @@ int main()
 	// Test Voice
 
 
-	ret = json::parse(v.CreateUser());
+  str = v.CreateUser();
+  // std::cout << "str: " << str << std::endl;
+	ret = json::parse(str);
 	userId1 = ret["userId"].get<std::string>();
-	ret = json::parse(v.CreateUser());
+  str = v.CreateUser();
+  // std::cout << "str: " << str << std::endl;
+	ret = json::parse(str);
 	userId2 = ret["userId"].get<std::string>();
-	ret = json::parse(v.CreateGroup("Sample Group Description"));
+  str = v.CreateGroup("Sample Group Description");
+  // std::cout << "str: " << str << std::endl;
+	ret = json::parse(str);
 	groupId = ret["groupId"].get<std::string>();
 	v.AddUserToGroup(groupId, userId1);
 	v.AddUserToGroup(groupId, userId2);
@@ -394,34 +485,50 @@ int main()
 	DownloadFile("./enrollmentC2.wav", "https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/enrollmentC2.wav");
 	DownloadFile("./enrollmentC3.wav", "https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/enrollmentC3.wav");
 
-	ret = json::parse(v.CreateVoiceEnrollment(userId1, "en-US", "never forget tomorrow is a new day", "./enrollmentA1.wav"));
+  str = v.CreateVoiceEnrollment(userId1, "en-US", "never forget tomorrow is a new day", "./enrollmentA1.wav");
+  // std::cout << "str: " << str << std::endl;
+	ret = json::parse(str);
 	AssertEquals(201, ret["status"], std::to_string(__LINE__), ret.dump());
 	AssertEquals("SUCC", ret["responseCode"], std::to_string(__LINE__), ret.dump());
-	ret = json::parse(v.CreateVoiceEnrollment(userId1, "en-US", "never forget tomorrow is a new day", "./enrollmentA2.wav"));
+  str = v.CreateVoiceEnrollment(userId1, "en-US", "never forget tomorrow is a new day", "./enrollmentA2.wav");
+  // std::cout << "str: " << str << std::endl;
+	ret = json::parse(str);
 	AssertEquals(201, ret["status"], std::to_string(__LINE__), ret.dump());
 	AssertEquals("SUCC", ret["responseCode"], std::to_string(__LINE__), ret.dump());
-	ret = json::parse(v.CreateVoiceEnrollment(userId1, "en-US", "never forget tomorrow is a new day", "./enrollmentA3.wav"));
+  str = v.CreateVoiceEnrollment(userId1, "en-US", "never forget tomorrow is a new day", "./enrollmentA3.wav");
+  // std::cout << "str: " << str << std::endl;
+	ret = json::parse(str);
 	AssertEquals(201, ret["status"], std::to_string(__LINE__), ret.dump());
 	AssertEquals("SUCC", ret["responseCode"], std::to_string(__LINE__), ret.dump());
 
 
-	ret = json::parse(v.CreateVoiceEnrollment(userId2, "en-US", "never forget tomorrow is a new day", "./enrollmentC1.wav"));
+  str = v.CreateVoiceEnrollment(userId2, "en-US", "never forget tomorrow is a new day", "./enrollmentC1.wav");
+  // std::cout << "str: " << str << std::endl;
+	ret = json::parse(str);
 	AssertEquals(201, ret["status"], std::to_string(__LINE__), ret.dump());
 	AssertEquals("SUCC", ret["responseCode"], std::to_string(__LINE__), ret.dump());
-	ret = json::parse(v.CreateVoiceEnrollment(userId2, "en-US", "never forget tomorrow is a new day", "./enrollmentC2.wav"));
+  str = v.CreateVoiceEnrollment(userId2, "en-US", "never forget tomorrow is a new day", "./enrollmentC2.wav");
+  // std::cout << "str: " << str << std::endl;
+	ret = json::parse(str);
 	AssertEquals(201, ret["status"], std::to_string(__LINE__), ret.dump());
 	AssertEquals("SUCC", ret["responseCode"], std::to_string(__LINE__), ret.dump());
-	ret = json::parse(v.CreateVoiceEnrollment(userId2, "en-US", "never forget tomorrow is a new day", "./enrollmentC3.wav"));
+  str = v.CreateVoiceEnrollment(userId2, "en-US", "never forget tomorrow is a new day", "./enrollmentC3.wav");
+  // std::cout << "str: " << str << std::endl;
+	ret = json::parse(str);
 	AssertEquals(201, ret["status"], std::to_string(__LINE__), ret.dump());
 	AssertEquals("SUCC", ret["responseCode"], std::to_string(__LINE__), ret.dump());
 
 	// Voice Verification
-	ret = json::parse(v.VoiceVerification(userId1, "en-US", "never forget tomorrow is a new day", "./verificationA1.wav"));
+  str = v.VoiceVerification(userId1, "en-US", "never forget tomorrow is a new day", "./verificationA1.wav");
+  // std::cout << "str: " << str << std::endl;
+	ret = json::parse(str);
 	AssertEquals(200, ret["status"], std::to_string(__LINE__), ret.dump());
 	AssertEquals("SUCC", ret["responseCode"], std::to_string(__LINE__), ret.dump());
 
 	// Voice Identification
-	ret = json::parse(v.VoiceIdentification(groupId, "en-US", "never forget tomorrow is a new day", "./verificationA1.wav"));
+  str = v.VoiceIdentification(groupId, "en-US", "never forget tomorrow is a new day", "./verificationA1.wav");
+  // std::cout << "str: " << str << std::endl;
+	ret = json::parse(str);
 	AssertEquals(200, ret["status"], std::to_string(__LINE__), ret.dump());
 	AssertEquals("SUCC", ret["responseCode"], std::to_string(__LINE__), ret.dump());
 	AssertEquals(userId1, ret["userId"], std::to_string(__LINE__), ret.dump());
@@ -432,43 +539,65 @@ int main()
 	v.DeleteUser(userId1);
 	v.DeleteUser(userId2);
 	v.DeleteGroup(groupId);
-	ret = json::parse(v.CreateUser());
+  str = v.CreateUser();
+  // std::cout << "str: " << str << std::endl;
+	ret = json::parse(str);
 	userId1 = ret["userId"].get<std::string>();
-	ret = json::parse(v.CreateUser());
+  str = v.CreateUser();
+  // std::cout << "str: " << str << std::endl;
+	ret = json::parse(str);
 	userId2 = ret["userId"].get<std::string>();
-	ret = json::parse(v.CreateGroup("Sample Group Description"));
+  str = v.CreateGroup("Sample Group Description");
+  // std::cout << "str: " << str << std::endl;
+	ret = json::parse(str);
 	groupId = ret["groupId"].get<std::string>();
 	v.AddUserToGroup(groupId, userId1);
 	v.AddUserToGroup(groupId, userId2);
 
 	// Voice Enrollment By URL
-	ret = json::parse(v.CreateVoiceEnrollmentByUrl(userId1, "en-US", "never forget tomorrow is a new day", "https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/enrollmentA1.wav"));
+  str = v.CreateVoiceEnrollmentByUrl(userId1, "en-US", "never forget tomorrow is a new day", "https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/enrollmentA1.wav");
+  // std::cout << "str: " << str << std::endl;
+	ret = json::parse(str);
 	AssertEquals(201, ret["status"], std::to_string(__LINE__), ret.dump());
 	AssertEquals("SUCC", ret["responseCode"], std::to_string(__LINE__), ret.dump());
-	ret = json::parse(v.CreateVoiceEnrollmentByUrl(userId1, "en-US", "never forget tomorrow is a new day", "https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/enrollmentA2.wav"));
+  str = v.CreateVoiceEnrollmentByUrl(userId1, "en-US", "never forget tomorrow is a new day", "https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/enrollmentA2.wav");
+  // std::cout << "str: " << str << std::endl;
+	ret = json::parse(str);
 	AssertEquals(201, ret["status"], std::to_string(__LINE__), ret.dump());
 	AssertEquals("SUCC", ret["responseCode"], std::to_string(__LINE__), ret.dump());
-	ret = json::parse(v.CreateVoiceEnrollmentByUrl(userId1, "en-US", "never forget tomorrow is a new day", "https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/enrollmentA3.wav"));
+  str = v.CreateVoiceEnrollmentByUrl(userId1, "en-US", "never forget tomorrow is a new day", "https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/enrollmentA3.wav");
+  // std::cout << "str: " << str << std::endl;
+	ret = json::parse(str);
 	AssertEquals(201, ret["status"], std::to_string(__LINE__), ret.dump());
 	AssertEquals("SUCC", ret["responseCode"], std::to_string(__LINE__), ret.dump());
-	ret = json::parse(v.CreateVoiceEnrollmentByUrl(userId2, "en-US", "never forget tomorrow is a new day", "https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/enrollmentC1.wav"));
+  str = v.CreateVoiceEnrollmentByUrl(userId2, "en-US", "never forget tomorrow is a new day", "https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/enrollmentC1.wav");
+  // std::cout << "str: " << str << std::endl;
+	ret = json::parse(str);
 	AssertEquals(201, ret["status"], std::to_string(__LINE__), ret.dump());
 	AssertEquals("SUCC", ret["responseCode"], std::to_string(__LINE__), ret.dump());
-	ret = json::parse(v.CreateVoiceEnrollmentByUrl(userId2, "en-US", "never forget tomorrow is a new day", "https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/enrollmentC2.wav"));
+  str = v.CreateVoiceEnrollmentByUrl(userId2, "en-US", "never forget tomorrow is a new day", "https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/enrollmentC2.wav");
+  // std::cout << "str: " << str << std::endl;
+	ret = json::parse(str);
 	AssertEquals(201, ret["status"], std::to_string(__LINE__), ret.dump());
 	AssertEquals("SUCC", ret["responseCode"], std::to_string(__LINE__), ret.dump());
-	ret = json::parse(v.CreateVoiceEnrollmentByUrl(userId2, "en-US", "never forget tomorrow is a new day", "https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/enrollmentC3.wav"));
+  str = v.CreateVoiceEnrollmentByUrl(userId2, "en-US", "never forget tomorrow is a new day", "https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/enrollmentC3.wav");
+  // std::cout << "str: " << str << std::endl;
+	ret = json::parse(str);
 	AssertEquals(201, ret["status"], std::to_string(__LINE__), ret.dump());
 	AssertEquals("SUCC", ret["responseCode"], std::to_string(__LINE__), ret.dump());
 
 
 	// Voice Verification By URL
-	ret = json::parse(v.VoiceVerificationByUrl(userId1, "en-US", "never forget tomorrow is a new day", "https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/verificationA1.wav"));
+  str = v.VoiceVerificationByUrl(userId1, "en-US", "never forget tomorrow is a new day", "https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/verificationA1.wav");
+  // std::cout << "str: " << str << std::endl;
+	ret = json::parse(str);
 	AssertEquals(200, ret["status"], std::to_string(__LINE__), ret.dump());
 	AssertEquals("SUCC", ret["responseCode"], std::to_string(__LINE__), ret.dump());
 
 	// Voice Identification By URL
-	ret = json::parse(v.VoiceIdentificationByUrl(groupId, "en-US", "never forget tomorrow is a new day", "https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/verificationA1.wav"));
+  str = v.VoiceIdentificationByUrl(groupId, "en-US", "never forget tomorrow is a new day", "https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/verificationA1.wav");
+  // std::cout << "str: " << str << std::endl;
+	ret = json::parse(str);
 	AssertEquals(200, ret["status"], std::to_string(__LINE__), ret.dump());
 	AssertEquals("SUCC", ret["responseCode"], std::to_string(__LINE__), ret.dump());
 	AssertEquals(userId1, ret["userId"], std::to_string(__LINE__), ret.dump());
@@ -485,11 +614,17 @@ int main()
 	// Test Face
 
 
-	ret = json::parse(v.CreateUser());
+  str = v.CreateUser();
+  // std::cout << "str: " << str << std::endl;
+	ret = json::parse(str);
 	userId1 = ret["userId"].get<std::string>();
-	ret = json::parse(v.CreateUser());
+  str = v.CreateUser();
+  // std::cout << "str: " << str << std::endl;
+	ret = json::parse(str);
 	userId2 = ret["userId"].get<std::string>();
-	ret = json::parse(v.CreateGroup("Sample Group Description"));
+  str = v.CreateGroup("Sample Group Description");
+  // std::cout << "str: " << str << std::endl;
+	ret = json::parse(str);
 	groupId = ret["groupId"].get<std::string>();
 	v.AddUserToGroup(groupId, userId1);
 	v.AddUserToGroup(groupId, userId2);
@@ -501,33 +636,49 @@ int main()
 	DownloadFile("./faceEnrollmentB3.mp4", "https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/faceEnrollmentB3.mp4");
 	DownloadFile("./faceVerificationB1.mp4", "https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/faceVerificationB1.mp4");
 
-	ret = json::parse(v.CreateFaceEnrollment(userId1, "./faceEnrollmentB1.mp4"));
+  str = v.CreateFaceEnrollment(userId1, "./faceEnrollmentB1.mp4");
+  // std::cout << "str: " << str << std::endl;
+	ret = json::parse(str);
 	AssertEquals(201, ret["status"], std::to_string(__LINE__), ret.dump());
 	AssertEquals("SUCC", ret["responseCode"], std::to_string(__LINE__), ret.dump());
-	ret = json::parse(v.CreateFaceEnrollment(userId1, "./faceEnrollmentB2.mp4"));
+  str = v.CreateFaceEnrollment(userId1, "./faceEnrollmentB2.mp4");
+  // std::cout << "str: " << str << std::endl;
+	ret = json::parse(str);
 	AssertEquals(201, ret["status"], std::to_string(__LINE__), ret.dump());
 	AssertEquals("SUCC", ret["responseCode"], std::to_string(__LINE__), ret.dump());
-	ret = json::parse(v.CreateFaceEnrollment(userId1, "./faceEnrollmentB3.mp4"));
+  str = v.CreateFaceEnrollment(userId1, "./faceEnrollmentB3.mp4");
+  // std::cout << "str: " << str << std::endl;
+	ret = json::parse(str);
 	AssertEquals(201, ret["status"], std::to_string(__LINE__), ret.dump());
 	AssertEquals("SUCC", ret["responseCode"], std::to_string(__LINE__), ret.dump());
 
 
-	ret = json::parse(v.CreateFaceEnrollment(userId2, "./videoEnrollmentC1.mov"));
+  str = v.CreateFaceEnrollment(userId2, "./videoEnrollmentC1.mov");
+  // std::cout << "str: " << str << std::endl;
+	ret = json::parse(str);
 	AssertEquals(201, ret["status"], std::to_string(__LINE__), ret.dump());
 	AssertEquals("SUCC", ret["responseCode"], std::to_string(__LINE__), ret.dump());
-	ret = json::parse(v.CreateFaceEnrollment(userId2, "./videoEnrollmentC2.mov"));
+  str = v.CreateFaceEnrollment(userId2, "./videoEnrollmentC2.mov");
+  // std::cout << "str: " << str << std::endl;
+	ret = json::parse(str);
 	AssertEquals(201, ret["status"], std::to_string(__LINE__), ret.dump());
 	AssertEquals("SUCC", ret["responseCode"], std::to_string(__LINE__), ret.dump());
-	ret = json::parse(v.CreateFaceEnrollment(userId2, "./videoEnrollmentC3.mov"));
+  str = v.CreateFaceEnrollment(userId2, "./videoEnrollmentC3.mov");
+  // std::cout << "str: " << str << std::endl;
+	ret = json::parse(str);
 	AssertEquals(201, ret["status"], std::to_string(__LINE__), ret.dump());
 	AssertEquals("SUCC", ret["responseCode"], std::to_string(__LINE__), ret.dump());
 
 	// Face Verification
-	ret = json::parse(v.FaceVerification(userId1, "./faceVerificationB1.mp4"));
+  str = v.FaceVerification(userId1, "./faceVerificationB1.mp4");
+  // std::cout << "str: " << str << std::endl;
+	ret = json::parse(str);
 	AssertEquals(200, ret["status"], std::to_string(__LINE__), ret.dump());
 	AssertEquals("SUCC", ret["responseCode"], std::to_string(__LINE__), ret.dump());
 
 	// Face Identification
+  str = v.FaceIdentification(groupId, "./faceVerificationB1.mp4");
+  // std::cout << "str: " << str << std::endl;
 	ret = json::parse(v.FaceIdentification(groupId, "./faceVerificationB1.mp4"));
 	AssertEquals(200, ret["status"], std::to_string(__LINE__), ret.dump());
 	AssertEquals("SUCC", ret["responseCode"], std::to_string(__LINE__), ret.dump());
@@ -540,43 +691,65 @@ int main()
 	v.DeleteUser(userId1);
 	v.DeleteUser(userId2);
 	v.DeleteGroup(groupId);
-	ret = json::parse(v.CreateUser());
+  str = v.CreateUser();
+  // std::cout << "str: " << str << std::endl;
+	ret = json::parse(str);
 	userId1 = ret["userId"].get<std::string>();
-	ret = json::parse(v.CreateUser());
+  str = v.CreateUser();
+  // std::cout << "str: " << str << std::endl;
+	ret = json::parse(str);
 	userId2 = ret["userId"].get<std::string>();
-	ret = json::parse(v.CreateGroup("Sample Group Description"));
+  str = v.CreateGroup("Sample Group Description");
+  // std::cout << "str: " << str << std::endl;
+	ret = json::parse(str);
 	groupId = ret["groupId"].get<std::string>();
 	v.AddUserToGroup(groupId, userId1);
 	v.AddUserToGroup(groupId, userId2);
 
 	// Face Enrollment By URL
-	ret = json::parse(v.CreateFaceEnrollmentByUrl(userId1, "https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/faceEnrollmentB1.mp4"));
+  str = v.CreateFaceEnrollmentByUrl(userId1, "https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/faceEnrollmentB1.mp4");
+  // std::cout << "str: " << str << std::endl;
+	ret = json::parse(str);
 	AssertEquals(201, ret["status"], std::to_string(__LINE__), ret.dump());
 	AssertEquals("SUCC", ret["responseCode"], std::to_string(__LINE__), ret.dump());
-	ret = json::parse(v.CreateFaceEnrollmentByUrl(userId1, "https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/faceEnrollmentB2.mp4"));
+  str = v.CreateFaceEnrollmentByUrl(userId1, "https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/faceEnrollmentB2.mp4");
+  // std::cout << "str: " << str << std::endl;
+	ret = json::parse(str);
 	AssertEquals(201, ret["status"], std::to_string(__LINE__), ret.dump());
 	AssertEquals("SUCC", ret["responseCode"], std::to_string(__LINE__), ret.dump());
-	ret = json::parse(v.CreateFaceEnrollmentByUrl(userId1, "https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/faceEnrollmentB3.mp4"));
+  str = v.CreateFaceEnrollmentByUrl(userId1, "https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/faceEnrollmentB3.mp4");
+  // std::cout << "str: " << str << std::endl;
+	ret = json::parse(str);
 	AssertEquals(201, ret["status"], std::to_string(__LINE__), ret.dump());
 	AssertEquals("SUCC", ret["responseCode"], std::to_string(__LINE__), ret.dump());
-	ret = json::parse(v.CreateFaceEnrollmentByUrl(userId2, "https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/videoEnrollmentC1.mov"));
+  str = v.CreateFaceEnrollmentByUrl(userId2, "https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/videoEnrollmentC1.mov");
+  // std::cout << "str: " << str << std::endl;
+	ret = json::parse(str);
 	AssertEquals(201, ret["status"], std::to_string(__LINE__), ret.dump());
 	AssertEquals("SUCC", ret["responseCode"], std::to_string(__LINE__), ret.dump());
-	ret = json::parse(v.CreateFaceEnrollmentByUrl(userId2, "https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/videoEnrollmentC2.mov"));
+  str = v.CreateFaceEnrollmentByUrl(userId2, "https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/videoEnrollmentC2.mov");
+  // std::cout << "str: " << str << std::endl;
+	ret = json::parse(str);
 	AssertEquals(201, ret["status"], std::to_string(__LINE__), ret.dump());
 	AssertEquals("SUCC", ret["responseCode"], std::to_string(__LINE__), ret.dump());
-	ret = json::parse(v.CreateFaceEnrollmentByUrl(userId2, "https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/videoEnrollmentC3.mov"));
+  str = v.CreateFaceEnrollmentByUrl(userId2, "https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/videoEnrollmentC3.mov");
+  // std::cout << "str: " << str << std::endl;
+	ret = json::parse(str);
 	AssertEquals(201, ret["status"], std::to_string(__LINE__), ret.dump());
 	AssertEquals("SUCC", ret["responseCode"], std::to_string(__LINE__), ret.dump());
 
 
 	// Face Verification By URL
-	ret = json::parse(v.FaceVerificationByUrl(userId1, "https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/faceVerificationB1.mp4"));
+  str = v.FaceVerificationByUrl(userId1, "https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/faceVerificationB1.mp4");
+  // std::cout << "str: " << str << std::endl;
+	ret = json::parse(str);
 	AssertEquals(200, ret["status"], std::to_string(__LINE__), ret.dump());
 	AssertEquals("SUCC", ret["responseCode"], std::to_string(__LINE__), ret.dump());
 
 	// Face Identification By URL
-	ret = json::parse(v.FaceIdentificationByUrl(groupId, "https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/faceVerificationB1.mp4"));
+  str = v.FaceIdentificationByUrl(groupId, "https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/faceVerificationB1.mp4");
+  // std::cout << "str: " << str << std::endl;
+	ret = json::parse(str);
 	AssertEquals(200, ret["status"], std::to_string(__LINE__), ret.dump());
 	AssertEquals("SUCC", ret["responseCode"], std::to_string(__LINE__), ret.dump());
 	AssertEquals(userId1, ret["userId"], std::to_string(__LINE__), ret.dump());
@@ -592,7 +765,9 @@ int main()
 
 
 	// Test Delete Enrollment
-	ret = json::parse(v.CreateUser());
+  str = v.CreateUser();
+  // std::cout << "str: " << str << std::endl;
+	ret = json::parse(str);
 	userId = ret["userId"].get<std::string>();
 	int videoEnrollmentId = json::parse(v.CreateVideoEnrollmentByUrl(userId, "en-US", "never forget tomorrow is a new day", "https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/videoEnrollmentB1.mov"))["id"];
 	v.CreateVideoEnrollmentByUrl(userId, "en-US", "never forget tomorrow is a new day", "https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/videoEnrollmentB2.mov");
@@ -601,25 +776,37 @@ int main()
 	int faceEnrollmentId = json::parse(v.CreateFaceEnrollment(userId, "./faceEnrollmentB1.mp4"))["faceEnrollmentId"];
 	v.CreateFaceEnrollment(userId, "./faceEnrollmentB2.mp4");
 
-	ret = json::parse(v.DeleteFaceEnrollment(userId, faceEnrollmentId));
+  str = v.DeleteFaceEnrollment(userId, faceEnrollmentId);
+  // std::cout << "str: " << str << std::endl;
+	ret = json::parse(str);
 	AssertEquals(200, ret["status"], std::to_string(__LINE__), ret.dump());
 	AssertEquals("SUCC", ret["responseCode"], std::to_string(__LINE__), ret.dump());
-	ret = json::parse(v.DeleteVideoEnrollment(userId, videoEnrollmentId));
+  str = v.DeleteVideoEnrollment(userId, videoEnrollmentId);
+  // std::cout << "str: " << str << std::endl;
+	ret = json::parse(str);
 	AssertEquals(200, ret["status"], std::to_string(__LINE__), ret.dump());
 	AssertEquals("SUCC", ret["responseCode"], std::to_string(__LINE__), ret.dump());
-	ret = json::parse(v.DeleteVoiceEnrollment(userId, voiceEnrollmentId));
+  str = v.DeleteVoiceEnrollment(userId, voiceEnrollmentId);
+  // std::cout << "str: " << str << std::endl;
+	ret = json::parse(str);
 	AssertEquals(200, ret["status"], std::to_string(__LINE__), ret.dump());
 	AssertEquals("SUCC", ret["responseCode"], std::to_string(__LINE__), ret.dump());
 
-	ret = json::parse(v.GetAllVideoEnrollments(userId));
+  str = v.GetAllVideoEnrollments(userId);
+  // std::cout << "str: " << str << std::endl;
+	ret = json::parse(str);
 	AssertEquals(200, ret["status"], std::to_string(__LINE__), ret.dump());
 	AssertEquals("SUCC", ret["responseCode"], std::to_string(__LINE__), ret.dump());
 	AssertEquals(1, ret["count"], std::to_string(__LINE__), ret.dump());
-	ret = json::parse(v.GetAllVoiceEnrollments(userId));
+  str = v.GetAllVoiceEnrollments(userId);
+  // std::cout << "str: " << str << std::endl;
+	ret = json::parse(str);
 	AssertEquals(200, ret["status"], std::to_string(__LINE__), ret.dump());
 	AssertEquals("SUCC", ret["responseCode"], std::to_string(__LINE__), ret.dump());
 	AssertEquals(1, ret["count"], std::to_string(__LINE__), ret.dump());
-	ret = json::parse(v.GetAllFaceEnrollments(userId));
+  str = v.GetAllFaceEnrollments(userId);
+  // std::cout << "str: " << str << std::endl;
+	ret = json::parse(str);
 	AssertEquals(200, ret["status"], std::to_string(__LINE__), ret.dump());
 	AssertEquals("SUCC", ret["responseCode"], std::to_string(__LINE__), ret.dump());
 	AssertEquals(1, ret["count"], std::to_string(__LINE__), ret.dump());
@@ -635,13 +822,19 @@ int main()
 	v.CreateFaceEnrollment(userId, "./faceEnrollmentB1.mp4");
 	v.CreateFaceEnrollment(userId, "./faceEnrollmentB2.mp4");
 
-	ret = json::parse(v.DeleteAllVideoEnrollments(userId));
+  str = v.DeleteAllVideoEnrollments(userId);
+  // std::cout << "str: " << str << std::endl;
+	ret = json::parse(str);
 	AssertEquals(200, ret["status"], std::to_string(__LINE__), ret.dump());
 	AssertEquals("SUCC", ret["responseCode"], std::to_string(__LINE__), ret.dump());
-	ret = json::parse(v.DeleteAllVoiceEnrollments(userId));
+  str = v.DeleteAllVoiceEnrollments(userId);
+  // std::cout << "str: " << str << std::endl;
+	ret = json::parse(str);
 	AssertEquals(200, ret["status"], std::to_string(__LINE__), ret.dump());
 	AssertEquals("SUCC", ret["responseCode"], std::to_string(__LINE__), ret.dump());
-	ret = json::parse(v.DeleteAllFaceEnrollments(userId));
+  str = v.DeleteAllFaceEnrollments(userId);
+  // std::cout << "str: " << str << std::endl;
+	ret = json::parse(str);
 	AssertEquals(200, ret["status"], std::to_string(__LINE__), ret.dump());
 	AssertEquals("SUCC", ret["responseCode"], std::to_string(__LINE__), ret.dump());
 	AssertEquals(0, json::parse(v.GetAllVideoEnrollments(userId))["count"], std::to_string(__LINE__), ret.dump());
