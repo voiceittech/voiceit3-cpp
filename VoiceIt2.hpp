@@ -11,11 +11,11 @@ static std::string readBuffer;
 class VoiceIt2
 {
   private:
-    const std::string baseUrl = "https://api.voiceit.io";
-    const std::string version = "2.1.0";
-    std::string notificationUrl = "";
+    std::string baseUrl;
+    std::string version;
+    std::string notificationUrl;
     std::string auth;
-    std::string platformIdHeader = "platformId: 34";
+    std::string platformIdHeader;
     std::string platformVersionHeader;
 
 
@@ -28,18 +28,23 @@ class VoiceIt2
 
     void FileExists(std::string path)
     {
-      std::ifstream file(path);
-      if(file.fail())
-      {
+      FILE *file = fopen(path.c_str(), "r");
+      if (file)
+        fclose(file);
+      else
         throw std::string("No such file: " + path);
-      }
+
     }
 
   public:
 
     VoiceIt2(std::string key, std::string token)
     {
+      baseUrl = "https://api.voiceit.io";
+      version = "2.1.1";
+      notificationUrl = "";
       auth = key + ":" + token;
+      platformIdHeader = "platformId: 34";
       platformVersionHeader = "platformVersion: " + version;
     }
 
