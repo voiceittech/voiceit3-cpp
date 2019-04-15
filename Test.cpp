@@ -289,7 +289,7 @@ int main(int argc, char *argv[])
 	ret = json::parse(str);
 	AssertEquals(200, ret["status"], std::to_string(__LINE__), ret.dump());
 	AssertEquals("SUCC", ret["responseCode"], std::to_string(__LINE__), ret.dump());
-	std::cout << "****Test Basics All Passed****" << std::endl;
+	std::cout << "**** Test Basics All Passed ****" << std::endl;
 
 	// Test Video
 
@@ -457,7 +457,7 @@ int main(int argc, char *argv[])
 	v.DeleteGroup(groupId);
 
 
-	std::cout << "****Test Video All Passed****" << std::endl;
+	std::cout << "**** Test Video All Passed ****" << std::endl;
 
 	// Test Voice
 
@@ -611,7 +611,7 @@ int main(int argc, char *argv[])
 	v.DeleteGroup(groupId);
 
 
-	std::cout << "****Test Voice All Passed****" << std::endl;
+	std::cout << "**** Test Voice All Passed ****" << std::endl;
 
 	// Test Face
 
@@ -763,7 +763,7 @@ int main(int argc, char *argv[])
 	v.DeleteGroup(groupId);
 
 
-	std::cout << "****Test Face All Passed****" << std::endl;
+	std::cout << "**** Test Face All Passed ****" << std::endl;
 
 
 	// Test Delete Enrollment
@@ -814,7 +814,7 @@ int main(int argc, char *argv[])
 	AssertEquals(1, ret["count"], std::to_string(__LINE__), ret.dump());
 
 	v.DeleteAllEnrollments(userId);
-	std::cout << "****Delete Enrollment All Passed****" << std::endl;
+	std::cout << "**** Delete Enrollment All Passed ****" << std::endl;
 
 	// Test Delete Enrollments
 	v.CreateVideoEnrollmentByUrl(userId, "en-US", "never forget tomorrow is a new day", "https://drive.voiceit.io/files/videoEnrollmentB1.mov");
@@ -845,7 +845,7 @@ int main(int argc, char *argv[])
 	v.DeleteAllEnrollments(userId);
 	v.DeleteUser(userId);
 
-	std::cout << "****Delete All Video/Voice/Face Enrollments All Passed****" << std::endl;
+	std::cout << "**** Delete All Video/Voice/Face Enrollments All Passed ****" << std::endl;
 
 	remove("./videoEnrollmentB1.mov");
 	remove("./videoEnrollmentB2.mov");
