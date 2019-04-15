@@ -21,7 +21,7 @@ void AssertEquals(std::string arg1, std::string arg2, std::string line, std::str
   {
 		std::cerr << arg1 + " does not equal " + arg2 + " on line " + line << std::endl;
 		std::cerr << "message: " << message << std::endl;
-		// exit(1);
+		exit(1);
 	}
 }
 
@@ -31,7 +31,7 @@ void AssertEquals(int arg1, int arg2, std::string line, std::string message)
   {
 		std::cerr << std::to_string(arg1) + " does not equal " + std::to_string(arg2) + " on line " + line << std::endl;
 		std::cerr << "message: " << message << std::endl;
-		// exit(1);
+		exit(1);
 	}
 }
 
@@ -310,57 +310,57 @@ int main(int argc, char *argv[])
 	// Video Enrollments
 
 
-	DownloadFile(argv[2] + "/videoEnrollmentB1.mov", "https://drive.voiceit.io/files/videoEnrollmentB1.mov");
-	DownloadFile(argv[2] + "/videoEnrollmentB2.mov", "https://drive.voiceit.io/files/videoEnrollmentB2.mov");
-	DownloadFile(argv[2] + "/videoEnrollmentB3.mov", "https://drive.voiceit.io/files/videoEnrollmentB3.mov");
-	DownloadFile(argv[2] + "/videoVerificationB1.mov", "https://drive.voiceit.io/files/videoVerificationB1.mov");
-	DownloadFile(argv[2] + "/videoEnrollmentC1.mov", "https://drive.voiceit.io/files/videoEnrollmentC1.mov");
-	DownloadFile(argv[2] + "/videoEnrollmentC2.mov", "https://drive.voiceit.io/files/videoEnrollmentC2.mov");
-	DownloadFile(argv[2] + "/videoEnrollmentC3.mov", "https://drive.voiceit.io/files/videoEnrollmentC3.mov");
+	DownloadFile("./videoEnrollmentB1.mov", "https://drive.voiceit.io/files/videoEnrollmentB1.mov");
+	DownloadFile("./videoEnrollmentB2.mov", "https://drive.voiceit.io/files/videoEnrollmentB2.mov");
+	DownloadFile("./videoEnrollmentB3.mov", "https://drive.voiceit.io/files/videoEnrollmentB3.mov");
+	DownloadFile("./videoVerificationB1.mov", "https://drive.voiceit.io/files/videoVerificationB1.mov");
+	DownloadFile("./videoEnrollmentC1.mov", "https://drive.voiceit.io/files/videoEnrollmentC1.mov");
+	DownloadFile("./videoEnrollmentC2.mov", "https://drive.voiceit.io/files/videoEnrollmentC2.mov");
+	DownloadFile("./videoEnrollmentC3.mov", "https://drive.voiceit.io/files/videoEnrollmentC3.mov");
 
-  str = v.CreateVideoEnrollment(userId1, "en-US", "never forget tomorrow is a new day", argv[2] + "/videoEnrollmentB1.mov");
+  str = v.CreateVideoEnrollment(userId1, "en-US", "never forget tomorrow is a new day", "./videoEnrollmentB1.mov");
   // std::cout << "str: " << str << std::endl;
 	ret = json::parse(str);
 	AssertEquals(201, ret["status"], std::to_string(__LINE__), ret.dump());
 	AssertEquals("SUCC", ret["responseCode"], std::to_string(__LINE__), ret.dump());
 	enrollmentId1 = ret["id"].get<int>();
-  str = v.CreateVideoEnrollment(userId1, "en-US", "never forget tomorrow is a new day", argv[2] + "/videoEnrollmentB2.mov");
+  str = v.CreateVideoEnrollment(userId1, "en-US", "never forget tomorrow is a new day", "./videoEnrollmentB2.mov");
   // std::cout << "str: " << str << std::endl;
 	ret = json::parse(str);
 	AssertEquals(201, ret["status"], std::to_string(__LINE__), ret.dump());
 	AssertEquals("SUCC", ret["responseCode"], std::to_string(__LINE__), ret.dump());
-  str = v.CreateVideoEnrollment(userId1, "en-US", "never forget tomorrow is a new day", argv[2] + "/videoEnrollmentB3.mov");
+  str = v.CreateVideoEnrollment(userId1, "en-US", "never forget tomorrow is a new day", "./videoEnrollmentB3.mov");
   // std::cout << "str: " << str << std::endl;
 	ret = json::parse(str);
 	AssertEquals(201, ret["status"], std::to_string(__LINE__), ret.dump());
 	AssertEquals("SUCC", ret["responseCode"], std::to_string(__LINE__), ret.dump());
 
 
-  str = v.CreateVideoEnrollment(userId2, "en-US", "never forget tomorrow is a new day", argv[2] + "/videoEnrollmentC1.mov");
+  str = v.CreateVideoEnrollment(userId2, "en-US", "never forget tomorrow is a new day", "./videoEnrollmentC1.mov");
   // std::cout << "str: " << str << std::endl;
 	ret = json::parse(str);
 	AssertEquals(201, ret["status"], std::to_string(__LINE__), ret.dump());
 	AssertEquals("SUCC", ret["responseCode"], std::to_string(__LINE__), ret.dump());
-  str = v.CreateVideoEnrollment(userId2, "en-US", "never forget tomorrow is a new day", argv[2] + "/videoEnrollmentC2.mov");
+  str = v.CreateVideoEnrollment(userId2, "en-US", "never forget tomorrow is a new day", "./videoEnrollmentC2.mov");
   // std::cout << "str: " << str << std::endl;
 	ret = json::parse(str);
 	AssertEquals(201, ret["status"], std::to_string(__LINE__), ret.dump());
 	AssertEquals("SUCC", ret["responseCode"], std::to_string(__LINE__), ret.dump());
-  str = v.CreateVideoEnrollment(userId2, "en-US", "never forget tomorrow is a new day", argv[2] + "/videoEnrollmentC3.mov");
+  str = v.CreateVideoEnrollment(userId2, "en-US", "never forget tomorrow is a new day", "./videoEnrollmentC3.mov");
   // std::cout << "str: " << str << std::endl;
 	ret = json::parse(str);
 	AssertEquals(201, ret["status"], std::to_string(__LINE__), ret.dump());
 	AssertEquals("SUCC", ret["responseCode"], std::to_string(__LINE__), ret.dump());
 
 	// Video Verification
-  str = v.VideoVerification(userId1, "en-US", "never forget tomorrow is a new day", argv[2] + "/videoVerificationB1.mov");
+  str = v.VideoVerification(userId1, "en-US", "never forget tomorrow is a new day", "./videoVerificationB1.mov");
   // std::cout << "str: " << str << std::endl;
 	ret = json::parse(str);
 	AssertEquals(200, ret["status"], std::to_string(__LINE__), ret.dump());
 	AssertEquals("SUCC", ret["responseCode"], std::to_string(__LINE__), ret.dump());
 
 	// Video Identification
-  str = v.VideoIdentification(groupId, "en-US", "never forget tomorrow is a new day", argv[2] + "/videoVerificationB1.mov");
+  str = v.VideoIdentification(groupId, "en-US", "never forget tomorrow is a new day", "./videoVerificationB1.mov");
   // std::cout << "str: " << str << std::endl;
 	ret = json::parse(str);
 	AssertEquals(200, ret["status"], std::to_string(__LINE__), ret.dump());
@@ -479,56 +479,56 @@ int main(int argc, char *argv[])
 
 	// Voice Enrollments
 
-	DownloadFile(argv[2] + "/enrollmentA1.wav", "https://drive.voiceit.io/files/enrollmentA1.wav");
-	DownloadFile(argv[2] + "/enrollmentA2.wav", "https://drive.voiceit.io/files/enrollmentA2.wav");
-	DownloadFile(argv[2] + "/enrollmentA3.wav", "https://drive.voiceit.io/files/enrollmentA3.wav");
-	DownloadFile(argv[2] + "/verificationA1.wav", "https://drive.voiceit.io/files/verificationA1.wav");
-	DownloadFile(argv[2] + "/enrollmentC1.wav", "https://drive.voiceit.io/files/enrollmentC1.wav");
-	DownloadFile(argv[2] + "/enrollmentC2.wav", "https://drive.voiceit.io/files/enrollmentC2.wav");
-	DownloadFile(argv[2] + "/enrollmentC3.wav", "https://drive.voiceit.io/files/enrollmentC3.wav");
+	DownloadFile("./enrollmentA1.wav", "https://drive.voiceit.io/files/enrollmentA1.wav");
+	DownloadFile("./enrollmentA2.wav", "https://drive.voiceit.io/files/enrollmentA2.wav");
+	DownloadFile("./enrollmentA3.wav", "https://drive.voiceit.io/files/enrollmentA3.wav");
+	DownloadFile("./verificationA1.wav", "https://drive.voiceit.io/files/verificationA1.wav");
+	DownloadFile("./enrollmentC1.wav", "https://drive.voiceit.io/files/enrollmentC1.wav");
+	DownloadFile("./enrollmentC2.wav", "https://drive.voiceit.io/files/enrollmentC2.wav");
+	DownloadFile("./enrollmentC3.wav", "https://drive.voiceit.io/files/enrollmentC3.wav");
 
-  str = v.CreateVoiceEnrollment(userId1, "en-US", "never forget tomorrow is a new day", argv[2] + "/enrollmentA1.wav");
+  str = v.CreateVoiceEnrollment(userId1, "en-US", "never forget tomorrow is a new day", "./enrollmentA1.wav");
   // std::cout << "str: " << str << std::endl;
 	ret = json::parse(str);
 	AssertEquals(201, ret["status"], std::to_string(__LINE__), ret.dump());
 	AssertEquals("SUCC", ret["responseCode"], std::to_string(__LINE__), ret.dump());
-  str = v.CreateVoiceEnrollment(userId1, "en-US", "never forget tomorrow is a new day", argv[2] + "/enrollmentA2.wav");
+  str = v.CreateVoiceEnrollment(userId1, "en-US", "never forget tomorrow is a new day", "./enrollmentA2.wav");
   // std::cout << "str: " << str << std::endl;
 	ret = json::parse(str);
 	AssertEquals(201, ret["status"], std::to_string(__LINE__), ret.dump());
 	AssertEquals("SUCC", ret["responseCode"], std::to_string(__LINE__), ret.dump());
-  str = v.CreateVoiceEnrollment(userId1, "en-US", "never forget tomorrow is a new day", argv[2] + "/enrollmentA3.wav");
+  str = v.CreateVoiceEnrollment(userId1, "en-US", "never forget tomorrow is a new day", "./enrollmentA3.wav");
   // std::cout << "str: " << str << std::endl;
 	ret = json::parse(str);
 	AssertEquals(201, ret["status"], std::to_string(__LINE__), ret.dump());
 	AssertEquals("SUCC", ret["responseCode"], std::to_string(__LINE__), ret.dump());
 
 
-  str = v.CreateVoiceEnrollment(userId2, "en-US", "never forget tomorrow is a new day", argv[2] + "/enrollmentC1.wav");
+  str = v.CreateVoiceEnrollment(userId2, "en-US", "never forget tomorrow is a new day", "./enrollmentC1.wav");
   // std::cout << "str: " << str << std::endl;
 	ret = json::parse(str);
 	AssertEquals(201, ret["status"], std::to_string(__LINE__), ret.dump());
 	AssertEquals("SUCC", ret["responseCode"], std::to_string(__LINE__), ret.dump());
-  str = v.CreateVoiceEnrollment(userId2, "en-US", "never forget tomorrow is a new day", argv[2] + "/enrollmentC2.wav");
+  str = v.CreateVoiceEnrollment(userId2, "en-US", "never forget tomorrow is a new day", "./enrollmentC2.wav");
   // std::cout << "str: " << str << std::endl;
 	ret = json::parse(str);
 	AssertEquals(201, ret["status"], std::to_string(__LINE__), ret.dump());
 	AssertEquals("SUCC", ret["responseCode"], std::to_string(__LINE__), ret.dump());
-  str = v.CreateVoiceEnrollment(userId2, "en-US", "never forget tomorrow is a new day", argv[2] + "/enrollmentC3.wav");
+  str = v.CreateVoiceEnrollment(userId2, "en-US", "never forget tomorrow is a new day", "./enrollmentC3.wav");
   // std::cout << "str: " << str << std::endl;
 	ret = json::parse(str);
 	AssertEquals(201, ret["status"], std::to_string(__LINE__), ret.dump());
 	AssertEquals("SUCC", ret["responseCode"], std::to_string(__LINE__), ret.dump());
 
 	// Voice Verification
-  str = v.VoiceVerification(userId1, "en-US", "never forget tomorrow is a new day", argv[2] + "/verificationA1.wav");
+  str = v.VoiceVerification(userId1, "en-US", "never forget tomorrow is a new day", "./verificationA1.wav");
   // std::cout << "str: " << str << std::endl;
 	ret = json::parse(str);
 	AssertEquals(200, ret["status"], std::to_string(__LINE__), ret.dump());
 	AssertEquals("SUCC", ret["responseCode"], std::to_string(__LINE__), ret.dump());
 
 	// Voice Identification
-  str = v.VoiceIdentification(groupId, "en-US", "never forget tomorrow is a new day", argv[2] + "/verificationA1.wav");
+  str = v.VoiceIdentification(groupId, "en-US", "never forget tomorrow is a new day", "./verificationA1.wav");
   // std::cout << "str: " << str << std::endl;
 	ret = json::parse(str);
 	AssertEquals(200, ret["status"], std::to_string(__LINE__), ret.dump());
@@ -633,55 +633,55 @@ int main(int argc, char *argv[])
 
 	// Face Enrollments
 
-	DownloadFile(argv[2] + "/faceEnrollmentB1.mp4", "https://drive.voiceit.io/files/faceEnrollmentB1.mp4");
-	DownloadFile(argv[2] + "/faceEnrollmentB2.mp4", "https://drive.voiceit.io/files/faceEnrollmentB2.mp4");
-	DownloadFile(argv[2] + "/faceEnrollmentB3.mp4", "https://drive.voiceit.io/files/faceEnrollmentB3.mp4");
-	DownloadFile(argv[2] + "/faceVerificationB1.mp4", "https://drive.voiceit.io/files/faceVerificationB1.mp4");
+	DownloadFile("./faceEnrollmentB1.mp4", "https://drive.voiceit.io/files/faceEnrollmentB1.mp4");
+	DownloadFile("./faceEnrollmentB2.mp4", "https://drive.voiceit.io/files/faceEnrollmentB2.mp4");
+	DownloadFile("./faceEnrollmentB3.mp4", "https://drive.voiceit.io/files/faceEnrollmentB3.mp4");
+	DownloadFile("./faceVerificationB1.mp4", "https://drive.voiceit.io/files/faceVerificationB1.mp4");
 
-  str = v.CreateFaceEnrollment(userId1, argv[2] + "/faceEnrollmentB1.mp4");
+  str = v.CreateFaceEnrollment(userId1, "./faceEnrollmentB1.mp4");
   // std::cout << "str: " << str << std::endl;
 	ret = json::parse(str);
 	AssertEquals(201, ret["status"], std::to_string(__LINE__), ret.dump());
 	AssertEquals("SUCC", ret["responseCode"], std::to_string(__LINE__), ret.dump());
-  str = v.CreateFaceEnrollment(userId1, argv[2] + "/faceEnrollmentB2.mp4");
+  str = v.CreateFaceEnrollment(userId1, "./faceEnrollmentB2.mp4");
   // std::cout << "str: " << str << std::endl;
 	ret = json::parse(str);
 	AssertEquals(201, ret["status"], std::to_string(__LINE__), ret.dump());
 	AssertEquals("SUCC", ret["responseCode"], std::to_string(__LINE__), ret.dump());
-  str = v.CreateFaceEnrollment(userId1, argv[2] + "/faceEnrollmentB3.mp4");
+  str = v.CreateFaceEnrollment(userId1, "./faceEnrollmentB3.mp4");
   // std::cout << "str: " << str << std::endl;
 	ret = json::parse(str);
 	AssertEquals(201, ret["status"], std::to_string(__LINE__), ret.dump());
 	AssertEquals("SUCC", ret["responseCode"], std::to_string(__LINE__), ret.dump());
 
 
-  str = v.CreateFaceEnrollment(userId2, argv[2] + "/videoEnrollmentC1.mov");
+  str = v.CreateFaceEnrollment(userId2, "./videoEnrollmentC1.mov");
   // std::cout << "str: " << str << std::endl;
 	ret = json::parse(str);
 	AssertEquals(201, ret["status"], std::to_string(__LINE__), ret.dump());
 	AssertEquals("SUCC", ret["responseCode"], std::to_string(__LINE__), ret.dump());
-  str = v.CreateFaceEnrollment(userId2, argv[2] + "/videoEnrollmentC2.mov");
+  str = v.CreateFaceEnrollment(userId2, "./videoEnrollmentC2.mov");
   // std::cout << "str: " << str << std::endl;
 	ret = json::parse(str);
 	AssertEquals(201, ret["status"], std::to_string(__LINE__), ret.dump());
 	AssertEquals("SUCC", ret["responseCode"], std::to_string(__LINE__), ret.dump());
-  str = v.CreateFaceEnrollment(userId2, argv[2] + "/videoEnrollmentC3.mov");
+  str = v.CreateFaceEnrollment(userId2, "./videoEnrollmentC3.mov");
   // std::cout << "str: " << str << std::endl;
 	ret = json::parse(str);
 	AssertEquals(201, ret["status"], std::to_string(__LINE__), ret.dump());
 	AssertEquals("SUCC", ret["responseCode"], std::to_string(__LINE__), ret.dump());
 
 	// Face Verification
-  str = v.FaceVerification(userId1, argv[2] + "/faceVerificationB1.mp4");
+  str = v.FaceVerification(userId1, "./faceVerificationB1.mp4");
   // std::cout << "str: " << str << std::endl;
 	ret = json::parse(str);
 	AssertEquals(200, ret["status"], std::to_string(__LINE__), ret.dump());
 	AssertEquals("SUCC", ret["responseCode"], std::to_string(__LINE__), ret.dump());
 
 	// Face Identification
-  str = v.FaceIdentification(groupId, argv[2] + "/faceVerificationB1.mp4");
+  str = v.FaceIdentification(groupId, "./faceVerificationB1.mp4");
   // std::cout << "str: " << str << std::endl;
-	ret = json::parse(v.FaceIdentification(groupId, argv[2] + "/faceVerificationB1.mp4"));
+	ret = json::parse(v.FaceIdentification(groupId, "./faceVerificationB1.mp4"));
 	AssertEquals(200, ret["status"], std::to_string(__LINE__), ret.dump());
 	AssertEquals("SUCC", ret["responseCode"], std::to_string(__LINE__), ret.dump());
 	AssertEquals(userId1, ret["userId"], std::to_string(__LINE__), ret.dump());
@@ -775,8 +775,8 @@ int main(int argc, char *argv[])
 	v.CreateVideoEnrollmentByUrl(userId, "en-US", "never forget tomorrow is a new day", "https://drive.voiceit.io/files/videoEnrollmentB2.mov");
 	int voiceEnrollmentId = json::parse(v.CreateVoiceEnrollmentByUrl(userId, "en-US", "never forget tomorrow is a new day", "https://drive.voiceit.io/files/enrollmentA1.wav"))["id"];
 	v.CreateVoiceEnrollmentByUrl(userId, "en-US", "never forget tomorrow is a new day", "https://drive.voiceit.io/files/enrollmentA2.wav");
-	int faceEnrollmentId = json::parse(v.CreateFaceEnrollment(userId, argv[2] + "/faceEnrollmentB1.mp4"))["faceEnrollmentId"];
-	v.CreateFaceEnrollment(userId, argv[2] + "/faceEnrollmentB2.mp4");
+	int faceEnrollmentId = json::parse(v.CreateFaceEnrollment(userId, "./faceEnrollmentB1.mp4"))["faceEnrollmentId"];
+	v.CreateFaceEnrollment(userId, "./faceEnrollmentB2.mp4");
 
   str = v.DeleteFaceEnrollment(userId, faceEnrollmentId);
   // std::cout << "str: " << str << std::endl;
@@ -821,8 +821,8 @@ int main(int argc, char *argv[])
 	v.CreateVideoEnrollmentByUrl(userId, "en-US", "never forget tomorrow is a new day", "https://drive.voiceit.io/files/videoEnrollmentB2.mov");
 	v.CreateVoiceEnrollmentByUrl(userId, "en-US", "never forget tomorrow is a new day", "https://drive.voiceit.io/files/enrollmentA1.wav");
 	v.CreateVoiceEnrollmentByUrl(userId, "en-US", "never forget tomorrow is a new day", "https://drive.voiceit.io/files/enrollmentA2.wav");
-	v.CreateFaceEnrollment(userId, argv[2] + "/faceEnrollmentB1.mp4");
-	v.CreateFaceEnrollment(userId, argv[2] + "/faceEnrollmentB2.mp4");
+	v.CreateFaceEnrollment(userId, "./faceEnrollmentB1.mp4");
+	v.CreateFaceEnrollment(userId, "./faceEnrollmentB2.mp4");
 
   str = v.DeleteAllVideoEnrollments(userId);
   // std::cout << "str: " << str << std::endl;
@@ -847,24 +847,24 @@ int main(int argc, char *argv[])
 
 	std::cout << "**** Delete All Video/Voice/Face Enrollments All Passed ****" << std::endl;
 
-	remove(argv[2] + "/videoEnrollmentB1.mov");
-	remove(argv[2] + "/videoEnrollmentB2.mov");
-	remove(argv[2] + "/videoEnrollmentB3.mov");
-	remove(argv[2] + "/videoVerificationB1.mov");
+	remove("./videoEnrollmentB1.mov");
+	remove("./videoEnrollmentB2.mov");
+	remove("./videoEnrollmentB3.mov");
+	remove("./videoVerificationB1.mov");
 
-	remove(argv[2] + "/enrollmentA1.wav");
-	remove(argv[2] + "/enrollmentA2.wav");
-	remove(argv[2] + "/enrollmentA3.wav");
-	remove(argv[2] + "/verificationA1.wav");
-	remove(argv[2] + "/enrollmentC1.wav");
-	remove(argv[2] + "/enrollmentC2.wav");
-	remove(argv[2] + "/enrollmentC3.wav");
+	remove("./enrollmentA1.wav");
+	remove("./enrollmentA2.wav");
+	remove("./enrollmentA3.wav");
+	remove("./verificationA1.wav");
+	remove("./enrollmentC1.wav");
+	remove("./enrollmentC2.wav");
+	remove("./enrollmentC3.wav");
 
-	remove(argv[2] + "/faceEnrollmentB1.mp4");
-	remove(argv[2] + "/faceEnrollmentB2.mp4");
-	remove(argv[2] + "/faceEnrollmentB3.mp4");
-	remove(argv[2] + "/faceVerificationB1.mp4");
-	remove(argv[2] + "/videoEnrollmentC1.mov");
-	remove(argv[2] + "/videoEnrollmentC2.mov");
-	remove(argv[2] + "/videoEnrollmentC3.mov");
+	remove("./faceEnrollmentB1.mp4");
+	remove("./faceEnrollmentB2.mp4");
+	remove("./faceEnrollmentB3.mp4");
+	remove("./faceVerificationB1.mp4");
+	remove("./videoEnrollmentC1.mov");
+	remove("./videoEnrollmentC2.mov");
+	remove("./videoEnrollmentC3.mov");
 }
