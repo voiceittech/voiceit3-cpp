@@ -21,7 +21,7 @@ void AssertEquals(std::string arg1, std::string arg2, std::string line, std::str
   {
 		std::cerr << arg1 + " does not equal " + arg2 + " on line " + line << std::endl;
 		std::cerr << "message: " << message << std::endl;
-		exit(1);
+		// exit(1);
 	}
 }
 
@@ -31,7 +31,7 @@ void AssertEquals(int arg1, int arg2, std::string line, std::string message)
   {
 		std::cerr << std::to_string(arg1) + " does not equal " + std::to_string(arg2) + " on line " + line << std::endl;
 		std::cerr << "message: " << message << std::endl;
-		exit(1);
+		// exit(1);
 	}
 }
 
