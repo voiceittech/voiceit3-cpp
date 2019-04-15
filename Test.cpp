@@ -318,13 +318,13 @@ int main(int argc, char *argv[])
 	DownloadFile("./videoEnrollmentC2.mov", "https://drive.voiceit.io/files/videoEnrollmentC2.mov");
 	DownloadFile("./videoEnrollmentC3.mov", "https://drive.voiceit.io/files/videoEnrollmentC3.mov");
 
-  str = v.CreateVideoEnrollment(userId1, "en-US", "never forget tomorrow is a new day", "./videoEnrollmentB1.mov");
+  str = v.CreateVideoEnrollment(userId1, "en-US", "never forget tomorrow is a new day", "./videoEnrollmentB2.mov");
   // std::cout << "str: " << str << std::endl;
 	ret = json::parse(str);
 	AssertEquals(201, ret["status"], std::to_string(__LINE__), ret.dump());
 	AssertEquals("SUCC", ret["responseCode"], std::to_string(__LINE__), ret.dump());
 	enrollmentId1 = ret["id"].get<int>();
-  str = v.CreateVideoEnrollment(userId1, "en-US", "never forget tomorrow is a new day", "./videoEnrollmentB2.mov");
+  str = v.CreateVideoEnrollment(userId1, "en-US", "never forget tomorrow is a new day", "./videoEnrollmentB1.mov");
   // std::cout << "str: " << str << std::endl;
 	ret = json::parse(str);
 	AssertEquals(201, ret["status"], std::to_string(__LINE__), ret.dump());
