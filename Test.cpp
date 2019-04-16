@@ -847,7 +847,6 @@ int main(int argc, char *argv[])
 
 	std::cout << "****Delete All Video/Voice/Face Enrollments All Passed****" << std::endl;
 
-  /*
 	remove("./videoEnrollmentB1.mov");
 	remove("./videoEnrollmentB2.mov");
 	remove("./videoEnrollmentB3.mov");
@@ -868,5 +867,4 @@ int main(int argc, char *argv[])
 	remove("./videoEnrollmentC1.mov");
 	remove("./videoEnrollmentC2.mov");
 	remove("./videoEnrollmentC3.mov");
-  */
 }
