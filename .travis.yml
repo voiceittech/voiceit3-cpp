@@ -12,7 +12,7 @@ before_script:
   - export CC=gcc-8
   - export CXX=g++-8
   - g++-8 -std=c++11 Test.cpp -o test $(curl-config --libs)
-script: ./test $VIAPIKEY $VIAPITOKEN && ls -lh
+script: ./test $VIAPIKEY $VIAPITOKEN
 after_success:
   - ./release.sh
 notifications:
