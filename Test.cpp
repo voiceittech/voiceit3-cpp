@@ -367,13 +367,6 @@ int main(int argc, char *argv[])
 	AssertEquals("SUCC", ret["responseCode"], std::to_string(__LINE__), ret.dump());
 	AssertEquals(userId1, ret["userId"], std::to_string(__LINE__), ret.dump());
 
-	// Delete Enrollment
-  str = v.DeleteVideoEnrollment(userId1, enrollmentId1);
-  // std::cout << "str: " << str << std::endl;
-	ret = json::parse(str);
-	AssertEquals(200, ret["status"], std::to_string(__LINE__), ret.dump());
-	AssertEquals("SUCC", ret["responseCode"], std::to_string(__LINE__), ret.dump());
-
 	// Delete All Enrollments
   str = v.DeleteAllEnrollments(userId1);
   // std::cout << "str: " << str << std::endl;
@@ -778,17 +771,7 @@ int main(int argc, char *argv[])
 	int faceEnrollmentId = json::parse(v.CreateFaceEnrollment(userId, "./faceEnrollmentB1.mp4"))["faceEnrollmentId"];
 	v.CreateFaceEnrollment(userId, "./faceEnrollmentB2.mp4");
 
-  str = v.DeleteFaceEnrollment(userId, faceEnrollmentId);
-  // std::cout << "str: " << str << std::endl;
-	ret = json::parse(str);
-	AssertEquals(200, ret["status"], std::to_string(__LINE__), ret.dump());
-	AssertEquals("SUCC", ret["responseCode"], std::to_string(__LINE__), ret.dump());
-  str = v.DeleteVideoEnrollment(userId, videoEnrollmentId);
-  // std::cout << "str: " << str << std::endl;
-	ret = json::parse(str);
-	AssertEquals(200, ret["status"], std::to_string(__LINE__), ret.dump());
-	AssertEquals("SUCC", ret["responseCode"], std::to_string(__LINE__), ret.dump());
-  str = v.DeleteVoiceEnrollment(userId, voiceEnrollmentId);
+  str = v.DeleteAllEnrollments(userId);
   // std::cout << "str: " << str << std::endl;
 	ret = json::parse(str);
 	AssertEquals(200, ret["status"], std::to_string(__LINE__), ret.dump());
@@ -799,19 +782,19 @@ int main(int argc, char *argv[])
 	ret = json::parse(str);
 	AssertEquals(200, ret["status"], std::to_string(__LINE__), ret.dump());
 	AssertEquals("SUCC", ret["responseCode"], std::to_string(__LINE__), ret.dump());
-	AssertEquals(1, ret["count"], std::to_string(__LINE__), ret.dump());
+	AssertEquals(0, ret["count"], std::to_string(__LINE__), ret.dump());
   str = v.GetAllVoiceEnrollments(userId);
   // std::cout << "str: " << str << std::endl;
 	ret = json::parse(str);
 	AssertEquals(200, ret["status"], std::to_string(__LINE__), ret.dump());
 	AssertEquals("SUCC", ret["responseCode"], std::to_string(__LINE__), ret.dump());
-	AssertEquals(1, ret["count"], std::to_string(__LINE__), ret.dump());
+	AssertEquals(0, ret["count"], std::to_string(__LINE__), ret.dump());
   str = v.GetAllFaceEnrollments(userId);
   // std::cout << "str: " << str << std::endl;
 	ret = json::parse(str);
 	AssertEquals(200, ret["status"], std::to_string(__LINE__), ret.dump());
 	AssertEquals("SUCC", ret["responseCode"], std::to_string(__LINE__), ret.dump());
-	AssertEquals(1, ret["count"], std::to_string(__LINE__), ret.dump());
+	AssertEquals(0, ret["count"], std::to_string(__LINE__), ret.dump());
 
 	v.DeleteAllEnrollments(userId);
 	std::cout << "****Delete Enrollment All Passed****" << std::endl;
@@ -824,24 +807,6 @@ int main(int argc, char *argv[])
 	v.CreateFaceEnrollment(userId, "./faceEnrollmentB1.mp4");
 	v.CreateFaceEnrollment(userId, "./faceEnrollmentB2.mp4");
 
-  str = v.DeleteAllVideoEnrollments(userId);
-  // std::cout << "str: " << str << std::endl;
-	ret = json::parse(str);
-	AssertEquals(200, ret["status"], std::to_string(__LINE__), ret.dump());
-	AssertEquals("SUCC", ret["responseCode"], std::to_string(__LINE__), ret.dump());
-  str = v.DeleteAllVoiceEnrollments(userId);
-  // std::cout << "str: " << str << std::endl;
-	ret = json::parse(str);
-	AssertEquals(200, ret["status"], std::to_string(__LINE__), ret.dump());
-	AssertEquals("SUCC", ret["responseCode"], std::to_string(__LINE__), ret.dump());
-  str = v.DeleteAllFaceEnrollments(userId);
-  // std::cout << "str: " << str << std::endl;
-	ret = json::parse(str);
-	AssertEquals(200, ret["status"], std::to_string(__LINE__), ret.dump());
-	AssertEquals("SUCC", ret["responseCode"], std::to_string(__LINE__), ret.dump());
-	AssertEquals(0, json::parse(v.GetAllVideoEnrollments(userId))["count"], std::to_string(__LINE__), ret.dump());
-	AssertEquals(0, json::parse(v.GetAllVoiceEnrollments(userId))["count"], std::to_string(__LINE__), ret.dump());
-	AssertEquals(0, json::parse(v.GetAllFaceEnrollments(userId))["count"], std::to_string(__LINE__), ret.dump());
 	v.DeleteAllEnrollments(userId);
 	v.DeleteUser(userId);
 
