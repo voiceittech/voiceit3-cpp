@@ -91,6 +91,8 @@ int main(int argc, char *argv[])
 	std::string userId1;
 	std::string userId2;
 	std::string groupId;
+	std::string subAccountUnmanagedAPIKey;
+	std::string subAccountManagedAPIKey;
 	int enrollmentId1;
   std::string str;
 
@@ -291,6 +293,39 @@ int main(int argc, char *argv[])
 	AssertEquals("SUCC", ret["responseCode"], std::to_string(__LINE__), ret.dump());
 	std::cout << "****Test Basics All Passed****" << std::endl;
 
+  str = v.CreateManagedSubAccount("Testy","","","","");
+    // std::cout << "str: " << str << std::endl;
+    ret = json::parse(str);
+    AssertEquals(201, ret["status"], std::to_string(__LINE__), ret.dump());
+	AssertEquals("SUCC", ret["responseCode"], std::to_string(__LINE__), ret.dump());
+    subAccountManagedAPIKey = ret["apiKey"];
+
+  str = v.CreateUnmanagedSubAccount();
+    // std::cout << "str: " << str << std::endl;
+    ret = json::parse(str);
+    AssertEquals(201, ret["status"], std::to_string(__LINE__), ret.dump());
+	AssertEquals("SUCC", ret["responseCode"], std::to_string(__LINE__), ret.dump());
+	subAccountUnmanagedAPIKey = ret["apiKey"];
+
+  str = v.RegenerateSubAccountAPIToken(subAccountManagedAPIKey);
+    // std::cout << "str: " << str << std::endl;
+    ret = json::parse(str);
+    AssertEquals(200, ret["status"], std::to_string(__LINE__), ret.dump());
+	AssertEquals("SUCC", ret["responseCode"], std::to_string(__LINE__), ret.dump());
+
+  str = v.DeleteSubAccount(subAccountManagedAPIKey);
+    // std::cout << "str: " << str << std::endl;
+    ret = json::parse(str);
+    AssertEquals(200, ret["status"], std::to_string(__LINE__), ret.dump());
+	AssertEquals("SUCC", ret["responseCode"], std::to_string(__LINE__), ret.dump());
+
+  str = v.DeleteSubAccount(subAccountUnmanagedAPIKey);
+    // std::cout << "str: " << str << std::endl;
+    ret = json::parse(str);
+    AssertEquals(200, ret["status"], std::to_string(__LINE__), ret.dump());
+	AssertEquals("SUCC", ret["responseCode"], std::to_string(__LINE__), ret.dump());
+
+	std::cout << "****Test Subaccounts All Passed****" << std::endl;
 	// Test Video
 
   str = v.CreateUser();

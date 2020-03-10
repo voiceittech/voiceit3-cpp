@@ -422,6 +422,225 @@ class VoiceIt2
       }
     }
 
+    std::string CreateManagedSubAccount(std::string firstName, std::string lastName,std::string email,std::string password, std::string contentLanguage )
+    {
+      CURL *curl;
+      curl_global_init(CURL_GLOBAL_ALL);
+      curl = curl_easy_init();
+      if (curl)
+      {
+        readBuffer.clear();
+        CURLcode res;
+        std::stringstream url;
+        if (notificationUrl == "")
+        {
+          url << baseUrl << "/subaccount/managed";
+        } else {
+          url << baseUrl << "/subaccount/managed" << "?notificationUrl=" << notificationUrl;
+        }
+
+        curl_easy_setopt(curl, CURLOPT_URL, url.str().c_str());
+        curl_easy_setopt(curl, CURLOPT_HTTPAUTH, CURLAUTH_ANY);
+        curl_easy_setopt(curl, CURLOPT_USERPWD, auth.c_str());
+        curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "POST");
+
+        struct curl_slist *chunk = NULL;
+        chunk = curl_slist_append(chunk, platformVersionHeader.c_str());
+        chunk = curl_slist_append(chunk, platformIdHeader.c_str());
+        // chunk = curl_slist_append(chunk, "Content-Type: multipart/form-data");
+        curl_easy_setopt(curl, CURLOPT_HTTPHEADER, chunk);
+
+        struct curl_httppost *formpost = NULL;
+        struct curl_httppost *lastptr = NULL;
+
+        if(firstName != "")
+        curl_formadd(&formpost,
+             &lastptr,
+             CURLFORM_COPYNAME, "firstName",
+             CURLFORM_COPYCONTENTS, firstName.c_str(),
+             CURLFORM_END);
+        if(lastName != "")
+        curl_formadd(&formpost,
+             &lastptr,
+             CURLFORM_COPYNAME, "lastName",
+             CURLFORM_COPYCONTENTS, lastName.c_str(),
+             CURLFORM_END);
+
+        if(email != "")
+        curl_formadd(&formpost,
+             &lastptr,
+             CURLFORM_COPYNAME, "email",
+             CURLFORM_COPYCONTENTS, email.c_str(),
+             CURLFORM_END);
+
+        if(password != "")
+        curl_formadd(&formpost,
+             &lastptr,
+             CURLFORM_COPYNAME, "password",
+             CURLFORM_FILE, password.c_str(),
+             CURLFORM_END);
+
+        if(contentLanguage != "")
+        curl_formadd(&formpost,
+             &lastptr,
+             CURLFORM_COPYNAME, "contentLanguage",
+             CURLFORM_FILE, contentLanguage.c_str(),
+             CURLFORM_END);
+
+
+        curl_easy_setopt(curl, CURLOPT_HTTPPOST, formpost);
+        curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
+        curl_easy_setopt(curl, CURLOPT_WRITEDATA, &readBuffer);
+        res = curl_easy_perform(curl);
+
+        curl_easy_cleanup(curl);
+        curl_formfree(formpost);
+        curl_slist_free_all(chunk);
+        return readBuffer;
+
+      } else {
+        throw std::string("Cannot initialize curl object. Please ensure you have a working installation of the libcurl Library with the appropriate compile flag.");
+      }
+    }
+
+    std::string CreateUnmanagedSubAccount(){
+      CURL *curl;
+      curl_global_init(CURL_GLOBAL_ALL);
+      curl = curl_easy_init();
+      if (curl)
+      {
+        readBuffer.clear();
+        CURLcode res;
+        std::stringstream url;
+        if (notificationUrl == "")
+        {
+          url << baseUrl << "/subaccount/unmanaged";
+        } else {
+          url << baseUrl << "/subaccount/unmanaged" << "?notificationUrl=" << notificationUrl;
+        }
+
+        curl_easy_setopt(curl, CURLOPT_URL, url.str().c_str());
+        curl_easy_setopt(curl, CURLOPT_HTTPAUTH, CURLAUTH_ANY);
+        curl_easy_setopt(curl, CURLOPT_USERPWD, auth.c_str());
+        curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "POST");
+
+        struct curl_slist *chunk = NULL;
+        chunk = curl_slist_append(chunk, platformVersionHeader.c_str());
+        chunk = curl_slist_append(chunk, platformIdHeader.c_str());
+        chunk = curl_slist_append(chunk, "Content-Type: multipart/form-data");
+        curl_easy_setopt(curl, CURLOPT_HTTPHEADER, chunk);
+
+        struct curl_httppost *formpost = NULL;
+        struct curl_httppost *lastptr = NULL;
+        curl_formadd(&formpost,
+             &lastptr,
+             CURLFORM_COPYNAME, "description",
+             CURLFORM_COPYCONTENTS, "",
+             CURLFORM_END);
+
+        curl_easy_setopt(curl, CURLOPT_HTTPPOST, formpost);
+        curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
+        curl_easy_setopt(curl, CURLOPT_WRITEDATA, &readBuffer);
+        res = curl_easy_perform(curl);
+
+        curl_easy_cleanup(curl);
+        curl_formfree(formpost);
+        curl_slist_free_all(chunk);
+        return readBuffer;
+
+      } else {
+        throw std::string("Cannot initialize curl object. Please ensure you have a working installation of the libcurl Library with the appropriate compile flag.");
+      }
+    }
+
+    std::string RegenerateSubAccountAPIToken(std::string subAccountAPIKey){
+       CURL *curl;
+      curl_global_init(CURL_GLOBAL_ALL);
+      curl = curl_easy_init();
+      if (curl)
+      {
+        readBuffer.clear();
+        CURLcode res;
+        std::stringstream url;
+        if (notificationUrl == "")
+        {
+          url << baseUrl << "/subaccount/" << subAccountAPIKey;
+        } else {
+          url << baseUrl << "/subaccount/" << subAccountAPIKey << "?notificationUrl=" << notificationUrl;
+        }
+
+        curl_easy_setopt(curl, CURLOPT_URL, url.str().c_str());
+        curl_easy_setopt(curl, CURLOPT_HTTPAUTH, CURLAUTH_ANY);
+        curl_easy_setopt(curl, CURLOPT_USERPWD, auth.c_str());
+        curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "POST");
+
+        struct curl_slist *chunk = NULL;
+        chunk = curl_slist_append(chunk, platformVersionHeader.c_str());
+        chunk = curl_slist_append(chunk, platformIdHeader.c_str());
+        chunk = curl_slist_append(chunk, "Content-Type: multipart/form-data");
+        curl_easy_setopt(curl, CURLOPT_HTTPHEADER, chunk);
+
+        struct curl_httppost *formpost = NULL;
+        struct curl_httppost *lastptr = NULL;
+        curl_formadd(&formpost,
+             &lastptr,
+             CURLFORM_COPYNAME, "description",
+             CURLFORM_COPYCONTENTS, "",
+             CURLFORM_END);
+
+        curl_easy_setopt(curl, CURLOPT_HTTPPOST, formpost);
+        curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
+        curl_easy_setopt(curl, CURLOPT_WRITEDATA, &readBuffer);
+        res = curl_easy_perform(curl);
+
+        curl_easy_cleanup(curl);
+        curl_formfree(formpost);
+        curl_slist_free_all(chunk);
+        return readBuffer;
+
+      } else {
+        throw std::string("Cannot initialize curl object. Please ensure you have a working installation of the libcurl Library with the appropriate compile flag.");
+      }
+
+    }
+
+    std::string DeleteSubAccount(std::string subAccountAPIKey){
+      CURL *curl;
+      curl_global_init(CURL_GLOBAL_ALL);
+      curl = curl_easy_init();
+      if (curl)
+      {
+        readBuffer.clear();
+        CURLcode res;
+        std::stringstream url;
+        if (notificationUrl == "")
+        {
+          url << baseUrl << "/subaccount/" << subAccountAPIKey;
+        } else {
+          url << baseUrl << "/subaccount/" << subAccountAPIKey << "?notificationUrl=" << notificationUrl;
+        }
+
+        curl_easy_setopt(curl, CURLOPT_URL, url.str().c_str());
+        curl_easy_setopt(curl, CURLOPT_HTTPAUTH, CURLAUTH_ANY);
+        curl_easy_setopt(curl, CURLOPT_USERPWD, auth.c_str());
+        curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "DELETE");
+        struct curl_slist *chunk = NULL;
+        chunk = curl_slist_append(chunk, platformVersionHeader.c_str());
+        chunk = curl_slist_append(chunk, platformIdHeader.c_str());
+        curl_easy_setopt(curl, CURLOPT_HTTPHEADER, chunk);
+        curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
+        curl_easy_setopt(curl, CURLOPT_WRITEDATA, &readBuffer);
+        res = curl_easy_perform(curl);
+
+        curl_easy_cleanup(curl);
+        curl_slist_free_all(chunk);
+        return readBuffer;
+
+      } else {
+        throw std::string("Cannot initialize curl object. Please ensure you have a working installation of the libcurl Library with the appropriate compile flag.");
+      }
+    }
+
     std::string CreateGroup(std::string description="")
     {
       CURL *curl;
