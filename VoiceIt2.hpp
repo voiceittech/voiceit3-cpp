@@ -41,7 +41,7 @@ class VoiceIt2
     VoiceIt2(std::string key, std::string token)
     {
       baseUrl = "https://api.voiceit.io";
-      version = "2.2.1";
+      version = "2.3.0";
       notificationUrl = "";
       auth = key + ":" + token;
       platformIdHeader = "platformId: 34";
