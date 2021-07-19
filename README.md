@@ -1,6 +1,6 @@
 <img src="./cpp.png" width="100%" style="width:100%" />
 
-# VoiceIt API 2.0 C++ Wrapper [![travisstatus](https://api.travis-ci.org/voiceittech/VoiceIt2-Cpp.svg?branch=master)](https://travis-ci.org/voiceittech/VoiceIt2-Cpp)
+# VoiceIt API 2.0 C++ Wrapper [![travisstatus](https://api.travis-ci.com/voiceittech/VoiceIt2-Cpp.svg?branch=master)](https://travis-ci.com/voiceittech/VoiceIt2-Cpp)
 
 A C++ wrapper for VoiceIt's API 2.0 featuring Voice + Face Verification and Identification.
 
@@ -17,5 +17,5 @@ Contact us with any questions at support@voiceit.io
 
 ## License
 
-VoiceIt2-cpp is available under the MIT license. See the LICENSE file for more info.
+VoiceIt2-Cpp is available under the MIT license. See the LICENSE file for more info.
 
