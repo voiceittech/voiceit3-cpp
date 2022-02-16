@@ -12,7 +12,7 @@ class VoiceIt2
 {
   private:
     std::string baseUrl;
-    std::string version;
+    std::string version = "2.5.1";
     std::string notificationUrl;
     std::string auth;
     std::string platformIdHeader;
@@ -41,17 +41,15 @@ class VoiceIt2
     VoiceIt2(std::string key, std::string token)
     {
       baseUrl = "https://api.voiceit.io";
-      version = "2.5.0";
       notificationUrl = "";
       auth = key + ":" + token;
       platformIdHeader = "platformId: 34";
       platformVersionHeader = "platformVersion: " + version;
     }
 
-    VoiceIt2(std::string key, std::string token, std::string inputBaseUrl)
+    VoiceIt2(std::string key, std::string token, std::string customUrl)
     {
-      baseUrl = inputBaseUrl;
-      version = "2.5.0";
+      baseUrl = customUrl;
       notificationUrl = "";
       auth = key + ":" + token;
       platformIdHeader = "platformId: 34";
