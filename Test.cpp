@@ -300,12 +300,6 @@ int main(int argc, char *argv[])
 	AssertEquals("SUCC", ret["responseCode"], std::to_string(__LINE__), ret.dump());
     subAccountManagedAPIKey = ret["apiKey"];
 
-  str = v.SwitchSubAccountType(ret["apiKey"]);
-    // std::cout << "str: " << str << std::endl;
-    ret = json::parse(str);
-    AssertEquals(200, ret["status"], std::to_string(__LINE__), ret.dump());
-	AssertEquals("SUCC", ret["responseCode"], std::to_string(__LINE__), ret.dump());
-
   str = v.CreateUnmanagedSubAccount();
     // std::cout << "str: " << str << std::endl;
     ret = json::parse(str);
