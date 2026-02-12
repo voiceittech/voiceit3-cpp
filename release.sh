@@ -64,7 +64,7 @@ then
   if [[ $wrapperplatformversion = $version ]];
   then
     uploadurl=$(curl -s -H "Authorization: token $GH_TOKEN" -H "Content-Type: application/json" -X POST --data '{"tag_name": "'$version'", "target_commitish": "master", "name": "'$version'", "body": "", "draft": false, "prerelease": false}' https://api.github.com/repos/voiceittech/VoiceIt3-Cpp/releases | grep upload_url | awk '{print $2}' | cut -d '"' -f2 | cut -f1 -d '{')
-    curl -H "Authorization: token $GH_TOKEN" -H "Content-Type: text/x-c" -X POST --data-binary '@./VoiceIt2.hpp' $uploadurl'?name=VoiceIt2.hpp' 1>&2
+    curl -H "Authorization: token $GH_TOKEN" -H "Content-Type: text/x-c" -X POST --data-binary '@./VoiceIt3.hpp' $uploadurl'?name=VoiceIt3.hpp' 1>&2
 
     if [ "$?" != "0" ]
     then
@@ -96,7 +96,7 @@ then
         formattedmessages=$formattedmessages'|'$i
       done
 
-      curl -X POST -H "X-Admin-Password: $EMAILAUTHPASS" --data-urlencode "messages=$formattedmessages" -d "packageManaged=false" --data-urlencode "instructions=https://github.com/voiceittech/VoiceIt3-Cpp/releases/download/$wrapperplatformversion/VoiceIt2.hpp" "https://api.voiceit.io/platform/34"
+      curl -X POST -H "X-Admin-Password: $EMAILAUTHPASS" --data-urlencode "messages=$formattedmessages" -d "packageManaged=false" --data-urlencode "instructions=https://github.com/voiceittech/VoiceIt3-Cpp/releases/download/$wrapperplatformversion/VoiceIt3.hpp" "https://api.voiceit.io/platform/34"
     fi
     exit 0
 
