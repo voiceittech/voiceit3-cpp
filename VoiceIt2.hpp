@@ -512,44 +512,6 @@ class VoiceIt2
     }
 
 
-    std::string SwitchSubAccountType(std::string subAccountApiKey)
-    {
-      CURL *curl;
-      curl_global_init(CURL_GLOBAL_ALL);
-      curl = curl_easy_init();
-      if (curl)
-      {
-        readBuffer.clear();
-        CURLcode res;
-        std::stringstream url;
-        if (notificationUrl == "")
-        {
-          url << baseUrl << "/subaccount/" << subAccountApiKey << "/switchType";
-        } else {
-          url << baseUrl << "/subaccount/"  << subAccountApiKey << "/switchType?notificationUrl=" << notificationUrl;
-        }
-
-        curl_easy_setopt(curl, CURLOPT_URL, url.str().c_str());
-        curl_easy_setopt(curl, CURLOPT_HTTPAUTH, CURLAUTH_ANY);
-        curl_easy_setopt(curl, CURLOPT_USERPWD, auth.c_str());
-        curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "POST");
-
-        struct curl_slist *chunk = NULL;
-        chunk = curl_slist_append(chunk, platformVersionHeader.c_str());
-        chunk = curl_slist_append(chunk, platformIdHeader.c_str());
-        curl_easy_setopt(curl, CURLOPT_HTTPHEADER, chunk);
-        curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
-        curl_easy_setopt(curl, CURLOPT_WRITEDATA, &readBuffer);
-        res = curl_easy_perform(curl);
-
-        curl_easy_cleanup(curl);
-        curl_slist_free_all(chunk);
-        return readBuffer;
-
-      } else {
-        throw std::string("Cannot initialize curl object. Please ensure you have a working installation of the libcurl Library with the appropriate compile flag.");
-      }
-    }
 
     std::string CreateUnmanagedSubAccount(){
       CURL *curl;
