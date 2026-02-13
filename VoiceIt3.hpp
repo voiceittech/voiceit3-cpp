@@ -40,7 +40,7 @@ class VoiceIt3
 
     VoiceIt3(std::string key, std::string token)
     {
-      baseUrl = "https://qpi.voiceit.io";
+      baseUrl = "https://api.voiceit.io";
       notificationUrl = "";
       auth = key + ":" + token;
       platformIdHeader = "platformId: 34";
