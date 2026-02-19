@@ -19,4 +19,4 @@ jobs:
         run: g++ -std=c++17 -o Test test.cpp -lcurl -lpthread
 
       - name: Run test
-        run: ./Test ${{ secrets.VOICEIT_API_KEY }} ${{ secrets.VOICEIT_API_TOKEN }}
+        run: ./Test ${{ secrets.VIAPIKEY }} ${{ secrets.VIAPITOKEN }}
