@@ -1,6 +1,5 @@
 <img src="./cpp.png" width="100%" style="width:100%" />
 
-# VoiceIt API 3.0 C++ Wrapper [![CI](https://github.com/voiceittech/VoiceIt3-Cpp/actions/workflows/ci.yml/badge.svg)](https://github.com/voiceittech/VoiceIt3-Cpp/actions/workflows/ci.yml) [![version](https://img.shields.io/github/v/release/voiceittech/VoiceIt3-Cpp)](https://github.com/voiceittech/VoiceIt3-Cpp/releases) ![MIT](https://img.shields.io/github/license/mashape/apistatus.svg)
 
 A C++ wrapper for VoiceIt's API 3.0 featuring Voice + Face Verification and Identification.
 
@@ -13,7 +12,7 @@ You can visit our [HTTP API 3.0 Documentation](https://api.voiceit.io/?cpp#intro
 
 ## Support
 
-Contact us with any questions at support@voiceit.io
+Contact us with any questions at support@voiceit.tech
 
 ## License
 
