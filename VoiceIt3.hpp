@@ -292,7 +292,7 @@ class VoiceIt3
         {
           url << baseUrl << "/users/" << userId << "/token?timeOut=" << secondsToTimeout;
         } else {
-          url << baseUrl << "/users/" << userId << "/token?notificationUrl=" << notificationUrl << "t&imeOut=" << secondsToTimeout;
+          url << baseUrl << "/users/" << userId << "/token?notificationUrl=" << notificationUrl << "&timeOut=" << secondsToTimeout;
         }
 
         curl_easy_setopt(curl, CURLOPT_URL, url.str().c_str());
