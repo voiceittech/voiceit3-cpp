@@ -1,5 +1,10 @@
 <img src="./cpp.png" width="100%" style="width:100%" />
 
+[![Version](https://img.shields.io/badge/version-2.5.2-blue)](https://github.com/voiceittech/VoiceIt3-Cpp)
+[![License: MIT](https://img.shields.io/badge/license-MIT-green)](https://github.com/voiceittech/VoiceIt3-Cpp/blob/main/LICENSE)
+[![Platform](https://img.shields.io/badge/platform-C%2B%2B-lightgrey)](https://github.com/voiceittech/VoiceIt3-Cpp)
+[![VoiceIt API](https://img.shields.io/badge/VoiceIt-API%203.0-blue)](https://voiceit.io)
+
 
 A C++ wrapper for VoiceIt's API 3.0 featuring Voice + Face Verification and Identification.
 
