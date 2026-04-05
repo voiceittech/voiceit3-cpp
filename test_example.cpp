@@ -15,11 +15,11 @@ int main() {
 
     VoiceIt3 vi(apiKey, apiToken);
 
-    std::cout << "CreateUser: " << vi.createUser() << std::endl;
-    std::cout << "GetAllUsers: " << vi.getAllUsers() << std::endl;
-    std::cout << "CreateGroup: " << vi.createGroup("Test Group") << std::endl;
-    std::cout << "GetAllGroups: " << vi.getAllGroups() << std::endl;
-    std::cout << "GetPhrases: " << vi.getPhrases("en-US") << std::endl;
+    std::cout << "CreateUser: " << vi.CreateUser() << std::endl;
+    std::cout << "GetAllUsers: " << vi.GetAllUsers() << std::endl;
+    std::cout << "CreateGroup: " << vi.CreateGroup("Test Group") << std::endl;
+    std::cout << "GetAllGroups: " << vi.GetAllGroups() << std::endl;
+    std::cout << "GetPhrases: " << vi.GetPhrases("en-US") << std::endl;
 
     std::cout << "\nAll API calls completed successfully!" << std::endl;
     return 0;
