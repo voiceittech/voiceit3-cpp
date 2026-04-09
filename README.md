@@ -1,10 +1,10 @@
 <img src="./cpp.png" width="100%" style="width:100%" />
 
-[![API Test](https://github.com/voiceittech/VoiceIt3-Cpp/actions/workflows/test.yml/badge.svg)](https://github.com/voiceittech/VoiceIt3-Cpp/actions/workflows/test.yml)
-[![Dependabot](https://img.shields.io/github/issues-pr/voiceittech/VoiceIt3-Cpp/dependencies?label=dependabot&logo=dependabot&color=025e8c)](https://github.com/voiceittech/VoiceIt3-Cpp/pulls?q=is%3Apr+label%3Adependencies)
-[![Version](https://img.shields.io/badge/version-2.5.2-blue)](https://github.com/voiceittech/VoiceIt3-Cpp)
-[![License: MIT](https://img.shields.io/badge/license-MIT-green)](https://github.com/voiceittech/VoiceIt3-Cpp/blob/main/LICENSE)
-[![Platform](https://img.shields.io/badge/platform-C%2B%2B-lightgrey)](https://github.com/voiceittech/VoiceIt3-Cpp)
+[![API Test](https://github.com/voiceittech/voiceit3-cpp/actions/workflows/test.yml/badge.svg)](https://github.com/voiceittech/voiceit3-cpp/actions/workflows/test.yml)
+[![Dependabot](https://img.shields.io/github/issues-pr/voiceittech/voiceit3-cpp/dependencies?label=dependabot&logo=dependabot&color=025e8c)](https://github.com/voiceittech/voiceit3-cpp/pulls?q=is%3Apr+label%3Adependencies)
+[![Version](https://img.shields.io/badge/version-3.0.0-blue)](https://github.com/voiceittech/voiceit3-cpp)
+[![License: MIT](https://img.shields.io/badge/license-MIT-green)](https://github.com/voiceittech/voiceit3-cpp/blob/main/LICENSE)
+[![Platform](https://img.shields.io/badge/platform-C%2B%2B-lightgrey)](https://github.com/voiceittech/voiceit3-cpp)
 [![VoiceIt API](https://img.shields.io/badge/VoiceIt-API%203.0-blue)](https://voiceit.io)
 
 
@@ -13,7 +13,7 @@ A C++ wrapper for VoiceIt's API 3.0 featuring Voice + Face Verification and Iden
 ## Installation
 
 ```bash
-git clone https://github.com/voiceittech/VoiceIt3-Cpp.git
+git clone https://github.com/voiceittech/voiceit3-cpp.git
 ```
 
 Include the header in your project:
@@ -35,7 +35,7 @@ You can visit our [HTTP API 3.0 Documentation](https://voiceit.io/documentation)
 
 If you find this SDK useful, please consider giving it a star on GitHub — it helps others discover the project!
 
-[![GitHub stars](https://img.shields.io/github/stars/voiceittech/VoiceIt3-Cpp?style=social)](https://github.com/voiceittech/VoiceIt3-Cpp/stargazers)
+[![GitHub stars](https://img.shields.io/github/stars/voiceittech/voiceit3-cpp?style=social)](https://github.com/voiceittech/voiceit3-cpp/stargazers)
 
 ## License
 
