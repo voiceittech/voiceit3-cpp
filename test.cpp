@@ -2,7 +2,7 @@
 #include "pch.h"
 #endif
 
-#include "VoiceIt3.hpp"
+#include "voiceit3.hpp"
 #include "json.hpp"
 #include <fstream>
 #include <iostream>

@@ -1,4 +1,4 @@
-#include "VoiceIt3.hpp"
+#include "voiceit3.hpp"
 #include <iostream>
 #include <cstdlib>
 #include <string>
