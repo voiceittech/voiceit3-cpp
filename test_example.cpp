@@ -9,7 +9,7 @@ int main() {
     if (!ak || !at) { std::cout << "Set VOICEIT_API_KEY and VOICEIT_API_TOKEN" << std::endl; return 1; }
 
     VoiceIt3 vi(ak, at);
-    std::string phrase = "never forget tomorrow is a new day";
+    std::string phrase = "Never forget tomorrow is a new day";
     std::string td = "test-data";
 
     std::string r = vi.CreateUser();
