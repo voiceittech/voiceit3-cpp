@@ -12,7 +12,7 @@ class VoiceIt3
 {
   private:
     std::string baseUrl;
-    std::string version = "3.0.4";
+    std::string version = "3.0.5";
     std::string notificationUrl;
     std::string auth;
     std::string platformIdHeader;
@@ -34,6 +34,19 @@ class VoiceIt3
       else
         throw std::string("No such file: " + path);
 
+    }
+
+    // Percent-encode a path segment so caller-supplied IDs cannot
+    // change the endpoint or inject query parameters.
+    std::string Enc(const std::string& s)
+    {
+      CURL *c = curl_easy_init();
+      if (!c) return s;
+      char *esc = curl_easy_escape(c, s.c_str(), (int)s.length());
+      std::string r = esc ? esc : s;
+      if (esc) curl_free(esc);
+      curl_easy_cleanup(c);
+      return r;
     }
 
   public:
@@ -176,9 +189,9 @@ class VoiceIt3
         std::stringstream url;
         if (notificationUrl == "")
         {
-          url << baseUrl << "/users/" << userId;
+          url << baseUrl << "/users/" << Enc(userId);
         } else {
-          url << baseUrl << "/users/" << userId << "?notificationUrl=" << notificationUrl;
+          url << baseUrl << "/users/" << Enc(userId) << "?notificationUrl=" << notificationUrl;
         }
 
         curl_easy_setopt(curl, CURLOPT_URL, url.str().c_str());
@@ -214,9 +227,9 @@ class VoiceIt3
         std::stringstream url;
         if (notificationUrl == "")
         {
-          url << baseUrl << "/users/" << userId;
+          url << baseUrl << "/users/" << Enc(userId);
         } else {
-          url << baseUrl << "/users/" << userId << "?notificationUrl=" << notificationUrl;
+          url << baseUrl << "/users/" << Enc(userId) << "?notificationUrl=" << notificationUrl;
         }
 
         curl_easy_setopt(curl, CURLOPT_URL, url.str().c_str());
@@ -252,9 +265,9 @@ class VoiceIt3
         std::stringstream url;
         if (notificationUrl == "")
         {
-          url << baseUrl << "/users/" << userId << "/groups";
+          url << baseUrl << "/users/" << Enc(userId) << "/groups";
         } else {
-          url << baseUrl << "/users/" << userId << "/groups?notificationUrl=" << notificationUrl;
+          url << baseUrl << "/users/" << Enc(userId) << "/groups?notificationUrl=" << notificationUrl;
         }
 
         curl_easy_setopt(curl, CURLOPT_URL, url.str().c_str());
@@ -290,9 +303,9 @@ class VoiceIt3
         std::stringstream url;
         if (notificationUrl == "")
         {
-          url << baseUrl << "/users/" << userId << "/token?timeOut=" << secondsToTimeout;
+          url << baseUrl << "/users/" << Enc(userId) << "/token?timeOut=" << secondsToTimeout;
         } else {
-          url << baseUrl << "/users/" << userId << "/token?notificationUrl=" << notificationUrl << "&timeOut=" << secondsToTimeout;
+          url << baseUrl << "/users/" << Enc(userId) << "/token?notificationUrl=" << notificationUrl << "&timeOut=" << secondsToTimeout;
         }
 
         curl_easy_setopt(curl, CURLOPT_URL, url.str().c_str());
@@ -366,9 +379,9 @@ class VoiceIt3
         std::stringstream url;
         if (notificationUrl == "")
         {
-          url << baseUrl << "/groups/" << groupId;
+          url << baseUrl << "/groups/" << Enc(groupId);
         } else {
-          url << baseUrl << "/groups/" << groupId << "?notificationUrl=" << notificationUrl;
+          url << baseUrl << "/groups/" << Enc(groupId) << "?notificationUrl=" << notificationUrl;
         }
 
         curl_easy_setopt(curl, CURLOPT_URL, url.str().c_str());
@@ -404,9 +417,9 @@ class VoiceIt3
         std::stringstream url;
         if (notificationUrl == "")
         {
-          url << baseUrl << "/groups/" << groupId << "/exists";
+          url << baseUrl << "/groups/" << Enc(groupId) << "/exists";
         } else {
-          url << baseUrl << "/groups/" << groupId << "/exists?notificationUrl=" << notificationUrl;
+          url << baseUrl << "/groups/" << Enc(groupId) << "/exists?notificationUrl=" << notificationUrl;
         }
 
         curl_easy_setopt(curl, CURLOPT_URL, url.str().c_str());
@@ -574,9 +587,9 @@ class VoiceIt3
         std::stringstream url;
         if (notificationUrl == "")
         {
-          url << baseUrl << "/subaccount/" << subAccountAPIKey;
+          url << baseUrl << "/subaccount/" << Enc(subAccountAPIKey);
         } else {
-          url << baseUrl << "/subaccount/" << subAccountAPIKey << "?notificationUrl=" << notificationUrl;
+          url << baseUrl << "/subaccount/" << Enc(subAccountAPIKey) << "?notificationUrl=" << notificationUrl;
         }
 
         curl_easy_setopt(curl, CURLOPT_URL, url.str().c_str());
@@ -625,9 +638,9 @@ class VoiceIt3
         std::stringstream url;
         if (notificationUrl == "")
         {
-          url << baseUrl << "/subaccount/" << subAccountAPIKey;
+          url << baseUrl << "/subaccount/" << Enc(subAccountAPIKey);
         } else {
-          url << baseUrl << "/subaccount/" << subAccountAPIKey << "?notificationUrl=" << notificationUrl;
+          url << baseUrl << "/subaccount/" << Enc(subAccountAPIKey) << "?notificationUrl=" << notificationUrl;
         }
 
         curl_easy_setopt(curl, CURLOPT_URL, url.str().c_str());
@@ -831,9 +844,9 @@ class VoiceIt3
         std::stringstream url;
         if (notificationUrl == "")
         {
-          url << baseUrl << "/groups/" << groupId;
+          url << baseUrl << "/groups/" << Enc(groupId);
         } else {
-          url << baseUrl << "/groups/" << groupId << "?notificationUrl=" << notificationUrl;
+          url << baseUrl << "/groups/" << Enc(groupId) << "?notificationUrl=" << notificationUrl;
         }
 
         curl_easy_setopt(curl, CURLOPT_URL, url.str().c_str());
@@ -871,9 +884,9 @@ class VoiceIt3
         std::stringstream url;
         if (notificationUrl == "")
         {
-          url << baseUrl << "/enrollments/voice/" << userId;
+          url << baseUrl << "/enrollments/voice/" << Enc(userId);
         } else {
-          url << baseUrl << "/enrollments/voice/" << userId << "?notificationUrl=" << notificationUrl;
+          url << baseUrl << "/enrollments/voice/" << Enc(userId) << "?notificationUrl=" << notificationUrl;
         }
 
         curl_easy_setopt(curl, CURLOPT_URL, url.str().c_str());
@@ -911,9 +924,9 @@ class VoiceIt3
         std::stringstream url;
         if (notificationUrl == "")
         {
-          url << baseUrl << "/enrollments/face/" << userId;
+          url << baseUrl << "/enrollments/face/" << Enc(userId);
         } else {
-          url << baseUrl << "/enrollments/face/" << userId << "?notificationUrl=" << notificationUrl;
+          url << baseUrl << "/enrollments/face/" << Enc(userId) << "?notificationUrl=" << notificationUrl;
         }
 
         curl_easy_setopt(curl, CURLOPT_URL, url.str().c_str());
@@ -951,9 +964,9 @@ class VoiceIt3
         std::stringstream url;
         if (notificationUrl == "")
         {
-          url << baseUrl << "/enrollments/video/" << userId;
+          url << baseUrl << "/enrollments/video/" << Enc(userId);
         } else {
-          url << baseUrl << "/enrollments/video/" << userId << "?notificationUrl=" << notificationUrl;
+          url << baseUrl << "/enrollments/video/" << Enc(userId) << "?notificationUrl=" << notificationUrl;
         }
 
         curl_easy_setopt(curl, CURLOPT_URL, url.str().c_str());
@@ -1394,9 +1407,9 @@ class VoiceIt3
         std::stringstream url;
         if (notificationUrl == "")
         {
-          url << baseUrl << "/enrollments/" << userId << "/all";
+          url << baseUrl << "/enrollments/" << Enc(userId) << "/all";
         } else {
-          url << baseUrl << "/enrollments/" << userId << "/all?notificationUrl=" << notificationUrl;
+          url << baseUrl << "/enrollments/" << Enc(userId) << "/all?notificationUrl=" << notificationUrl;
         }
 
         curl_easy_setopt(curl, CURLOPT_URL, url.str().c_str());
@@ -2241,9 +2254,9 @@ class VoiceIt3
         std::stringstream url;
         if (notificationUrl == "")
         {
-          url << baseUrl << "/phrases/" << contentLanguage;
+          url << baseUrl << "/phrases/" << Enc(contentLanguage);
         } else {
-          url << baseUrl << "/phrases/" << contentLanguage << "?notificationUrl=" << notificationUrl;
+          url << baseUrl << "/phrases/" << Enc(contentLanguage) << "?notificationUrl=" << notificationUrl;
         }
 
         curl_easy_setopt(curl, CURLOPT_URL, url.str().c_str());
@@ -2280,7 +2293,7 @@ class VoiceIt3
         std::stringstream url;
         if (notificationUrl == "")
         {
-          url << baseUrl << "/users/" << userId << "/expireTokens";
+          url << baseUrl << "/users/" << Enc(userId) << "/expireTokens";
         } else {
           url << baseUrl << "/users/" <<  userId << "/expireTokens?notificationUrl=" << notificationUrl;
         }
