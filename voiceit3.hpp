@@ -12,7 +12,7 @@ class VoiceIt3
 {
   private:
     std::string baseUrl;
-    std::string version = "2.5.1";
+    std::string version = "3.0.4";
     std::string notificationUrl;
     std::string auth;
     std::string platformIdHeader;
