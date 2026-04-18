@@ -71,7 +71,7 @@ void DownloadFile(std::string destination, std::string source)
 int main(int argc, char *argv[])
 {
 #ifndef _WIN32
-	VoiceIt3 v(argv[1], argv[2]);
+	voiceit3 v(argv[1], argv[2]);
   if (getenv("BOXFUSE_ENV") != NULL) {
     std::string boxfuseenv = getenv("BOXFUSE_ENV");
     if (boxfuseenv == "voiceittest")
@@ -83,7 +83,7 @@ int main(int argc, char *argv[])
     }
   }
 #else
-	VoiceIt3 v("key_00000000000000000000000000000000", "tok_00000000000000000000000000000000");
+	voiceit3 v("key_00000000000000000000000000000000", "tok_00000000000000000000000000000000");
 #endif
 	json ret;
 

@@ -8,7 +8,7 @@
 
 static std::string readBuffer;
 
-class VoiceIt3
+class voiceit3
 {
   private:
     std::string baseUrl;
@@ -51,7 +51,7 @@ class VoiceIt3
 
   public:
 
-    VoiceIt3(std::string key, std::string token)
+    voiceit3(std::string key, std::string token)
     {
       baseUrl = "https://api.voiceit.io";
       notificationUrl = "";
@@ -60,7 +60,7 @@ class VoiceIt3
       platformVersionHeader = "platformVersion: " + version;
     }
 
-    VoiceIt3(std::string key, std::string token, std::string customUrl)
+    voiceit3(std::string key, std::string token, std::string customUrl)
     {
       baseUrl = customUrl;
       notificationUrl = "";

@@ -8,7 +8,7 @@ int main() {
     const char* at = std::getenv("VOICEIT_API_TOKEN");
     if (!ak || !at) { std::cout << "Set VOICEIT_API_KEY and VOICEIT_API_TOKEN" << std::endl; return 1; }
 
-    VoiceIt3 vi(ak, at);
+    voiceit3 vi(ak, at);
     std::string phrase = "Never forget tomorrow is a new day";
     std::string td = "test-data";
 
